@@ -1,5 +1,4 @@
 "use client"
-
 import { useState } from "react"
 import { PlusCircle, Trash2, LogOut, User, AlertCircle } from "lucide-react"
 import { Input } from "@/components/ui/input"
@@ -18,9 +17,9 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 
 // Item categories
-const categories = ["Weapon", "Armor", "Potions", "Gear", "Scroll"]
+const categories = ["Weapon", "Armor", "Potions", "Gear", "Scroll", "Misc"]
 // Currency types
-const currencies = ["GP", "SP", "CP"]
+const currencies = ["GP", "SP", "CP", "Credits", "Coins"]
 // Theme options
 const themes = [
   { id: "parchment", name: "Parchment" },
@@ -37,6 +36,16 @@ type Item = {
   category: string
   price: number
   currency: string
+}
+
+// Shop type definition
+type Shop = {
+  id?: string
+  title: string
+  owner: string
+  items: Item[]
+  theme: string
+  description?: string
 }
 
 export default function ShopCreator() {
@@ -286,16 +295,16 @@ export default function ShopCreator() {
   const displayName = isFreeMode ? "Free Mode User" : user?.displayName || user?.email || "User"
 
   return (
-    <div className="min-h-screen bg-stone-100 dark:bg-stone-900 p-4 md:p-8 print:hidden">
+    <div className="min-h-screen bg-background p-4 md:p-8 print:hidden">
       <div className="max-w-7xl mx-auto">
         {/* Free Mode Alert */}
         {isFreeMode && (
-          <Alert className="mb-6 border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-950/50 print:hidden">
-            <AlertCircle className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-            <AlertDescription className="text-blue-800 dark:text-blue-300">
+          <Alert className="mb-6 border-amber-600/30 bg-amber-50/80 dark:border-amber-400/30 dark:bg-amber-950/30 print:hidden card-3d">
+            <AlertCircle className="h-4 w-4 text-amber-700 dark:text-amber-400" />
+            <AlertDescription className="text-amber-800 dark:text-amber-300">
               You're using free mode. Your changes won't be saved.{" "}
               {isConfigured && (
-                <Link href="/auth" className="underline">
+                <Link href="/auth" className="underline font-medium">
                   Sign in to save your work
                 </Link>
               )}
@@ -307,31 +316,35 @@ export default function ShopCreator() {
         <div className="mb-8 flex justify-between items-center print:hidden">
           <div>
             <Link href="/home">
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 hover:text-amber-600 dark:hover:text-amber-400 transition-colors cursor-pointer">
+              <h1 className="text-3xl font-bold text-foreground hover:text-primary transition-colors cursor-pointer font-fantasy">
                 Dungeon and Shopkeeps
               </h1>
             </Link>
-            <p className="text-gray-600 dark:text-gray-300">
+            <p className="text-muted-foreground">
               {isFreeMode ? "Free Mode - Create without limits!" : `Welcome back, ${displayName}`}
             </p>
           </div>
           <div className="flex items-center space-x-4">
             <ThemeToggle />
             <PrintButton onPrint={handlePrint} disabled={items.length === 0} />
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 px-3 py-2 rounded-lg card-3d">
               {user?.photoURL ? (
-                <img src={user.photoURL || "/placeholder.svg"} alt="Profile" className="w-8 h-8 rounded-full" />
+                <img
+                  src={user.photoURL || "/placeholder.svg"}
+                  alt="Profile"
+                  className="w-8 h-8 rounded-full shadow-sm"
+                />
               ) : (
-                <User className="w-8 h-8 text-gray-400" />
+                <User className="w-8 h-8 text-muted-foreground" />
               )}
-              <span className="text-sm text-gray-600 dark:text-gray-300">{displayName}</span>
+              <span className="text-sm text-foreground font-medium">{displayName}</span>
             </div>
             {user ? (
               <Button
                 variant="outline"
                 size="sm"
                 onClick={handleSignOut}
-                className="flex items-center space-x-2 bg-transparent dark:bg-transparent dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800"
+                className="flex items-center space-x-2 button-3d text-primary-foreground bg-transparent"
               >
                 <LogOut className="w-4 h-4" />
                 <span>Sign Out</span>
@@ -341,7 +354,7 @@ export default function ShopCreator() {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="flex items-center space-x-2 bg-transparent dark:bg-transparent dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800"
+                  className="flex items-center space-x-2 button-3d text-primary-foreground bg-transparent"
                 >
                   <User className="w-4 h-4" />
                   <span>Sign In</span>
@@ -354,30 +367,26 @@ export default function ShopCreator() {
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Editor Section */}
           <div className="flex-1 print:hidden">
-            <Card className="dark:bg-gray-800/50 dark:border-gray-700">
-              <CardHeader>
+            <Card className="card-3d paper-texture">
+              <CardHeader className="wood-grain">
                 <div className="flex justify-between items-center">
                   <div>
-                    <CardTitle className="text-2xl font-bold dark:text-gray-100">Shop Creator</CardTitle>
-                    <CardDescription className="dark:text-gray-300">
+                    <CardTitle className="text-2xl font-bold text-foreground font-fantasy">Shop Creator</CardTitle>
+                    <CardDescription className="text-muted-foreground">
                       Create your fantasy RPG shop inventory
                     </CardDescription>
                   </div>
                   <div className="w-40">
-                    <Label htmlFor="theme" className="text-sm font-medium dark:text-gray-200">
+                    <Label htmlFor="theme" className="text-sm font-medium text-foreground">
                       Theme
                     </Label>
                     <Select value={theme} onValueChange={setTheme}>
-                      <SelectTrigger id="theme" className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200">
+                      <SelectTrigger id="theme" className="input-3d">
                         <SelectValue placeholder="Select theme" />
                       </SelectTrigger>
-                      <SelectContent className="dark:bg-gray-800 dark:border-gray-600">
+                      <SelectContent className="card-3d">
                         {themes.map((theme) => (
-                          <SelectItem
-                            key={theme.id}
-                            value={theme.id}
-                            className="dark:text-gray-200 dark:focus:bg-gray-700"
-                          >
+                          <SelectItem key={theme.id} value={theme.id} className="hover:bg-accent/50">
                             {theme.name}
                           </SelectItem>
                         ))}
@@ -386,12 +395,12 @@ export default function ShopCreator() {
                   </div>
                 </div>
               </CardHeader>
-              <CardContent>
+              <CardContent className="paper-texture">
                 <div className="space-y-6">
                   {/* Shop Details */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="shop-title" className="dark:text-gray-200">
+                      <Label htmlFor="shop-title" className="text-foreground font-medium">
                         Shop Title
                       </Label>
                       <Input
@@ -399,11 +408,11 @@ export default function ShopCreator() {
                         value={shopTitle}
                         onChange={(e) => setShopTitle(e.target.value)}
                         placeholder="Enter shop name"
-                        className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 dark:placeholder-gray-400"
+                        className="input-3d"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="owner-name" className="dark:text-gray-200">
+                      <Label htmlFor="owner-name" className="text-foreground font-medium">
                         Shop Owner
                       </Label>
                       <Input
@@ -411,17 +420,17 @@ export default function ShopCreator() {
                         value={ownerName}
                         onChange={(e) => setOwnerName(e.target.value)}
                         placeholder="Enter owner name"
-                        className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 dark:placeholder-gray-400"
+                        className="input-3d"
                       />
                     </div>
                   </div>
 
                   {/* Add New Item */}
-                  <div className="border rounded-md p-4 bg-stone-50 dark:bg-gray-800/50 dark:border-gray-600">
-                    <h3 className="font-medium mb-3 dark:text-gray-200">Add New Item</h3>
+                  <div className="border rounded-lg p-4 card-3d">
+                    <h3 className="font-medium mb-3 text-foreground font-fantasy">Add New Item</h3>
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-3 items-end">
                       <div className="space-y-2 md:col-span-2">
-                        <Label htmlFor="item-name" className="dark:text-gray-200">
+                        <Label htmlFor="item-name" className="text-foreground font-medium">
                           Item Name
                         </Label>
                         <Input
@@ -429,30 +438,23 @@ export default function ShopCreator() {
                           value={newItem.name}
                           onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
                           placeholder="Enter item name"
-                          className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 dark:placeholder-gray-400"
+                          className="input-3d"
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="item-category" className="dark:text-gray-200">
+                        <Label htmlFor="item-category" className="text-foreground font-medium">
                           Category
                         </Label>
                         <Select
                           value={newItem.category}
                           onValueChange={(value) => setNewItem({ ...newItem, category: value })}
                         >
-                          <SelectTrigger
-                            id="item-category"
-                            className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
-                          >
+                          <SelectTrigger id="item-category" className="input-3d">
                             <SelectValue placeholder="Select category" />
                           </SelectTrigger>
-                          <SelectContent className="dark:bg-gray-800 dark:border-gray-600">
+                          <SelectContent className="card-3d">
                             {categories.map((category) => (
-                              <SelectItem
-                                key={category}
-                                value={category}
-                                className="dark:text-gray-200 dark:focus:bg-gray-700"
-                              >
+                              <SelectItem key={category} value={category} className="hover:bg-accent/50">
                                 {category}
                               </SelectItem>
                             ))}
@@ -461,7 +463,7 @@ export default function ShopCreator() {
                       </div>
                       <div className="grid grid-cols-3 gap-2">
                         <div className="col-span-2 space-y-2">
-                          <Label htmlFor="item-price" className="dark:text-gray-200">
+                          <Label htmlFor="item-price" className="text-foreground font-medium">
                             Price
                           </Label>
                           <Input
@@ -471,30 +473,23 @@ export default function ShopCreator() {
                             value={newItem.price || ""}
                             onChange={(e) => setNewItem({ ...newItem, price: Number.parseFloat(e.target.value) || 0 })}
                             placeholder="0"
-                            className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 dark:placeholder-gray-400"
+                            className="input-3d"
                           />
                         </div>
                         <div className="space-y-2">
-                          <Label htmlFor="item-currency" className="dark:text-gray-200">
+                          <Label htmlFor="item-currency" className="text-foreground font-medium">
                             Currency
                           </Label>
                           <Select
                             value={newItem.currency}
                             onValueChange={(value) => setNewItem({ ...newItem, currency: value })}
                           >
-                            <SelectTrigger
-                              id="item-currency"
-                              className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
-                            >
+                            <SelectTrigger id="item-currency" className="input-3d">
                               <SelectValue />
                             </SelectTrigger>
-                            <SelectContent className="dark:bg-gray-800 dark:border-gray-600">
+                            <SelectContent className="card-3d">
                               {currencies.map((currency) => (
-                                <SelectItem
-                                  key={currency}
-                                  value={currency}
-                                  className="dark:text-gray-200 dark:focus:bg-gray-700"
-                                >
+                                <SelectItem key={currency} value={currency} className="hover:bg-accent/50">
                                   {currency}
                                 </SelectItem>
                               ))}
@@ -503,10 +498,7 @@ export default function ShopCreator() {
                         </div>
                       </div>
                       <div className="md:col-span-4 flex justify-end">
-                        <Button
-                          onClick={addItem}
-                          className="flex items-center gap-2 dark:bg-amber-600 dark:hover:bg-amber-700"
-                        >
+                        <Button onClick={addItem} className="flex items-center gap-2 button-3d text-primary-foreground">
                           <PlusCircle className="h-4 w-4" />
                           Add Item
                         </Button>
@@ -516,25 +508,25 @@ export default function ShopCreator() {
 
                   {/* Items Table */}
                   <div>
-                    <h3 className="font-medium mb-3 dark:text-gray-200">Shop Inventory</h3>
-                    <div className="border rounded-md overflow-hidden dark:border-gray-600">
+                    <h3 className="font-medium mb-3 text-foreground font-fantasy">Shop Inventory</h3>
+                    <div className="border rounded-lg overflow-hidden table-3d">
                       <Table>
                         <TableHeader>
-                          <TableRow className="dark:border-gray-600">
-                            <TableHead className="dark:text-gray-300">Item Name</TableHead>
-                            <TableHead className="dark:text-gray-300">Category</TableHead>
-                            <TableHead className="dark:text-gray-300">Price</TableHead>
-                            <TableHead className="w-[80px] dark:text-gray-300">Actions</TableHead>
+                          <TableRow className="border-border/50">
+                            <TableHead className="text-foreground font-medium">Item Name</TableHead>
+                            <TableHead className="text-foreground font-medium">Category</TableHead>
+                            <TableHead className="text-foreground font-medium">Price</TableHead>
+                            <TableHead className="w-[80px] text-foreground font-medium">Actions</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
                           {items.map((item) => (
-                            <TableRow key={item.id} className="dark:border-gray-600">
+                            <TableRow key={item.id} className="border-border/30 hover:bg-accent/30 transition-colors">
                               <TableCell>
                                 <Input
                                   value={item.name}
                                   onChange={(e) => updateItem(item.id, "name", e.target.value)}
-                                  className="border-0 p-0 h-auto focus-visible:ring-0 focus-visible:ring-offset-0 dark:bg-transparent dark:text-gray-200"
+                                  className="border-0 p-0 h-auto focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent text-foreground"
                                 />
                               </TableCell>
                               <TableCell>
@@ -542,16 +534,12 @@ export default function ShopCreator() {
                                   value={item.category}
                                   onValueChange={(value) => updateItem(item.id, "category", value)}
                                 >
-                                  <SelectTrigger className="border-0 p-0 h-auto focus:ring-0 dark:bg-transparent dark:text-gray-200">
+                                  <SelectTrigger className="border-0 p-0 h-auto focus:ring-0 bg-transparent text-foreground">
                                     <SelectValue />
                                   </SelectTrigger>
-                                  <SelectContent className="dark:bg-gray-800 dark:border-gray-600">
+                                  <SelectContent className="card-3d">
                                     {categories.map((category) => (
-                                      <SelectItem
-                                        key={category}
-                                        value={category}
-                                        className="dark:text-gray-200 dark:focus:bg-gray-700"
-                                      >
+                                      <SelectItem key={category} value={category} className="hover:bg-accent/50">
                                         {category}
                                       </SelectItem>
                                     ))}
@@ -567,22 +555,18 @@ export default function ShopCreator() {
                                     onChange={(e) =>
                                       updateItem(item.id, "price", Number.parseFloat(e.target.value) || 0)
                                     }
-                                    className="border-0 p-0 h-auto w-16 focus-visible:ring-0 focus-visible:ring-offset-0 dark:bg-transparent dark:text-gray-200"
+                                    className="border-0 p-0 h-auto w-16 focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent text-foreground"
                                   />
                                   <Select
                                     value={item.currency}
                                     onValueChange={(value) => updateItem(item.id, "currency", value)}
                                   >
-                                    <SelectTrigger className="border-0 p-0 h-auto w-16 focus:ring-0 dark:bg-transparent dark:text-gray-200">
+                                    <SelectTrigger className="border-0 p-0 h-auto w-16 focus:ring-0 bg-transparent text-foreground">
                                       <SelectValue />
                                     </SelectTrigger>
-                                    <SelectContent className="dark:bg-gray-800 dark:border-gray-600">
+                                    <SelectContent className="card-3d">
                                       {currencies.map((currency) => (
-                                        <SelectItem
-                                          key={currency}
-                                          value={currency}
-                                          className="dark:text-gray-200 dark:focus:bg-gray-700"
-                                        >
+                                        <SelectItem key={currency} value={currency} className="hover:bg-accent/50">
                                           {currency}
                                         </SelectItem>
                                       ))}
@@ -595,7 +579,7 @@ export default function ShopCreator() {
                                   variant="ghost"
                                   size="icon"
                                   onClick={() => removeItem(item.id)}
-                                  className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/50"
+                                  className="h-8 w-8 text-destructive hover:text-destructive-foreground hover:bg-destructive/20 transition-colors"
                                 >
                                   <Trash2 className="h-4 w-4" />
                                   <span className="sr-only">Delete</span>
@@ -605,10 +589,7 @@ export default function ShopCreator() {
                           ))}
                           {items.length === 0 && (
                             <TableRow>
-                              <TableCell
-                                colSpan={4}
-                                className="text-center py-6 text-muted-foreground dark:text-gray-400"
-                              >
+                              <TableCell colSpan={4} className="text-center py-6 text-muted-foreground italic">
                                 No items in inventory. Add some items to get started.
                               </TableCell>
                             </TableRow>
