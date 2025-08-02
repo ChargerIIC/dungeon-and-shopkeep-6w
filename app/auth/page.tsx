@@ -5,6 +5,7 @@ import { Sword, Shield, Sparkles, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { ThemeToggle } from "@/components/theme-toggle"
 import { signInWithGoogle, isFirebaseConfigured } from "@/lib/firebase"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
@@ -36,33 +37,38 @@ export default function AuthPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-stone-50 to-emerald-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-stone-50 to-emerald-50 dark:from-amber-950/20 dark:via-stone-950/20 dark:to-emerald-950/20 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
+        {/* Theme Toggle */}
+        <div className="flex justify-end mb-4">
+          <ThemeToggle />
+        </div>
+
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center space-x-2 mb-4">
-            <Sword className="h-10 w-10 text-amber-600" />
-            <h1 className="text-3xl font-bold text-gray-900">RPG Shop Creator</h1>
+            <Sword className="h-10 w-10 text-amber-600 dark:text-amber-400" />
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">RPG Shop Creator</h1>
           </div>
-          <p className="text-gray-600">Sign in to start creating amazing fantasy shop menus</p>
+          <p className="text-gray-600 dark:text-gray-300">Sign in to start creating amazing fantasy shop menus</p>
         </div>
 
         {/* Error Alert */}
         {error && (
-          <Alert className="mb-6 border-red-200 bg-red-50">
-            <AlertCircle className="h-4 w-4 text-red-600" />
-            <AlertDescription className="text-red-800">{error}</AlertDescription>
+          <Alert className="mb-6 border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-950/50">
+            <AlertCircle className="h-4 w-4 text-red-600 dark:text-red-400" />
+            <AlertDescription className="text-red-800 dark:text-red-300">{error}</AlertDescription>
           </Alert>
         )}
 
         {/* Configuration Warning */}
         {!firebaseConfigured && (
-          <Alert className="mb-6 border-yellow-200 bg-yellow-50">
-            <AlertCircle className="h-4 w-4 text-yellow-600" />
-            <AlertDescription className="text-yellow-800">
+          <Alert className="mb-6 border-yellow-200 bg-yellow-50 dark:border-yellow-800 dark:bg-yellow-950/50">
+            <AlertCircle className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
+            <AlertDescription className="text-yellow-800 dark:text-yellow-300">
               Firebase is not configured. You can still use the app in free mode without saving your work.
               <br />
-              <small className="text-yellow-700 mt-1 block">
+              <small className="text-yellow-700 dark:text-yellow-400 mt-1 block">
                 To enable sign-in, please set up your Firebase environment variables.
               </small>
             </AlertDescription>
@@ -70,17 +76,17 @@ export default function AuthPage() {
         )}
 
         {/* Sign In Card */}
-        <Card className="border-amber-200 shadow-lg">
+        <Card className="border-amber-200 dark:border-amber-800 shadow-lg dark:bg-gray-800/50">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl">Welcome Back</CardTitle>
-            <CardDescription>Continue your journey as a master merchant</CardDescription>
+            <CardTitle className="text-2xl dark:text-gray-100">Welcome Back</CardTitle>
+            <CardDescription className="dark:text-gray-300">Continue your journey as a master merchant</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             {firebaseConfigured && (
               <Button
                 onClick={handleGoogleSignIn}
                 disabled={isLoading}
-                className="w-full bg-white hover:bg-gray-50 text-gray-900 border border-gray-300 shadow-sm"
+                className="w-full bg-white hover:bg-gray-50 text-gray-900 border border-gray-300 shadow-sm dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-100 dark:border-gray-600"
                 size="lg"
               >
                 {isLoading ? (
@@ -116,19 +122,24 @@ export default function AuthPage() {
 
             {/* Free Mode Button */}
             <div className="text-center">
-              {firebaseConfigured && <div className="text-sm text-gray-500 mb-2">or</div>}
+              {firebaseConfigured && <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">or</div>}
               <Link href="/creator">
-                <Button variant="outline" className="w-full bg-transparent">
+                <Button
+                  variant="outline"
+                  className="w-full bg-transparent dark:bg-transparent dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800"
+                >
                   <div className="flex items-center space-x-2">
                     <Sparkles className="h-4 w-4" />
                     <span>Free Mode</span>
                   </div>
                 </Button>
               </Link>
-              <p className="text-xs text-gray-500 mt-2">Use the app without signing in. Your work won't be saved.</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                Use the app without signing in. Your work won't be saved.
+              </p>
             </div>
 
-            <div className="text-center text-sm text-gray-500">
+            <div className="text-center text-sm text-gray-500 dark:text-gray-400">
               By using this app, you agree to our terms of service and privacy policy
             </div>
           </CardContent>
@@ -136,22 +147,24 @@ export default function AuthPage() {
 
         {/* Setup Instructions for Developers */}
         {!firebaseConfigured && (
-          <Card className="mt-6 border-gray-200">
+          <Card className="mt-6 border-gray-200 dark:border-gray-700 dark:bg-gray-800/50">
             <CardHeader>
-              <CardTitle className="text-lg">For Developers</CardTitle>
-              <CardDescription>To enable authentication, set up Firebase:</CardDescription>
+              <CardTitle className="text-lg dark:text-gray-100">For Developers</CardTitle>
+              <CardDescription className="dark:text-gray-300">
+                To enable authentication, set up Firebase:
+              </CardDescription>
             </CardHeader>
-            <CardContent className="text-sm space-y-2">
+            <CardContent className="text-sm space-y-2 dark:text-gray-300">
               <p>
                 1. Create a Firebase project at{" "}
-                <code className="bg-gray-100 px-1 rounded">console.firebase.google.com</code>
+                <code className="bg-gray-100 dark:bg-gray-700 px-1 rounded">console.firebase.google.com</code>
               </p>
               <p>2. Enable Authentication → Google sign-in method</p>
               <p>3. Add your domain to authorized domains</p>
               <p>
-                4. Copy your config to <code className="bg-gray-100 px-1 rounded">.env.local</code>:
+                4. Copy your config to <code className="bg-gray-100 dark:bg-gray-700 px-1 rounded">.env.local</code>:
               </p>
-              <div className="bg-gray-50 p-2 rounded text-xs font-mono">
+              <div className="bg-gray-50 dark:bg-gray-900 p-2 rounded text-xs font-mono">
                 <div>NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key</div>
                 <div>NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_domain</div>
                 <div>NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id</div>
@@ -166,28 +179,31 @@ export default function AuthPage() {
         {/* Features Preview */}
         <div className="mt-8 grid grid-cols-3 gap-4 text-center">
           <div className="flex flex-col items-center space-y-2">
-            <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
-              <Shield className="h-5 w-5 text-amber-600" />
+            <div className="w-10 h-10 bg-amber-100 dark:bg-amber-900/50 rounded-lg flex items-center justify-center">
+              <Shield className="h-5 w-5 text-amber-600 dark:text-amber-400" />
             </div>
-            <span className="text-xs text-gray-600">Secure</span>
+            <span className="text-xs text-gray-600 dark:text-gray-400">Secure</span>
           </div>
           <div className="flex flex-col items-center space-y-2">
-            <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center">
-              <Sparkles className="h-5 w-5 text-emerald-600" />
+            <div className="w-10 h-10 bg-emerald-100 dark:bg-emerald-900/50 rounded-lg flex items-center justify-center">
+              <Sparkles className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
             </div>
-            <span className="text-xs text-gray-600">Easy to Use</span>
+            <span className="text-xs text-gray-600 dark:text-gray-400">Easy to Use</span>
           </div>
           <div className="flex flex-col items-center space-y-2">
-            <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-              <Sword className="h-5 w-5 text-purple-600" />
+            <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/50 rounded-lg flex items-center justify-center">
+              <Sword className="h-5 w-5 text-purple-600 dark:text-purple-400" />
             </div>
-            <span className="text-xs text-gray-600">Fantasy Ready</span>
+            <span className="text-xs text-gray-600 dark:text-gray-400">Fantasy Ready</span>
           </div>
         </div>
 
         {/* Back to Home */}
         <div className="mt-8 text-center">
-          <Link href="/home" className="text-sm text-gray-500 hover:text-gray-700">
+          <Link
+            href="/home"
+            className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+          >
             ← Back to Home
           </Link>
         </div>

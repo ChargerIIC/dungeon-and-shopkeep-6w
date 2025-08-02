@@ -9,6 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { ThemeToggle } from "@/components/theme-toggle"
+import { PrintButton } from "@/components/print-button"
 import { ShopDisplay } from "@/components/shop-display"
 import { useAuth } from "@/components/auth-provider"
 import { signOutUser } from "@/lib/firebase"
@@ -66,6 +68,169 @@ export default function ShopCreator() {
   // Selected theme state
   const [theme, setTheme] = useState("parchment")
 
+  // Handle print functionality
+  const handlePrint = () => {
+    // Create a new window for printing
+    const printWindow = window.open("", "_blank")
+    if (!printWindow) {
+      alert("Please allow pop-ups to enable printing")
+      return
+    }
+
+    // Get the shop display content
+    const shopDisplayElement = document.getElementById("shop-display-print")
+    if (!shopDisplayElement) {
+      alert("Unable to find shop display for printing")
+      return
+    }
+
+    // Create the print document
+    const printContent = `
+      <!DOCTYPE html>
+      <html lang="en">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Print - ${shopTitle}</title>
+          <style>
+            /* Import Tailwind CSS for print */
+            @import url('https://cdn.tailwindcss.com/3.4.0');
+            
+            /* Print-specific styles */
+            @media print {
+              @page {
+                margin: 0.75in;
+                size: letter;
+              }
+              
+              body {
+                font-family: 'Georgia', 'Times New Roman', serif;
+                line-height: 1.4;
+                color: #000;
+                background: white !important;
+              }
+              
+              * {
+                -webkit-print-color-adjust: exact !important;
+                color-adjust: exact !important;
+                print-color-adjust: exact !important;
+              }
+              
+              .print-hide {
+                display: none !important;
+              }
+              
+              .print-mode {
+                width: 100% !important;
+                max-width: none !important;
+                margin: 0 !important;
+                padding: 0 !important;
+              }
+              
+              /* Card styling for print */
+              [data-slot="card"] {
+                box-shadow: none !important;
+                border: 2px solid #666 !important;
+                border-radius: 8px !important;
+                background: white !important;
+                page-break-inside: avoid;
+              }
+              
+              /* Header styling */
+              [data-slot="card-header"] {
+                border-bottom: 2px solid #666 !important;
+                padding: 1.5rem !important;
+                background: #f8f9fa !important;
+              }
+              
+              /* Content styling */
+              [data-slot="card-content"] {
+                padding: 2rem !important;
+                background: white !important;
+              }
+              
+              /* Typography */
+              .font-fantasy {
+                font-family: 'Georgia', 'Times New Roman', serif !important;
+                font-weight: bold !important;
+              }
+              
+              /* Category sections */
+              .print\\:break-inside-avoid {
+                break-inside: avoid;
+                page-break-inside: avoid;
+              }
+              
+              /* Item list styling */
+              li {
+                border-bottom: 1px dotted #999 !important;
+                padding: 0.5rem 0.75rem !important;
+                margin: 0.25rem 0 !important;
+                background: rgba(0,0,0,0.02) !important;
+              }
+              
+              /* Ensure icons print */
+              svg {
+                width: 16px !important;
+                height: 16px !important;
+                display: inline-block !important;
+              }
+              
+              /* Theme-specific print colors */
+              .print\\:text-amber-900 { color: #92400e !important; }
+              .print\\:text-amber-800 { color: #a16207 !important; }
+              .print\\:text-amber-950 { color: #451a03 !important; }
+              .print\\:text-stone-800 { color: #292524 !important; }
+              .print\\:text-purple-800 { color: #6b21a8 !important; }
+              .print\\:text-purple-900 { color: #581c87 !important; }
+              .print\\:text-emerald-800 { color: #065f46 !important; }
+              .print\\:text-emerald-900 { color: #064e3b !important; }
+              .print\\:text-red-700 { color: #b91c1c !important; }
+              
+              .print\\:bg-amber-100\\/30 { background-color: rgba(254, 243, 199, 0.3) !important; }
+              .print\\:bg-stone-200 { background-color: #e7e5e4 !important; }
+              .print\\:bg-purple-100 { background-color: #f3e8ff !important; }
+              .print\\:bg-emerald-100 { background-color: #dcfce7 !important; }
+              
+              .print\\:border-amber-900\\/40 { border-color: rgba(120, 53, 15, 0.4) !important; }
+              .print\\:border-stone-600 { border-color: #57534e !important; }
+              .print\\:border-purple-700 { border-color: #7c3aed !important; }
+              .print\\:border-emerald-700 { border-color: #047857 !important; }
+              .print\\:border-red-900\\/50 { border-color: rgba(127, 29, 29, 0.5) !important; }
+            }
+            
+            /* Base styles that work in both screen and print */
+            body {
+              margin: 0;
+              padding: 20px;
+              font-family: 'Georgia', 'Times New Roman', serif;
+            }
+            
+            .font-fantasy {
+              font-family: 'Georgia', 'Times New Roman', serif;
+              font-weight: bold;
+            }
+          </style>
+        </head>
+        <body>
+          ${shopDisplayElement.outerHTML}
+          <script>
+            window.onload = function() {
+              window.print();
+              window.onafterprint = function() {
+                window.close();
+              };
+            };
+          </script>
+        </body>
+      </html>
+    `
+
+    // Write content to print window and trigger print
+    printWindow.document.write(printContent)
+    printWindow.document.close()
+  }
+
   // Handle sign out
   const handleSignOut = async () => {
     try {
@@ -107,10 +272,10 @@ export default function ShopCreator() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-stone-100 flex items-center justify-center">
+      <div className="min-h-screen bg-stone-100 dark:bg-stone-900 flex items-center justify-center">
         <div className="text-center">
           <div className="w-8 h-8 border-4 border-amber-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-gray-600">Loading...</p>
+          <p className="text-gray-600 dark:text-gray-300">Loading...</p>
         </div>
       </div>
     )
@@ -121,13 +286,13 @@ export default function ShopCreator() {
   const displayName = isFreeMode ? "Free Mode User" : user?.displayName || user?.email || "User"
 
   return (
-    <div className="min-h-screen bg-stone-100 p-4 md:p-8">
+    <div className="min-h-screen bg-stone-100 dark:bg-stone-900 p-4 md:p-8 print:hidden">
       <div className="max-w-7xl mx-auto">
         {/* Free Mode Alert */}
         {isFreeMode && (
-          <Alert className="mb-6 border-blue-200 bg-blue-50">
-            <AlertCircle className="h-4 w-4 text-blue-600" />
-            <AlertDescription className="text-blue-800">
+          <Alert className="mb-6 border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-950/50 print:hidden">
+            <AlertCircle className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+            <AlertDescription className="text-blue-800 dark:text-blue-300">
               You're using free mode. Your changes won't be saved.{" "}
               {isConfigured && (
                 <Link href="/auth" className="underline">
@@ -139,35 +304,41 @@ export default function ShopCreator() {
         )}
 
         {/* Header with user info */}
-        <div className="mb-8 flex justify-between items-center">
+        <div className="mb-8 flex justify-between items-center print:hidden">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">RPG Shop Creator</h1>
-            <p className="text-gray-600">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">RPG Shop Creator</h1>
+            <p className="text-gray-600 dark:text-gray-300">
               {isFreeMode ? "Free Mode - Create without limits!" : `Welcome back, ${displayName}`}
             </p>
           </div>
           <div className="flex items-center space-x-4">
+            <ThemeToggle />
+            <PrintButton onPrint={handlePrint} disabled={items.length === 0} />
             <div className="flex items-center space-x-2">
               {user?.photoURL ? (
                 <img src={user.photoURL || "/placeholder.svg"} alt="Profile" className="w-8 h-8 rounded-full" />
               ) : (
                 <User className="w-8 h-8 text-gray-400" />
               )}
-              <span className="text-sm text-gray-600">{displayName}</span>
+              <span className="text-sm text-gray-600 dark:text-gray-300">{displayName}</span>
             </div>
             {user ? (
               <Button
                 variant="outline"
                 size="sm"
                 onClick={handleSignOut}
-                className="flex items-center space-x-2 bg-transparent"
+                className="flex items-center space-x-2 bg-transparent dark:bg-transparent dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800"
               >
                 <LogOut className="w-4 h-4" />
                 <span>Sign Out</span>
               </Button>
             ) : (
               <Link href="/auth">
-                <Button variant="outline" size="sm" className="flex items-center space-x-2 bg-transparent">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center space-x-2 bg-transparent dark:bg-transparent dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800"
+                >
                   <User className="w-4 h-4" />
                   <span>Sign In</span>
                 </Button>
@@ -178,25 +349,31 @@ export default function ShopCreator() {
 
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Editor Section */}
-          <div className="flex-1">
-            <Card>
+          <div className="flex-1 print:hidden">
+            <Card className="dark:bg-gray-800/50 dark:border-gray-700">
               <CardHeader>
                 <div className="flex justify-between items-center">
                   <div>
-                    <CardTitle className="text-2xl font-bold">Shop Creator</CardTitle>
-                    <CardDescription>Create your fantasy RPG shop inventory</CardDescription>
+                    <CardTitle className="text-2xl font-bold dark:text-gray-100">Shop Creator</CardTitle>
+                    <CardDescription className="dark:text-gray-300">
+                      Create your fantasy RPG shop inventory
+                    </CardDescription>
                   </div>
                   <div className="w-40">
-                    <Label htmlFor="theme" className="text-sm font-medium">
+                    <Label htmlFor="theme" className="text-sm font-medium dark:text-gray-200">
                       Theme
                     </Label>
                     <Select value={theme} onValueChange={setTheme}>
-                      <SelectTrigger id="theme">
+                      <SelectTrigger id="theme" className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200">
                         <SelectValue placeholder="Select theme" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="dark:bg-gray-800 dark:border-gray-600">
                         {themes.map((theme) => (
-                          <SelectItem key={theme.id} value={theme.id}>
+                          <SelectItem
+                            key={theme.id}
+                            value={theme.id}
+                            className="dark:text-gray-200 dark:focus:bg-gray-700"
+                          >
                             {theme.name}
                           </SelectItem>
                         ))}
@@ -210,50 +387,68 @@ export default function ShopCreator() {
                   {/* Shop Details */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="shop-title">Shop Title</Label>
+                      <Label htmlFor="shop-title" className="dark:text-gray-200">
+                        Shop Title
+                      </Label>
                       <Input
                         id="shop-title"
                         value={shopTitle}
                         onChange={(e) => setShopTitle(e.target.value)}
                         placeholder="Enter shop name"
+                        className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 dark:placeholder-gray-400"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="owner-name">Shop Owner</Label>
+                      <Label htmlFor="owner-name" className="dark:text-gray-200">
+                        Shop Owner
+                      </Label>
                       <Input
                         id="owner-name"
                         value={ownerName}
                         onChange={(e) => setOwnerName(e.target.value)}
                         placeholder="Enter owner name"
+                        className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 dark:placeholder-gray-400"
                       />
                     </div>
                   </div>
 
                   {/* Add New Item */}
-                  <div className="border rounded-md p-4 bg-stone-50">
-                    <h3 className="font-medium mb-3">Add New Item</h3>
+                  <div className="border rounded-md p-4 bg-stone-50 dark:bg-gray-800/50 dark:border-gray-600">
+                    <h3 className="font-medium mb-3 dark:text-gray-200">Add New Item</h3>
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-3 items-end">
                       <div className="space-y-2 md:col-span-2">
-                        <Label htmlFor="item-name">Item Name</Label>
+                        <Label htmlFor="item-name" className="dark:text-gray-200">
+                          Item Name
+                        </Label>
                         <Input
                           id="item-name"
                           value={newItem.name}
                           onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
                           placeholder="Enter item name"
+                          className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 dark:placeholder-gray-400"
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="item-category">Category</Label>
+                        <Label htmlFor="item-category" className="dark:text-gray-200">
+                          Category
+                        </Label>
                         <Select
                           value={newItem.category}
                           onValueChange={(value) => setNewItem({ ...newItem, category: value })}
                         >
-                          <SelectTrigger id="item-category">
+                          <SelectTrigger
+                            id="item-category"
+                            className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
+                          >
                             <SelectValue placeholder="Select category" />
                           </SelectTrigger>
-                          <SelectContent>
+                          <SelectContent className="dark:bg-gray-800 dark:border-gray-600">
                             {categories.map((category) => (
-                              <SelectItem key={category} value={category}>
+                              <SelectItem
+                                key={category}
+                                value={category}
+                                className="dark:text-gray-200 dark:focus:bg-gray-700"
+                              >
                                 {category}
                               </SelectItem>
                             ))}
@@ -262,7 +457,9 @@ export default function ShopCreator() {
                       </div>
                       <div className="grid grid-cols-3 gap-2">
                         <div className="col-span-2 space-y-2">
-                          <Label htmlFor="item-price">Price</Label>
+                          <Label htmlFor="item-price" className="dark:text-gray-200">
+                            Price
+                          </Label>
                           <Input
                             id="item-price"
                             type="number"
@@ -270,20 +467,30 @@ export default function ShopCreator() {
                             value={newItem.price || ""}
                             onChange={(e) => setNewItem({ ...newItem, price: Number.parseFloat(e.target.value) || 0 })}
                             placeholder="0"
+                            className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 dark:placeholder-gray-400"
                           />
                         </div>
                         <div className="space-y-2">
-                          <Label htmlFor="item-currency">Currency</Label>
+                          <Label htmlFor="item-currency" className="dark:text-gray-200">
+                            Currency
+                          </Label>
                           <Select
                             value={newItem.currency}
                             onValueChange={(value) => setNewItem({ ...newItem, currency: value })}
                           >
-                            <SelectTrigger id="item-currency">
+                            <SelectTrigger
+                              id="item-currency"
+                              className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
+                            >
                               <SelectValue />
                             </SelectTrigger>
-                            <SelectContent>
+                            <SelectContent className="dark:bg-gray-800 dark:border-gray-600">
                               {currencies.map((currency) => (
-                                <SelectItem key={currency} value={currency}>
+                                <SelectItem
+                                  key={currency}
+                                  value={currency}
+                                  className="dark:text-gray-200 dark:focus:bg-gray-700"
+                                >
                                   {currency}
                                 </SelectItem>
                               ))}
@@ -292,7 +499,10 @@ export default function ShopCreator() {
                         </div>
                       </div>
                       <div className="md:col-span-4 flex justify-end">
-                        <Button onClick={addItem} className="flex items-center gap-2">
+                        <Button
+                          onClick={addItem}
+                          className="flex items-center gap-2 dark:bg-amber-600 dark:hover:bg-amber-700"
+                        >
                           <PlusCircle className="h-4 w-4" />
                           Add Item
                         </Button>
@@ -302,25 +512,25 @@ export default function ShopCreator() {
 
                   {/* Items Table */}
                   <div>
-                    <h3 className="font-medium mb-3">Shop Inventory</h3>
-                    <div className="border rounded-md overflow-hidden">
+                    <h3 className="font-medium mb-3 dark:text-gray-200">Shop Inventory</h3>
+                    <div className="border rounded-md overflow-hidden dark:border-gray-600">
                       <Table>
                         <TableHeader>
-                          <TableRow>
-                            <TableHead>Item Name</TableHead>
-                            <TableHead>Category</TableHead>
-                            <TableHead>Price</TableHead>
-                            <TableHead className="w-[80px]">Actions</TableHead>
+                          <TableRow className="dark:border-gray-600">
+                            <TableHead className="dark:text-gray-300">Item Name</TableHead>
+                            <TableHead className="dark:text-gray-300">Category</TableHead>
+                            <TableHead className="dark:text-gray-300">Price</TableHead>
+                            <TableHead className="w-[80px] dark:text-gray-300">Actions</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
                           {items.map((item) => (
-                            <TableRow key={item.id}>
+                            <TableRow key={item.id} className="dark:border-gray-600">
                               <TableCell>
                                 <Input
                                   value={item.name}
                                   onChange={(e) => updateItem(item.id, "name", e.target.value)}
-                                  className="border-0 p-0 h-auto focus-visible:ring-0 focus-visible:ring-offset-0"
+                                  className="border-0 p-0 h-auto focus-visible:ring-0 focus-visible:ring-offset-0 dark:bg-transparent dark:text-gray-200"
                                 />
                               </TableCell>
                               <TableCell>
@@ -328,12 +538,16 @@ export default function ShopCreator() {
                                   value={item.category}
                                   onValueChange={(value) => updateItem(item.id, "category", value)}
                                 >
-                                  <SelectTrigger className="border-0 p-0 h-auto focus:ring-0">
+                                  <SelectTrigger className="border-0 p-0 h-auto focus:ring-0 dark:bg-transparent dark:text-gray-200">
                                     <SelectValue />
                                   </SelectTrigger>
-                                  <SelectContent>
+                                  <SelectContent className="dark:bg-gray-800 dark:border-gray-600">
                                     {categories.map((category) => (
-                                      <SelectItem key={category} value={category}>
+                                      <SelectItem
+                                        key={category}
+                                        value={category}
+                                        className="dark:text-gray-200 dark:focus:bg-gray-700"
+                                      >
                                         {category}
                                       </SelectItem>
                                     ))}
@@ -349,18 +563,22 @@ export default function ShopCreator() {
                                     onChange={(e) =>
                                       updateItem(item.id, "price", Number.parseFloat(e.target.value) || 0)
                                     }
-                                    className="border-0 p-0 h-auto w-16 focus-visible:ring-0 focus-visible:ring-offset-0"
+                                    className="border-0 p-0 h-auto w-16 focus-visible:ring-0 focus-visible:ring-offset-0 dark:bg-transparent dark:text-gray-200"
                                   />
                                   <Select
                                     value={item.currency}
                                     onValueChange={(value) => updateItem(item.id, "currency", value)}
                                   >
-                                    <SelectTrigger className="border-0 p-0 h-auto w-16 focus:ring-0">
+                                    <SelectTrigger className="border-0 p-0 h-auto w-16 focus:ring-0 dark:bg-transparent dark:text-gray-200">
                                       <SelectValue />
                                     </SelectTrigger>
-                                    <SelectContent>
+                                    <SelectContent className="dark:bg-gray-800 dark:border-gray-600">
                                       {currencies.map((currency) => (
-                                        <SelectItem key={currency} value={currency}>
+                                        <SelectItem
+                                          key={currency}
+                                          value={currency}
+                                          className="dark:text-gray-200 dark:focus:bg-gray-700"
+                                        >
                                           {currency}
                                         </SelectItem>
                                       ))}
@@ -373,7 +591,7 @@ export default function ShopCreator() {
                                   variant="ghost"
                                   size="icon"
                                   onClick={() => removeItem(item.id)}
-                                  className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
+                                  className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/50"
                                 >
                                   <Trash2 className="h-4 w-4" />
                                   <span className="sr-only">Delete</span>
@@ -383,7 +601,10 @@ export default function ShopCreator() {
                           ))}
                           {items.length === 0 && (
                             <TableRow>
-                              <TableCell colSpan={4} className="text-center py-6 text-muted-foreground">
+                              <TableCell
+                                colSpan={4}
+                                className="text-center py-6 text-muted-foreground dark:text-gray-400"
+                              >
                                 No items in inventory. Add some items to get started.
                               </TableCell>
                             </TableRow>
@@ -399,7 +620,7 @@ export default function ShopCreator() {
 
           {/* Preview Section */}
           <div className="flex-1">
-            <ShopDisplay shopTitle={shopTitle} ownerName={ownerName} items={items} theme={theme} />
+            <ShopDisplay shopTitle={shopTitle} ownerName={ownerName} items={items} theme={theme} isPrintMode={false} />
           </div>
         </div>
       </div>

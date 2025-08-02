@@ -126,3 +126,201 @@
 .font-fantasy {
   font-family: "Cinzel", "Palatino", serif;
 }
+
+/* Print-specific styles */
+@media print {
+  @page {
+    margin: 0.75in;
+    size: letter;
+  }
+
+  body {
+    font-family: "Georgia", "Times New Roman", serif !important;
+    line-height: 1.4;
+    color: #000 !important;
+    background: white !important;
+  }
+
+  * {
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .print\:hidden {
+    display: none !important;
+  }
+
+  .print\:block {
+    display: block !important;
+  }
+
+  .print\:bg-white {
+    background-color: white !important;
+  }
+
+  .print\:text-black {
+    color: black !important;
+  }
+
+  .print\:shadow-none {
+    box-shadow: none !important;
+  }
+
+  .print\:max-w-none {
+    max-width: none !important;
+  }
+
+  .print\:w-full {
+    width: 100% !important;
+  }
+
+  .print\:p-8 {
+    padding: 2rem !important;
+  }
+
+  .print\:pb-4 {
+    padding-bottom: 1rem !important;
+  }
+
+  .print\:text-3xl {
+    font-size: 1.875rem !important;
+    line-height: 2.25rem !important;
+  }
+
+  .print\:text-xl {
+    font-size: 1.25rem !important;
+    line-height: 1.75rem !important;
+  }
+
+  .print\:text-lg {
+    font-size: 1.125rem !important;
+    line-height: 1.75rem !important;
+  }
+
+  .print\:mb-2 {
+    margin-bottom: 0.5rem !important;
+  }
+
+  .print\:mb-4 {
+    margin-bottom: 1rem !important;
+  }
+
+  .print\:space-y-8 > * + * {
+    margin-top: 2rem !important;
+  }
+
+  .print\:space-y-3 > * + * {
+    margin-top: 0.75rem !important;
+  }
+
+  .print\:py-2 {
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+  }
+
+  .print\:px-3 {
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+  }
+
+  .print\:py-12 {
+    padding-top: 3rem !important;
+    padding-bottom: 3rem !important;
+  }
+
+  .print\:bg-opacity-20 {
+    background-opacity: 0.2 !important;
+  }
+
+  .print\:rounded-none {
+    border-radius: 0 !important;
+  }
+
+  .print\:border-b {
+    border-bottom-width: 1px !important;
+  }
+
+  .print\:border-dotted {
+    border-style: dotted !important;
+  }
+
+  .print\:border-gray-300 {
+    border-color: #d1d5db !important;
+  }
+
+  .print\:font-medium {
+    font-weight: 500 !important;
+  }
+
+  .print\:font-bold {
+    font-weight: 700 !important;
+  }
+
+  .print\:h-px {
+    height: 1px !important;
+  }
+
+  .print\:break-inside-avoid {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  /* Theme-specific print colors */
+  .print\:text-amber-900 {
+    color: #92400e !important;
+  }
+  .print\:text-amber-800 {
+    color: #a16207 !important;
+  }
+  .print\:text-amber-950 {
+    color: #451a03 !important;
+  }
+  .print\:text-stone-800 {
+    color: #292524 !important;
+  }
+  .print\:text-purple-800 {
+    color: #6b21a8 !important;
+  }
+  .print\:text-purple-900 {
+    color: #581c87 !important;
+  }
+  .print\:text-emerald-800 {
+    color: #065f46 !important;
+  }
+  .print\:text-emerald-900 {
+    color: #064e3b !important;
+  }
+  .print\:text-red-700 {
+    color: #b91c1c !important;
+  }
+
+  .print\:bg-amber-100\/30 {
+    background-color: rgba(254, 243, 199, 0.3) !important;
+  }
+  .print\:bg-stone-200 {
+    background-color: #e7e5e4 !important;
+  }
+  .print\:bg-purple-100 {
+    background-color: #f3e8ff !important;
+  }
+  .print\:bg-emerald-100 {
+    background-color: #dcfce7 !important;
+  }
+
+  .print\:border-amber-900\/40 {
+    border-color: rgba(120, 53, 15, 0.4) !important;
+  }
+  .print\:border-stone-600 {
+    border-color: #57534e !important;
+  }
+  .print\:border-purple-700 {
+    border-color: #7c3aed !important;
+  }
+  .print\:border-emerald-700 {
+    border-color: #047857 !important;
+  }
+  .print\:border-red-900\/50 {
+    border-color: rgba(127, 29, 29, 0.5) !important;
+  }
+}
