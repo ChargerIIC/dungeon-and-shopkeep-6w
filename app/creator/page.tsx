@@ -306,7 +306,11 @@ export default function ShopCreator() {
         {/* Header with user info */}
         <div className="mb-8 flex justify-between items-center print:hidden">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">RPG Shop Creator</h1>
+            <Link href="/home">
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 hover:text-amber-600 dark:hover:text-amber-400 transition-colors cursor-pointer">
+                Dungeon and Shopkeeps
+              </h1>
+            </Link>
             <p className="text-gray-600 dark:text-gray-300">
               {isFreeMode ? "Free Mode - Create without limits!" : `Welcome back, ${displayName}`}
             </p>

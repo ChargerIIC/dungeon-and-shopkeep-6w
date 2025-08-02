@@ -48,7 +48,11 @@ export default function AuthPage() {
         <div className="text-center mb-8">
           <div className="flex items-center justify-center space-x-2 mb-4">
             <Sword className="h-10 w-10 text-amber-600 dark:text-amber-400" />
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">RPG Shop Creator</h1>
+            <Link href="/home">
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 hover:text-amber-600 dark:hover:text-amber-400 transition-colors cursor-pointer">
+                Dungeon and Shopkeeps
+              </h1>
+            </Link>
           </div>
           <p className="text-gray-600 dark:text-gray-300">Sign in to start creating amazing fantasy shop menus</p>
         </div>

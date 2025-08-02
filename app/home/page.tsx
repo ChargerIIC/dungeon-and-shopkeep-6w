@@ -13,7 +13,11 @@ export default function HomePage() {
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-2">
               <Sword className="h-8 w-8 text-amber-600 dark:text-amber-400" />
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">RPG Shop Creator</h1>
+              <Link href="/home">
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 hover:text-amber-600 dark:hover:text-amber-400 transition-colors cursor-pointer">
+                  Dungeon and Shopkeeps
+                </h1>
+              </Link>
             </div>
             <div className="flex items-center space-x-4">
               <ThemeToggle />
@@ -222,10 +226,10 @@ export default function HomePage() {
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center space-x-2 mb-4 md:mb-0">
               <Sword className="h-6 w-6 text-amber-400" />
-              <span className="text-xl font-bold">RPG Shop Creator</span>
+              <span className="text-xl font-bold">Dungeon and Shopkeeps</span>
             </div>
             <div className="text-gray-400 text-sm">
-              © 2024 RPG Shop Creator. Built for the tabletop gaming community.
+              © 2024 Dungeon and Shopkeeps. Built for the tabletop gaming community.
             </div>
           </div>
         </div>

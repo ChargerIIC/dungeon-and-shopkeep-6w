@@ -7,7 +7,7 @@ import { AuthProvider } from "@/components/auth-provider"
 import "./globals.css"
 
 export const metadata: Metadata = {
-  title: "RPG Shop Creator - Create Fantasy Shop Menus",
+  title: "Dungeon and Shopkeeps - Create Fantasy Shop Menus",
   description:
     "Design beautiful, immersive shop inventories for your tabletop RPG campaigns. Perfect for D&D, Pathfinder, and other fantasy games.",
   generator: "v0.dev",
