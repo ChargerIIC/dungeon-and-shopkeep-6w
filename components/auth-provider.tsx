@@ -1,10 +1,9 @@
 "use client"
 
 import type React from "react"
-
 import { createContext, useContext, useEffect, useState } from "react"
-import { type User, onAuthStateChanged } from "firebase/auth"
-import { auth, isFirebaseConfigured } from "@/lib/firebase"
+import type { User } from "firebase/auth"
+import { onAuthStateChange, isFirebaseConfigured } from "@/lib/firebase"
 
 interface AuthContextType {
   user: User | null
@@ -29,15 +28,15 @@ export const useAuth = () => {
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
-  const configured = isFirebaseConfigured()
+  const [configured] = useState(isFirebaseConfigured())
 
   useEffect(() => {
-    if (!configured || !auth) {
+    if (!configured) {
       setLoading(false)
       return
     }
 
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChange((user) => {
       setUser(user)
       setLoading(false)
     })

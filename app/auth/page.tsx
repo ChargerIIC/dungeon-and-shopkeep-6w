@@ -13,10 +13,11 @@ export default function AuthPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
+  const firebaseConfigured = isFirebaseConfigured()
 
   const handleGoogleSignIn = async () => {
-    if (!isFirebaseConfigured()) {
-      setError("Firebase is not properly configured. Please check the environment variables.")
+    if (!firebaseConfigured) {
+      setError("Firebase is not properly configured. Please use Free Mode instead.")
       return
     }
 
@@ -55,11 +56,15 @@ export default function AuthPage() {
         )}
 
         {/* Configuration Warning */}
-        {!isFirebaseConfigured() && (
+        {!firebaseConfigured && (
           <Alert className="mb-6 border-yellow-200 bg-yellow-50">
             <AlertCircle className="h-4 w-4 text-yellow-600" />
             <AlertDescription className="text-yellow-800">
               Firebase is not configured. You can still use the app in free mode without saving your work.
+              <br />
+              <small className="text-yellow-700 mt-1 block">
+                To enable sign-in, please set up your Firebase environment variables.
+              </small>
             </AlertDescription>
           </Alert>
         )}
@@ -71,7 +76,7 @@ export default function AuthPage() {
             <CardDescription>Continue your journey as a master merchant</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            {isFirebaseConfigured() && (
+            {firebaseConfigured && (
               <Button
                 onClick={handleGoogleSignIn}
                 disabled={isLoading}
@@ -111,7 +116,7 @@ export default function AuthPage() {
 
             {/* Free Mode Button */}
             <div className="text-center">
-              {isFirebaseConfigured() && <div className="text-sm text-gray-500 mb-2">or</div>}
+              {firebaseConfigured && <div className="text-sm text-gray-500 mb-2">or</div>}
               <Link href="/creator">
                 <Button variant="outline" className="w-full bg-transparent">
                   <div className="flex items-center space-x-2">
@@ -128,6 +133,35 @@ export default function AuthPage() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Setup Instructions for Developers */}
+        {!firebaseConfigured && (
+          <Card className="mt-6 border-gray-200">
+            <CardHeader>
+              <CardTitle className="text-lg">For Developers</CardTitle>
+              <CardDescription>To enable authentication, set up Firebase:</CardDescription>
+            </CardHeader>
+            <CardContent className="text-sm space-y-2">
+              <p>
+                1. Create a Firebase project at{" "}
+                <code className="bg-gray-100 px-1 rounded">console.firebase.google.com</code>
+              </p>
+              <p>2. Enable Authentication → Google sign-in method</p>
+              <p>3. Add your domain to authorized domains</p>
+              <p>
+                4. Copy your config to <code className="bg-gray-100 px-1 rounded">.env.local</code>:
+              </p>
+              <div className="bg-gray-50 p-2 rounded text-xs font-mono">
+                <div>NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key</div>
+                <div>NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_domain</div>
+                <div>NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id</div>
+                <div>NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_bucket</div>
+                <div>NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id</div>
+                <div>NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id</div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Features Preview */}
         <div className="mt-8 grid grid-cols-3 gap-4 text-center">
