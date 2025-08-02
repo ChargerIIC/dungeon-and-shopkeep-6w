@@ -1,15 +1,19 @@
 "use client"
 
 import { useState } from "react"
-import { PlusCircle, Trash2 } from "lucide-react"
+import { PlusCircle, Trash2, LogOut, User, AlertCircle } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 import { ShopDisplay } from "@/components/shop-display"
-import { redirect } from "next/navigation"
+import { useAuth } from "@/components/auth-provider"
+import { signOutUser } from "@/lib/firebase"
+import { useRouter } from "next/navigation"
+import Link from "next/link"
 
 // Item categories
 const categories = ["Weapon", "Armor", "Potions", "Gear", "Scroll"]
@@ -34,7 +38,8 @@ type Item = {
 }
 
 export default function ShopCreator() {
-  redirect("/home")
+  const { user, loading, isConfigured } = useAuth()
+  const router = useRouter()
 
   // Shop details state
   const [shopTitle, setShopTitle] = useState("Mystic Emporium")
@@ -60,6 +65,16 @@ export default function ShopCreator() {
 
   // Selected theme state
   const [theme, setTheme] = useState("parchment")
+
+  // Handle sign out
+  const handleSignOut = async () => {
+    try {
+      await signOutUser()
+      router.push("/home")
+    } catch (error) {
+      console.error("Sign out failed:", error)
+    }
+  }
 
   // Add new item
   const addItem = () => {
@@ -90,9 +105,77 @@ export default function ShopCreator() {
     setItems(items.map((item) => (item.id === id ? { ...item, [field]: value } : item)))
   }
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-stone-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-4 border-amber-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Determine if user is in free mode (not authenticated but using the app)
+  const isFreeMode = !isConfigured || !user
+  const displayName = isFreeMode ? "Free Mode User" : user?.displayName || user?.email || "User"
+
   return (
     <div className="min-h-screen bg-stone-100 p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
+        {/* Free Mode Alert */}
+        {isFreeMode && (
+          <Alert className="mb-6 border-blue-200 bg-blue-50">
+            <AlertCircle className="h-4 w-4 text-blue-600" />
+            <AlertDescription className="text-blue-800">
+              You're using free mode. Your changes won't be saved.{" "}
+              {isConfigured && (
+                <Link href="/auth" className="underline">
+                  Sign in to save your work
+                </Link>
+              )}
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {/* Header with user info */}
+        <div className="mb-8 flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">RPG Shop Creator</h1>
+            <p className="text-gray-600">
+              {isFreeMode ? "Free Mode - Create without limits!" : `Welcome back, ${displayName}`}
+            </p>
+          </div>
+          <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2">
+              {user?.photoURL ? (
+                <img src={user.photoURL || "/placeholder.svg"} alt="Profile" className="w-8 h-8 rounded-full" />
+              ) : (
+                <User className="w-8 h-8 text-gray-400" />
+              )}
+              <span className="text-sm text-gray-600">{displayName}</span>
+            </div>
+            {user ? (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleSignOut}
+                className="flex items-center space-x-2 bg-transparent"
+              >
+                <LogOut className="w-4 h-4" />
+                <span>Sign Out</span>
+              </Button>
+            ) : (
+              <Link href="/auth">
+                <Button variant="outline" size="sm" className="flex items-center space-x-2 bg-transparent">
+                  <User className="w-4 h-4" />
+                  <span>Sign In</span>
+                </Button>
+              </Link>
+            )}
+          </div>
+        </div>
+
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Editor Section */}
           <div className="flex-1">
