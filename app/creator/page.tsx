@@ -33,22 +33,57 @@ const themes = [
 // Pre-configured common items by category
 const commonItems = {
   Weapon: [
+    { name: "Club", price: 1, currency: "SP" },
     { name: "Dagger", price: 2, currency: "GP" },
-    { name: "Shortsword", price: 10, currency: "GP" },
-    { name: "Longsword", price: 15, currency: "GP" },
-    { name: "Battleaxe", price: 10, currency: "GP" },
-    { name: "Warhammer", price: 15, currency: "GP" },
-    { name: "Shortbow", price: 25, currency: "GP" },
-    { name: "Longbow", price: 50, currency: "GP" },
-    { name: "Crossbow", price: 75, currency: "GP" },
+    { name: "Greatclub", price: 2, currency: "SP" },
+    { name: "Handaxe", price: 5, currency: "GP" },
+    { name: "Javelin", price: 5, currency: "SP" },
+    { name: "Light Hammer", price: 2, currency: "GP" },
+    { name: "Mace", price: 5, currency: "GP" },
     { name: "Quarterstaff", price: 2, currency: "SP" },
+    { name: "Sickle", price: 1, currency: "GP" },
     { name: "Spear", price: 1, currency: "GP" },
+    { name: "Light Crossbow", price: 25, currency: "GP" },
+    { name: "Dart", price: 5, currency: "CP" },
+    { name: "Shortbow", price: 25, currency: "GP" },
+    { name: "Sling", price: 1, currency: "SP" },
+
+  ],
+  MartialWeapons:[
+    { name: "Battleaxe", price: 10, currency: "GP" },
+    { name: "Flail", price: 10, currency: "GP" },
+    { name: "Glaive", price: 20, currency: "GP" },
+    { name: "Greataxe", price: 30, currency: "GP" },
+    { name: "Greatsword", price: 50, currency: "GP" },
+    { name: "Halberd", price: 20, currency: "GP" },
+    { name: "Lance", price: 10, currency: "GP" },
+    { name: "Longsword", price: 15, currency: "GP" },
+    { name: "Maul", price: 10, currency: "GP" },
+    { name: "Morningstar", price: 15, currency: "GP" },
+    { name: "Pike", price: 5, currency: "GP" },
+    { name: "Rapier", price: 25, currency: "GP" },
+    { name: "Scimitar", price: 25, currency: "GP" },
+    { name: "Shortsword", price: 10, currency: "GP" },
+    { name: "Trident", price: 5, currency: "GP" },
+    { name: "War Pick", price: 5, currency: "GP" },
+    { name: "Warhammer", price: 15, currency: "GP" },
+    { name: "Whip", price: 2, currency: "GP" },
+    { name: "Blow Gun", price: 10, currency: "GP" },
+    { name: "Hand Crossbow", price: 75, currency: "GP" },
+    { name: "Heavy Crossbow", price: 50, currency: "GP" },
+    { name: "Long Bow", price: 50, currency: "GP" },
+    { name: "Net", price: 1, currency: "GP" },
   ],
   Armor: [
+    { name: "Padded Armor", price: 5, currency: "GP" },
     { name: "Leather Armor", price: 10, currency: "GP" },
     { name: "Studded Leather", price: 45, currency: "GP" },
+    { name: "Hide Armor", price: 10, currency: "GP" },
     { name: "Chain Shirt", price: 50, currency: "GP" },
     { name: "Scale Mail", price: 50, currency: "GP" },
+    { name: "Breastplate", price: 400, currency: "GP" },
+    { name: "Half Plate", price: 750, currency: "GP" },
+    { name: "Ring Mail", price: 30, currency: "GP" },
     { name: "Chain Mail", price: 75, currency: "GP" },
     { name: "Splint Armor", price: 200, currency: "GP" },
     { name: "Plate Armor", price: 1500, currency: "GP" },
@@ -57,7 +92,7 @@ const commonItems = {
     { name: "Tower Shield", price: 30, currency: "GP" },
   ],
   Potions: [
-    { name: "Healing Potion", price: 50, currency: "GP" },
+    { name: "Potion of Healing", price: 50, currency: "GP" },
     { name: "Greater Healing Potion", price: 200, currency: "GP" },
     { name: "Mana Potion", price: 100, currency: "GP" },
     { name: "Antidote", price: 50, currency: "GP" },
@@ -532,7 +567,7 @@ export default function ShopCreator() {
                         <DropdownMenuTrigger asChild>
                           <Button className="flex items-center gap-2 button-3d text-primary-foreground">
                             <Package2 className="h-4 w-4" />
-                            Add common items{selectedCommonCategory ? ` (${selectedCommonCategory})` : ""}
+                            Add common items {selectedCommonCategory ? ` (${selectedCommonCategory})` : ""}
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className="card-3d">
