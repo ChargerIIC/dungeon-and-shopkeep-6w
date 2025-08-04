@@ -1,6 +1,6 @@
 "use client"
 import { useState } from "react"
-import { PlusCircle, Trash2, LogOut, User, AlertCircle } from "lucide-react"
+import { PlusCircle, Trash2, LogOut, User, AlertCircle, Package2 } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { PrintButton } from "@/components/print-button"
 import { ShopDisplay } from "@/components/shop-display"
@@ -28,6 +29,82 @@ const themes = [
   { id: "forest", name: "Forest" },
   { id: "dungeon", name: "Dungeon" },
 ]
+
+// Pre-configured common items by category
+const commonItems = {
+  Weapon: [
+    { name: "Dagger", price: 2, currency: "GP" },
+    { name: "Shortsword", price: 10, currency: "GP" },
+    { name: "Longsword", price: 15, currency: "GP" },
+    { name: "Battleaxe", price: 10, currency: "GP" },
+    { name: "Warhammer", price: 15, currency: "GP" },
+    { name: "Shortbow", price: 25, currency: "GP" },
+    { name: "Longbow", price: 50, currency: "GP" },
+    { name: "Crossbow", price: 75, currency: "GP" },
+    { name: "Quarterstaff", price: 2, currency: "SP" },
+    { name: "Spear", price: 1, currency: "GP" },
+  ],
+  Armor: [
+    { name: "Leather Armor", price: 10, currency: "GP" },
+    { name: "Studded Leather", price: 45, currency: "GP" },
+    { name: "Chain Shirt", price: 50, currency: "GP" },
+    { name: "Scale Mail", price: 50, currency: "GP" },
+    { name: "Chain Mail", price: 75, currency: "GP" },
+    { name: "Splint Armor", price: 200, currency: "GP" },
+    { name: "Plate Armor", price: 1500, currency: "GP" },
+    { name: "Shield", price: 10, currency: "GP" },
+    { name: "Buckler", price: 5, currency: "GP" },
+    { name: "Tower Shield", price: 30, currency: "GP" },
+  ],
+  Potions: [
+    { name: "Healing Potion", price: 50, currency: "GP" },
+    { name: "Greater Healing Potion", price: 200, currency: "GP" },
+    { name: "Mana Potion", price: 100, currency: "GP" },
+    { name: "Antidote", price: 50, currency: "GP" },
+    { name: "Potion of Strength", price: 300, currency: "GP" },
+    { name: "Potion of Speed", price: 400, currency: "GP" },
+    { name: "Potion of Invisibility", price: 500, currency: "GP" },
+    { name: "Stamina Potion", price: 75, currency: "GP" },
+    { name: "Night Vision Elixir", price: 150, currency: "GP" },
+    { name: "Fire Resistance Brew", price: 250, currency: "GP" },
+  ],
+  Gear: [
+    { name: "Backpack", price: 2, currency: "GP" },
+    { name: "Bedroll", price: 1, currency: "GP" },
+    { name: "Rope (50 ft)", price: 2, currency: "GP" },
+    { name: "Torch", price: 1, currency: "CP" },
+    { name: "Lantern", price: 5, currency: "GP" },
+    { name: "Oil Flask", price: 1, currency: "SP" },
+    { name: "Rations (1 day)", price: 2, currency: "SP" },
+    { name: "Waterskin", price: 2, currency: "GP" },
+    { name: "Thieves' Tools", price: 25, currency: "GP" },
+    { name: "Grappling Hook", price: 2, currency: "GP" },
+  ],
+  Scroll: [
+    { name: "Scroll of Fireball", price: 150, currency: "GP" },
+    { name: "Scroll of Healing", price: 75, currency: "GP" },
+    { name: "Scroll of Magic Missile", price: 50, currency: "GP" },
+    { name: "Scroll of Shield", price: 25, currency: "GP" },
+    { name: "Scroll of Identify", price: 100, currency: "GP" },
+    { name: "Scroll of Light", price: 10, currency: "GP" },
+    { name: "Scroll of Teleport", price: 500, currency: "GP" },
+    { name: "Scroll of Dispel Magic", price: 300, currency: "GP" },
+    { name: "Scroll of Invisibility", price: 200, currency: "GP" },
+    { name: "Scroll of Lightning Bolt", price: 175, currency: "GP" },
+  ],
+  Misc: [
+    { name: "Gemstone", price: 100, currency: "GP" },
+    { name: "Silver Ring", price: 25, currency: "GP" },
+    { name: "Gold Necklace", price: 150, currency: "GP" },
+    { name: "Ancient Coin", price: 50, currency: "GP" },
+    { name: "Crystal Orb", price: 300, currency: "GP" },
+    { name: "Mysterious Key", price: 10, currency: "GP" },
+    { name: "Spell Component Pouch", price: 25, currency: "GP" },
+    { name: "Holy Symbol", price: 5, currency: "GP" },
+    { name: "Magnifying Glass", price: 100, currency: "GP" },
+    { name: "Music Box", price: 75, currency: "GP" },
+  ],
+}
 
 // Item type definition
 type Item = {
@@ -76,6 +153,9 @@ export default function ShopCreator() {
 
   // Selected theme state
   const [theme, setTheme] = useState("parchment")
+
+  // Selected category for common items
+  const [selectedCommonCategory, setSelectedCommonCategory] = useState<string>("")
 
   // Handle print functionality
   const handlePrint = () => {
@@ -269,6 +349,23 @@ export default function ShopCreator() {
     })
   }
 
+  // Add common items for a category
+  const addCommonItems = (category: string) => {
+    const categoryItems = commonItems[category as keyof typeof commonItems]
+    if (!categoryItems) return
+
+    const newItems = categoryItems.map((item, index) => ({
+      id: `${Date.now()}-${index}`,
+      name: item.name,
+      category: category,
+      price: item.price,
+      currency: item.currency,
+    }))
+
+    setItems([...items, ...newItems])
+    setSelectedCommonCategory(category)
+  }
+
   // Remove item
   const removeItem = (id: string) => {
     setItems(items.filter((item) => item.id !== id))
@@ -428,7 +525,32 @@ export default function ShopCreator() {
                   {/* Add New Item */}
                   <div className="border rounded-lg p-4 card-3d">
                     <h3 className="font-medium mb-3 text-foreground font-fantasy">Add New Item</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-3 items-end">
+
+                    {/* Add Common Items Button - Above manual entry */}
+                    <div className="mb-4 flex justify-start">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button className="flex items-center gap-2 button-3d text-primary-foreground">
+                            <Package2 className="h-4 w-4" />
+                            Add common items{selectedCommonCategory ? ` (${selectedCommonCategory})` : ""}
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="card-3d">
+                          {categories.map((category) => (
+                            <DropdownMenuItem
+                              key={category}
+                              onClick={() => addCommonItems(category)}
+                              className="hover:bg-accent/50 cursor-pointer"
+                            >
+                              {category} ({commonItems[category as keyof typeof commonItems]?.length || 0} items)
+                            </DropdownMenuItem>
+                          ))}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+
+                    {/* Manual Item Entry Row */}
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-2 items-end">
                       <div className="space-y-2 md:col-span-2">
                         <Label htmlFor="item-name" className="text-foreground font-medium">
                           Item Name
@@ -461,7 +583,7 @@ export default function ShopCreator() {
                           </SelectContent>
                         </Select>
                       </div>
-                      <div className="grid grid-cols-3 gap-2">
+                      <div className="grid grid-cols-4 gap-1">
                         <div className="col-span-2 space-y-2">
                           <Label htmlFor="item-price" className="text-foreground font-medium">
                             Price
@@ -476,7 +598,7 @@ export default function ShopCreator() {
                             className="input-3d"
                           />
                         </div>
-                        <div className="space-y-2">
+                        <div className="col-span-2 space-y-2">
                           <Label htmlFor="item-currency" className="text-foreground font-medium">
                             Currency
                           </Label>
