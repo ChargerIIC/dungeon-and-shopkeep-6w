@@ -1,0 +1,154 @@
+name: Deploy to Azure Container Apps
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  AZURE_CONTAINER_APP_NAME: dungeon-shopkeep-app
+  AZURE_RESOURCE_GROUP: dungeon-shopkeep-rg
+  AZURE_CONTAINER_REGISTRY: dungeonshopkeepreg
+  AZURE_LOCATION: eastus
+  AZURE_ENVIRONMENT_NAME: dungeon-shopkeep-env
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Enable Corepack for pnpm
+      run: corepack enable
+
+    - name: Install dependencies
+      run: pnpm install --frozen-lockfile
+
+    - name: Run build (to verify it works)
+      run: pnpm run build
+      env:
+        # Firebase environment variables for build
+        NEXT_PUBLIC_FIREBASE_API_KEY: ${{ secrets.NEXT_PUBLIC_FIREBASE_API_KEY }}
+        NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: ${{ secrets.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN }}
+        NEXT_PUBLIC_FIREBASE_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_PROJECT_ID }}
+        NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: ${{ secrets.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET }}
+        NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID }}
+        NEXT_PUBLIC_FIREBASE_APP_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_APP_ID }}
+
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Install Azure Container Apps extension
+      run: az extension add --name containerapp --upgrade
+
+    - name: Create Resource Group (if not exists)
+      run: |
+        az group create --name ${{ env.AZURE_RESOURCE_GROUP }} --location ${{ env.AZURE_LOCATION }} || true
+
+    - name: Create Azure Container Registry (if not exists)
+      run: |
+        az acr create --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+          --name ${{ env.AZURE_CONTAINER_REGISTRY }} \
+          --sku Basic \
+          --admin-enabled true || true
+
+    - name: Build and push Docker image
+      run: |
+        az acr build --registry ${{ env.AZURE_CONTAINER_REGISTRY }} \
+          --image dungeon-shopkeep:${{ github.sha }} \
+          --image dungeon-shopkeep:latest \
+          --build-arg NEXT_PUBLIC_FIREBASE_API_KEY="${{ secrets.NEXT_PUBLIC_FIREBASE_API_KEY }}" \
+          --build-arg NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN="${{ secrets.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN }}" \
+          --build-arg NEXT_PUBLIC_FIREBASE_PROJECT_ID="${{ secrets.NEXT_PUBLIC_FIREBASE_PROJECT_ID }}" \
+          --build-arg NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET="${{ secrets.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET }}" \
+          --build-arg NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID="${{ secrets.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID }}" \
+          --build-arg NEXT_PUBLIC_FIREBASE_APP_ID="${{ secrets.NEXT_PUBLIC_FIREBASE_APP_ID }}" \
+          .
+
+    - name: Create Container Apps Environment (if not exists)
+      run: |
+        az containerapp env create \
+          --name ${{ env.AZURE_ENVIRONMENT_NAME }} \
+          --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+          --location ${{ env.AZURE_LOCATION }} || true
+
+    - name: Get ACR login server
+      id: acr-login-server
+      run: |
+        ACR_LOGIN_SERVER=$(az acr show --name ${{ env.AZURE_CONTAINER_REGISTRY }} --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --query loginServer --output tsv)
+        echo "acr-login-server=$ACR_LOGIN_SERVER" >> $GITHUB_OUTPUT
+
+    - name: Get ACR credentials
+      id: acr-credentials
+      run: |
+        ACR_USERNAME=$(az acr credential show --name ${{ env.AZURE_CONTAINER_REGISTRY }} --query username --output tsv)
+        ACR_PASSWORD=$(az acr credential show --name ${{ env.AZURE_CONTAINER_REGISTRY }} --query passwords[0].value --output tsv)
+        echo "acr-username=$ACR_USERNAME" >> $GITHUB_OUTPUT
+        echo "acr-password=$ACR_PASSWORD" >> $GITHUB_OUTPUT
+
+    - name: Deploy Container App (Create or Update)
+      run: |
+        # Check if container app exists
+        if az containerapp show --name ${{ env.AZURE_CONTAINER_APP_NAME }} --resource-group ${{ env.AZURE_RESOURCE_GROUP }} >/dev/null 2>&1; then
+          echo "Container app exists, updating..."
+          az containerapp update \
+            --name ${{ env.AZURE_CONTAINER_APP_NAME }} \
+            --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+            --image ${{ steps.acr-login-server.outputs.acr-login-server }}/dungeon-shopkeep:${{ github.sha }} \
+            --set-env-vars \
+              NODE_ENV=production \
+              NEXT_PUBLIC_FIREBASE_API_KEY="${{ secrets.NEXT_PUBLIC_FIREBASE_API_KEY }}" \
+              NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN="${{ secrets.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN }}" \
+              NEXT_PUBLIC_FIREBASE_PROJECT_ID="${{ secrets.NEXT_PUBLIC_FIREBASE_PROJECT_ID }}" \
+              NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET="${{ secrets.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET }}" \
+              NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID="${{ secrets.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID }}" \
+              NEXT_PUBLIC_FIREBASE_APP_ID="${{ secrets.NEXT_PUBLIC_FIREBASE_APP_ID }}"
+        else
+          echo "Container app doesn't exist, creating..."
+          az containerapp create \
+            --name ${{ env.AZURE_CONTAINER_APP_NAME }} \
+            --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+            --environment ${{ env.AZURE_ENVIRONMENT_NAME }} \
+            --image ${{ steps.acr-login-server.outputs.acr-login-server }}/dungeon-shopkeep:${{ github.sha }} \
+            --target-port 3000 \
+            --ingress external \
+            --registry-server ${{ steps.acr-login-server.outputs.acr-login-server }} \
+            --registry-username ${{ steps.acr-credentials.outputs.acr-username }} \
+            --registry-password ${{ steps.acr-credentials.outputs.acr-password }} \
+            --cpu 0.5 \
+            --memory 1.0Gi \
+            --min-replicas 1 \
+            --max-replicas 3 \
+            --env-vars \
+              NODE_ENV=production \
+              NEXT_PUBLIC_FIREBASE_API_KEY="${{ secrets.NEXT_PUBLIC_FIREBASE_API_KEY }}" \
+              NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN="${{ secrets.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN }}" \
+              NEXT_PUBLIC_FIREBASE_PROJECT_ID="${{ secrets.NEXT_PUBLIC_FIREBASE_PROJECT_ID }}" \
+              NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET="${{ secrets.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET }}" \
+              NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID="${{ secrets.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID }}" \
+              NEXT_PUBLIC_FIREBASE_APP_ID="${{ secrets.NEXT_PUBLIC_FIREBASE_APP_ID }}"
+        fi
+
+    - name: Get Container App URL
+      id: get-url
+      run: |
+        APP_URL=$(az containerapp show --name ${{ env.AZURE_CONTAINER_APP_NAME }} --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --query properties.configuration.ingress.fqdn --output tsv)
+        echo "app-url=https://$APP_URL" >> $GITHUB_OUTPUT
+
+    - name: Display deployment info
+      run: |
+        echo "🚀 Deployment completed successfully!"
+        echo "📱 App URL: ${{ steps.get-url.outputs.app-url }}"
+        echo "🐳 Image: ${{ steps.acr-login-server.outputs.acr-login-server }}/dungeon-shopkeep:${{ github.sha }}"
