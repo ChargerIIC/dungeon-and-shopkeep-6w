@@ -150,9 +150,8 @@
   }
 }
 
-/* Enhanced 3D and tactile effects */
+/* Enhanced 3D and tactile effects - Modified to not override theme backgrounds */
 .card-3d {
-  background: linear-gradient(145deg, oklch(0.98 0.015 80), oklch(0.96 0.02 75));
   box-shadow:
     0 4px 6px -1px rgba(139, 69, 19, 0.1),
     0 2px 4px -1px rgba(139, 69, 19, 0.06),
@@ -160,6 +159,11 @@
     inset 0 -1px 0 rgba(139, 69, 19, 0.1);
   border: 1px solid rgba(139, 69, 19, 0.15);
   transition: all 0.2s ease;
+}
+
+/* Only apply default background when no theme background is present */
+.card-3d:not([class*="bg-"]) {
+  background: linear-gradient(145deg, oklch(0.98 0.015 80), oklch(0.96 0.02 75));
 }
 
 .card-3d:hover {
@@ -172,10 +176,14 @@
 }
 
 .dark .card-3d {
-  background: linear-gradient(145deg, oklch(0.18 0.02 45), oklch(0.15 0.02 40));
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2), inset 0 1px 0
     rgba(255, 255, 255, 0.1), inset 0 -1px 0 rgba(0, 0, 0, 0.2);
   border: 1px solid rgba(139, 69, 19, 0.3);
+}
+
+/* Only apply default dark background when no theme background is present */
+.dark .card-3d:not([class*="bg-"]) {
+  background: linear-gradient(145deg, oklch(0.18 0.02 45), oklch(0.15 0.02 40));
 }
 
 .dark .card-3d:hover {
@@ -318,9 +326,13 @@
 
 /* Enhanced table styling */
 .table-3d {
-  background: linear-gradient(145deg, oklch(0.98 0.015 80), oklch(0.96 0.02 75));
   box-shadow: 0 2px 4px rgba(139, 69, 19, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.4);
   border: 1px solid rgba(139, 69, 19, 0.15);
+}
+
+/* Only apply default background when no theme background is present */
+.table-3d:not([class*="bg-"]) {
+  background: linear-gradient(145deg, oklch(0.98 0.015 80), oklch(0.96 0.02 75));
 }
 
 .table-3d tr:hover {
@@ -328,9 +340,13 @@
 }
 
 .dark .table-3d {
-  background: linear-gradient(145deg, oklch(0.18 0.02 45), oklch(0.15 0.02 40));
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(139, 69, 19, 0.3);
+}
+
+/* Only apply default dark background when no theme background is present */
+.dark .table-3d:not([class*="bg-"]) {
+  background: linear-gradient(145deg, oklch(0.18 0.02 45), oklch(0.15 0.02 40));
 }
 
 .dark .table-3d tr:hover {
