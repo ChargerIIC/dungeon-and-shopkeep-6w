@@ -78,6 +78,8 @@ You can find these values in your Firebase project settings:
 
 ## Step 3: Find Your Firebase Configuration
 
+**📋 Important**: If you haven't set up Firebase yet, follow the complete [Firebase Setup Guide](../FIREBASE_SETUP.md) first.
+
 ### Method 1: Firebase Console
 1. Go to [Firebase Console](https://console.firebase.google.com/)
 2. Select your project
