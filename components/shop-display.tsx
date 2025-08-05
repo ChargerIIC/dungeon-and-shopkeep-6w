@@ -167,10 +167,10 @@ export function ShopDisplay({ shopTitle, ownerName, items, theme, isPrintMode = 
                     {categoryItems.map((item) => (
                       <li
                         key={item.id}
-                        className={`flex justify-between py-2 px-3 rounded-lg ${styles.itemText} ${styles.itemBg} hover:shadow-md transition-all duration-200 print:py-2 print:px-3 print:bg-opacity-20 print:rounded-none print:border-b print:border-dotted print:border-gray-300 card-3d border ${styles.border} border-opacity-30`}
+                        className={`flex justify-between py-2 px-3 rounded-lg ${styles.itemText} ${styles.itemBg} hover:shadow-md transition-all duration-200 print:py-2 print:px-3 print:bg-opacity-20 print:rounded-none print:border-b print:border-dotted print:border-gray-300 card-3d border ${styles.border} border-opacity-30 print:item-spacing print:line-spacing`}
                       >
-                        <span className="print:font-medium font-medium">{item.name}</span>
-                        <span className="font-bold print:font-bold text-right">
+                        <span className="print:font-medium font-medium print:item-name">{item.name}</span>
+                        <span className="font-bold print:font-bold text-right print:item-price">
                           {item.price} {item.currency}
                         </span>
                       </li>

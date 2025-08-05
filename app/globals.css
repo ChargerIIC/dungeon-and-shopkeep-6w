@@ -492,6 +492,60 @@
     page-break-inside: avoid !important;
   }
 
+  /* Print-specific item layout with leader dots */
+  .print\:justify-between-dots {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: baseline !important;
+  }
+
+  .print\:item-name {
+    flex-shrink: 0 !important;
+    max-width: 60% !important;
+  }
+
+  .print\:item-price {
+    flex-shrink: 0 !important;
+    margin-left: auto !important;
+    text-align: right !important;
+  }
+
+  .print\:leader-dots::before {
+    content: "" !important;
+    flex: 1 !important;
+    border-bottom: 1px dotted #666 !important;
+    margin: 0 8px !important;
+    height: 1px !important;
+    align-self: flex-end !important;
+    margin-bottom: 3px !important;
+  }
+
+  /* Alternative spacing without dots - cleaner option */
+  .print\:item-spacing {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: baseline !important;
+    min-height: 1.75rem !important;
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+  }
+
+  .print\:item-spacing .print\:item-name {
+    padding-right: 3rem !important;
+    flex: 1 !important;
+  }
+
+  .print\:item-spacing .print\:item-price {
+    white-space: nowrap !important;
+    padding-left: 1rem !important;
+  }
+
+  /* Print margin adjustments for better readability */
+  .print\:line-spacing {
+    line-height: 1.6 !important;
+    margin-bottom: 0.25rem !important;
+  }
+
   /* Theme-specific print colors */
   .print\:text-amber-900 {
     color: #92400e !important;

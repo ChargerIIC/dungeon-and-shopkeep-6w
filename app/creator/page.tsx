@@ -27,7 +27,7 @@ import Link from "next/link"
 import { toast } from "@/hooks/use-toast"
 
 // Item categories
-const categories = ["Weapon", "Armor", "Potions", "Gear", "Scroll", "Misc"]
+const categories = ["Weapon", "MartialWeapon", "Armor", "Potions", "Gear", "Scroll", "Misc"]
 // Currency types
 const currencies = ["GP", "SP", "CP", "Credits", "Coins"]
 // Theme options
@@ -57,7 +57,7 @@ const commonItems = {
     { name: "Shortbow", price: 25, currency: "GP" },
     { name: "Sling", price: 1, currency: "SP" },
   ],
-  MartialWeapons: [
+  MartialWeapon: [
     { name: "Battleaxe", price: 10, currency: "GP" },
     { name: "Flail", price: 10, currency: "GP" },
     { name: "Glaive", price: 20, currency: "GP" },
@@ -321,6 +321,39 @@ export default function ShopCreator() {
                 padding: 0.5rem 0.75rem !important;
                 margin: 0.25rem 0 !important;
                 background: rgba(0,0,0,0.02) !important;
+                display: flex !important;
+                justify-content: space-between !important;
+                align-items: baseline !important;
+                min-height: 1.75rem !important;
+                line-height: 1.6 !important;
+              }
+              
+              /* Item spacing improvements */
+              .print\\:item-spacing {
+                display: flex !important;
+                justify-content: space-between !important;
+                align-items: baseline !important;
+                min-height: 1.75rem !important;
+                padding-left: 0.75rem !important;
+                padding-right: 0.75rem !important;
+              }
+              
+              .print\\:item-name {
+                padding-right: 3rem !important;
+                flex: 1 !important;
+                font-weight: 500 !important;
+              }
+              
+              .print\\:item-price {
+                white-space: nowrap !important;
+                padding-left: 1rem !important;
+                font-weight: 700 !important;
+                text-align: right !important;
+              }
+              
+              .print\\:line-spacing {
+                line-height: 1.6 !important;
+                margin-bottom: 0.25rem !important;
               }
               
               /* Ensure icons print */
@@ -615,7 +648,7 @@ export default function ShopCreator() {
                   onClick={handleNewShop}
                   variant="outline"
                   size="sm"
-                  className="flex items-center space-x-2 button-3d bg-transparent"
+                  className="flex items-center space-x-2 button-3d text-primary-foreground"
                 >
                   <PlusCircle className="w-4 h-4" />
                   <span>New</span>
@@ -626,7 +659,7 @@ export default function ShopCreator() {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="flex items-center space-x-2 button-3d bg-transparent"
+                      className="flex items-center space-x-2 button-3d bg-transparent text-primary-foreground"
                       disabled={loadingShops}
                     >
                       <FolderOpen className="w-4 h-4" />
