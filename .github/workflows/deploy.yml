@@ -12,9 +12,9 @@ permissions:
   contents: read
 
 env:
-  AZURE_CONTAINER_APP_NAME: dungeon-shopkeep-app
-  AZURE_RESOURCE_GROUP: dungeon-shopkeep-rg
-  AZURE_CONTAINER_REGISTRY: dungeonshopkeepreg
+  AZURE_CONTAINER_APP_NAME: ${{ vars.AZURE_CONTAINER_APP_NAME }}
+  AZURE_RESOURCE_GROUP: ${{ vars.AZURE_RESOURCE_GROUP }}
+  AZURE_CONTAINER_REGISTRY: ${{ vars.AZURE_CONTAINER_REGISTRY }}
   AZURE_LOCATION: eastus
   AZURE_ENVIRONMENT_NAME: dungeon-shopkeep-env
 
