@@ -7,6 +7,10 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+permissions:
+  id-token: write
+  contents: read
+
 env:
   AZURE_CONTAINER_APP_NAME: dungeon-shopkeep-app
   AZURE_RESOURCE_GROUP: dungeon-shopkeep-rg
