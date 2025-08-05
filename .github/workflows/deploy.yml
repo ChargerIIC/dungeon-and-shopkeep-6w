@@ -148,8 +148,8 @@ jobs:
             --target-port 3000 \
             --ingress external \
             --registry-server houseofburt.azurecr.io \
-            --registry-username ${{ steps.acr-credentials.outputs.acr-username }} \
-            --registry-password ${{ steps.acr-credentials.outputs.acr-password }} \
+            --registry-username ${{ secrets.AZURE_CLIENT_ID }} \
+            --registry-password ${{ secrets.AZURE_PASSWORD }} \
             --cpu 0.5 \
             --memory 1.0Gi \
             --min-replicas 1 \
