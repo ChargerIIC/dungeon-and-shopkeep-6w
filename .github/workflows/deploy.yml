@@ -28,14 +28,14 @@ jobs:
         node-version: '18'
         cache: 'npm'
 
-    - name: Enable Corepack for pnpm
+    - name: Enable Corepack for npm
       run: corepack enable
 
     - name: Install dependencies
-      run: pnpm install --frozen-lockfile
+      run: npm install
 
     - name: Run build (to verify it works)
-      run: pnpm run build
+      run: npm run build
       env:
         # Firebase environment variables for build
         NEXT_PUBLIC_FIREBASE_API_KEY: ${{ secrets.NEXT_PUBLIC_FIREBASE_API_KEY }}
