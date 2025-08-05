@@ -4,6 +4,7 @@ import { GeistSans } from "geist/font/sans"
 import { GeistMono } from "geist/font/mono"
 import { ThemeProvider } from "@/components/theme-provider"
 import { AuthProvider } from "@/components/auth-provider"
+import { Toaster } from "@/components/ui/toaster"
 import "./globals.css"
 
 export const metadata: Metadata = {
@@ -31,7 +32,10 @@ html {
       </head>
       <body>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          <AuthProvider>{children}</AuthProvider>
+          <AuthProvider>
+            {children}
+            <Toaster />
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

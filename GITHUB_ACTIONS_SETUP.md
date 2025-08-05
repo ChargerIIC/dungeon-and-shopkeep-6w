@@ -14,7 +14,7 @@ You need to create an Azure Service Principal for GitHub Actions to authenticate
 
 ### Using Azure CLI:
 
-```bash
+\`\`\`bash
 # Login to Azure
 az login
 
@@ -23,17 +23,17 @@ az ad sp create-for-rbac --name "github-actions-dungeon-shopkeep" \
   --role contributor \
   --scopes /subscriptions/your-subscription-id \
   --sdk-auth
-```
+\`\`\`
 
 This will output JSON like:
-```json
+\`\`\`json
 {
   "clientId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
   "clientSecret": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
   "subscriptionId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
   "tenantId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 }
-```
+\`\`\`
 
 **Save this entire JSON output** - you'll need it for the next step.
 
@@ -93,14 +93,14 @@ If you already have a `.env.local` file, copy the values from there.
 
 The workflow is configured with default Azure resource names. You can customize these by editing the `env` section in `.github/workflows/deploy.yml`:
 
-```yaml
+\`\`\`yaml
 env:
   AZURE_CONTAINER_APP_NAME: your-custom-app-name
   AZURE_RESOURCE_GROUP: your-custom-resource-group
   AZURE_CONTAINER_REGISTRY: yourcustomregistry
   AZURE_LOCATION: eastus
   AZURE_ENVIRONMENT_NAME: your-custom-environment
-```
+\`\`\`
 
 **Important**: Azure Container Registry names must be globally unique and contain only lowercase letters and numbers.
 

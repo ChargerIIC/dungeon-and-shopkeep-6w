@@ -1,6 +1,17 @@
 import { initializeApp } from "firebase/app"
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, type User } from "firebase/auth"
-import { getFirestore } from "firebase/firestore"
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  getDocs,
+  updateDoc,
+  deleteDoc,
+  doc,
+  query,
+  where,
+  orderBy,
+} from "firebase/firestore"
 
 // Validate environment variables
 const requiredEnvVars = {
@@ -124,3 +135,117 @@ export const onAuthStateChange = (callback: (user: User | null) => void) => {
 
 // Helper function to check if Firebase is configured
 export { isFirebaseConfigured }
+
+// Shop data types
+export interface ShopItem {
+  id: string
+  name: string
+  category: string
+  price: number
+  currency: string
+}
+
+export interface Shop {
+  id?: string
+  title: string
+  owner: string
+  items: ShopItem[]
+  theme: string
+  creatorId: string
+  createdAt: Date
+  updatedAt: Date
+}
+
+// Save shop to Firestore
+export const saveShop = async (shop: Omit<Shop, "id" | "createdAt" | "updatedAt">) => {
+  if (!db || !auth?.currentUser) {
+    throw new Error("Firebase is not configured or user is not authenticated.")
+  }
+
+  try {
+    const shopData = {
+      ...shop,
+      creatorId: auth.currentUser.uid,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }
+
+    const docRef = await addDoc(collection(db, "shops"), shopData)
+    return docRef.id
+  } catch (error) {
+    console.error("Error saving shop:", error)
+    throw new Error("Failed to save shop. Please try again.")
+  }
+}
+
+// Update existing shop
+export const updateShop = async (shopId: string, shop: Omit<Shop, "id" | "creatorId" | "createdAt" | "updatedAt">) => {
+  if (!db || !auth?.currentUser) {
+    throw new Error("Firebase is not configured or user is not authenticated.")
+  }
+
+  try {
+    const shopData = {
+      ...shop,
+      updatedAt: new Date(),
+    }
+
+    const shopRef = doc(db, "shops", shopId)
+    await updateDoc(shopRef, shopData)
+  } catch (error) {
+    console.error("Error updating shop:", error)
+    throw new Error("Failed to update shop. Please try again.")
+  }
+}
+
+// Get user's shops
+export const getUserShops = async (): Promise<Shop[]> => {
+  if (!db || !auth?.currentUser) {
+    throw new Error("Firebase is not configured or user is not authenticated.")
+  }
+
+  try {
+    const shopsQuery = query(
+      collection(db, "shops"),
+      where("creatorId", "==", auth.currentUser.uid),
+      orderBy("updatedAt", "desc"),
+    )
+
+    const querySnapshot = await getDocs(shopsQuery)
+    const shops: Shop[] = []
+
+    querySnapshot.forEach((doc) => {
+      const data = doc.data()
+      shops.push({
+        id: doc.id,
+        title: data.title,
+        owner: data.owner,
+        items: data.items,
+        theme: data.theme,
+        creatorId: data.creatorId,
+        createdAt: data.createdAt.toDate(),
+        updatedAt: data.updatedAt.toDate(),
+      })
+    })
+
+    return shops
+  } catch (error) {
+    console.error("Error getting user shops:", error)
+    throw new Error("Failed to load shops. Please try again.")
+  }
+}
+
+// Delete shop
+export const deleteShop = async (shopId: string) => {
+  if (!db || !auth?.currentUser) {
+    throw new Error("Firebase is not configured or user is not authenticated.")
+  }
+
+  try {
+    const shopRef = doc(db, "shops", shopId)
+    await deleteDoc(shopRef)
+  } catch (error) {
+    console.error("Error deleting shop:", error)
+    throw new Error("Failed to delete shop. Please try again.")
+  }
+}

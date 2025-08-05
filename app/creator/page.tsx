@@ -1,6 +1,6 @@
 "use client"
-import { useState } from "react"
-import { PlusCircle, Trash2, LogOut, User, AlertCircle, Package2 } from "lucide-react"
+import { useState, useEffect } from "react"
+import { PlusCircle, Trash2, LogOut, User, AlertCircle, Package2, Save, FolderOpen, Trash } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
@@ -9,13 +9,22 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { PrintButton } from "@/components/print-button"
 import { ShopDisplay } from "@/components/shop-display"
 import { useAuth } from "@/components/auth-provider"
-import { signOutUser } from "@/lib/firebase"
+import { signOutUser, saveShop, updateShop, getUserShops, deleteShop, type Shop } from "@/lib/firebase"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import { toast } from "@/hooks/use-toast"
 
 // Item categories
 const categories = ["Weapon", "Armor", "Potions", "Gear", "Scroll", "Misc"]
@@ -47,9 +56,8 @@ const commonItems = {
     { name: "Dart", price: 5, currency: "CP" },
     { name: "Shortbow", price: 25, currency: "GP" },
     { name: "Sling", price: 1, currency: "SP" },
-
   ],
-  MartialWeapons:[
+  MartialWeapons: [
     { name: "Battleaxe", price: 10, currency: "GP" },
     { name: "Flail", price: 10, currency: "GP" },
     { name: "Glaive", price: 20, currency: "GP" },
@@ -150,16 +158,6 @@ type Item = {
   currency: string
 }
 
-// Shop type definition
-type Shop = {
-  id?: string
-  title: string
-  owner: string
-  items: Item[]
-  theme: string
-  description?: string
-}
-
 export default function ShopCreator() {
   const { user, loading, isConfigured } = useAuth()
   const router = useRouter()
@@ -167,6 +165,7 @@ export default function ShopCreator() {
   // Shop details state
   const [shopTitle, setShopTitle] = useState("Mystic Emporium")
   const [ownerName, setOwnerName] = useState("Eldrin the Merchant")
+  const [currentShopId, setCurrentShopId] = useState<string | null>(null)
 
   // Items state
   const [items, setItems] = useState<Item[]>([
@@ -191,6 +190,37 @@ export default function ShopCreator() {
 
   // Selected category for common items
   const [selectedCommonCategory, setSelectedCommonCategory] = useState<string>("")
+
+  // Saved shops state
+  const [savedShops, setSavedShops] = useState<Shop[]>([])
+  const [loadingShops, setLoadingShops] = useState(false)
+  const [savingShop, setSavingShop] = useState(false)
+
+  // Load user's shops when they sign in
+  useEffect(() => {
+    if (user && isConfigured) {
+      loadUserShops()
+    }
+  }, [user, isConfigured])
+
+  const loadUserShops = async () => {
+    if (!user || !isConfigured) return
+
+    setLoadingShops(true)
+    try {
+      const shops = await getUserShops()
+      setSavedShops(shops)
+    } catch (error) {
+      console.error("Failed to load shops:", error)
+      toast({
+        title: "Error",
+        description: "Failed to load your saved shops.",
+        variant: "destructive",
+      })
+    } finally {
+      setLoadingShops(false)
+    }
+  }
 
   // Handle print functionality
   const handlePrint = () => {
@@ -365,6 +395,124 @@ export default function ShopCreator() {
     }
   }
 
+  // Save current shop
+  const handleSaveShop = async () => {
+    if (!user || !isConfigured) {
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in to save your shop.",
+        variant: "destructive",
+      })
+      return
+    }
+
+    if (!shopTitle.trim()) {
+      toast({
+        title: "Shop Title Required",
+        description: "Please enter a shop title before saving.",
+        variant: "destructive",
+      })
+      return
+    }
+
+    setSavingShop(true)
+    try {
+      const shopData = {
+        title: shopTitle,
+        owner: ownerName,
+        items: items,
+        theme: theme,
+      }
+
+      if (currentShopId) {
+        // Update existing shop
+        await updateShop(currentShopId, shopData)
+        toast({
+          title: "Shop Updated",
+          description: `"${shopTitle}" has been updated successfully.`,
+        })
+      } else {
+        // Save new shop
+        const newShopId = await saveShop(shopData)
+        setCurrentShopId(newShopId)
+        toast({
+          title: "Shop Saved",
+          description: `"${shopTitle}" has been saved successfully.`,
+        })
+      }
+
+      // Reload shops list
+      await loadUserShops()
+    } catch (error) {
+      console.error("Failed to save shop:", error)
+      toast({
+        title: "Save Failed",
+        description: "Failed to save shop. Please try again.",
+        variant: "destructive",
+      })
+    } finally {
+      setSavingShop(false)
+    }
+  }
+
+  // Load a saved shop
+  const handleLoadShop = (shop: Shop) => {
+    setShopTitle(shop.title)
+    setOwnerName(shop.owner)
+    setItems(shop.items)
+    setTheme(shop.theme)
+    setCurrentShopId(shop.id || null)
+
+    toast({
+      title: "Shop Loaded",
+      description: `"${shop.title}" has been loaded successfully.`,
+    })
+  }
+
+  // Delete a saved shop
+  const handleDeleteShop = async (shopId: string, shopTitle: string) => {
+    if (!user || !isConfigured) return
+
+    try {
+      await deleteShop(shopId)
+
+      // If we're currently editing this shop, clear the current shop ID
+      if (currentShopId === shopId) {
+        setCurrentShopId(null)
+      }
+
+      // Reload shops list
+      await loadUserShops()
+
+      toast({
+        title: "Shop Deleted",
+        description: `"${shopTitle}" has been deleted successfully.`,
+      })
+    } catch (error) {
+      console.error("Failed to delete shop:", error)
+      toast({
+        title: "Delete Failed",
+        description: "Failed to delete shop. Please try again.",
+        variant: "destructive",
+      })
+    }
+  }
+
+  // Create new shop
+  const handleNewShop = () => {
+    setShopTitle("New Shop")
+    setOwnerName("Shop Owner")
+    setItems([])
+    setTheme("parchment")
+    setCurrentShopId(null)
+    setSelectedCommonCategory("")
+
+    toast({
+      title: "New Shop",
+      description: "Started creating a new shop.",
+    })
+  }
+
   // Add new item
   const addItem = () => {
     if (newItem.name.trim() === "" || newItem.price <= 0) return
@@ -459,6 +607,98 @@ export default function ShopCreator() {
           <div className="flex items-center space-x-4">
             <ThemeToggle />
             <PrintButton onPrint={handlePrint} disabled={items.length === 0} />
+
+            {/* Shop Management Buttons */}
+            {user && isConfigured && (
+              <>
+                <Button
+                  onClick={handleNewShop}
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center space-x-2 button-3d bg-transparent"
+                >
+                  <PlusCircle className="w-4 h-4" />
+                  <span>New</span>
+                </Button>
+
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex items-center space-x-2 button-3d bg-transparent"
+                      disabled={loadingShops}
+                    >
+                      <FolderOpen className="w-4 h-4" />
+                      <span>Load</span>
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="card-3d max-w-2xl">
+                    <DialogHeader>
+                      <DialogTitle className="font-fantasy">Load Saved Shop</DialogTitle>
+                      <DialogDescription>Choose a shop to load from your saved collection.</DialogDescription>
+                    </DialogHeader>
+                    <div className="max-h-96 overflow-y-auto">
+                      {loadingShops ? (
+                        <div className="flex items-center justify-center py-8">
+                          <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                        </div>
+                      ) : savedShops.length === 0 ? (
+                        <p className="text-center py-8 text-muted-foreground">No saved shops found.</p>
+                      ) : (
+                        <div className="space-y-2">
+                          {savedShops.map((shop) => (
+                            <div
+                              key={shop.id}
+                              className="flex items-center justify-between p-3 border rounded-lg hover:bg-accent/50 transition-colors"
+                            >
+                              <div className="flex-1">
+                                <h4 className="font-medium text-foreground">{shop.title}</h4>
+                                <p className="text-sm text-muted-foreground">
+                                  Owner: {shop.owner} • {shop.items.length} items •{" "}
+                                  {themes.find((t) => t.id === shop.theme)?.name} theme
+                                </p>
+                                <p className="text-xs text-muted-foreground">
+                                  Updated: {shop.updatedAt.toLocaleDateString()}
+                                </p>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <Button
+                                  size="sm"
+                                  onClick={() => handleLoadShop(shop)}
+                                  className="button-3d text-primary-foreground"
+                                >
+                                  Load
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => handleDeleteShop(shop.id!, shop.title)}
+                                  className="text-destructive hover:text-destructive-foreground hover:bg-destructive/20"
+                                >
+                                  <Trash className="w-4 h-4" />
+                                </Button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </DialogContent>
+                </Dialog>
+
+                <Button
+                  onClick={handleSaveShop}
+                  size="sm"
+                  disabled={savingShop}
+                  className="flex items-center space-x-2 button-3d text-primary-foreground"
+                >
+                  <Save className="w-4 h-4" />
+                  <span>{savingShop ? "Saving..." : currentShopId ? "Update" : "Save"}</span>
+                </Button>
+              </>
+            )}
+
             <div className="flex items-center space-x-2 px-3 py-2 rounded-lg card-3d">
               {user?.photoURL ? (
                 <img
