@@ -94,11 +94,11 @@ jobs:
           .
         
         # Tag the images with the ACR server
-        # docker tag dungeon-shopkeep:${{ github.sha }} ${{ steps.acr-login-server-info.outputs.server }}/dungeon-shopkeep:${{ github.sha }}
-        docker tag dungeon-shopkeep:latest ${{ steps.acr-login-server-info.outputs.server }}/dungeon-shopkeep:latest        
+        docker tag dungeon-shopkeep:${{ github.sha }} houseofburt.azurecr.io/dungeon-shopkeep:${{ github.sha }}
+        docker tag dungeon-shopkeep:latest houseofburt.azurecr.io/dungeon-shopkeep:latest        
         # Push the images to ACR
-        # docker push ${{ steps.acr-login-server-info.outputs.server }}/dungeon-shopkeep:${{ github.sha }}
-        docker push ${{ steps.acr-login-server-info.outputs.server }}/dungeon-shopkeep:latest
+        docker push houseofburt.azurecr.io/dungeon-shopkeep:${{ github.sha }}
+        docker push houseofburt.azurecr.io/dungeon-shopkeep:latest
 
     - name: Create Container Apps Environment (if not exists)
       run: |
@@ -129,7 +129,7 @@ jobs:
           az containerapp update \
             --name ${{ vars.AZURE_CONTAINER_APP_NAME }} \
             --resource-group ${{ vars.AZURE_RESOURCE_GROUP }} \
-            --image ${{ steps.acr-login-server-info.outputs.server }}/dungeon-shopkeep:${{ github.sha }} \
+            --image houseofburt.azurecr.io/dungeon-shopkeep:${{ github.sha }} \
             --set-env-vars \
               NODE_ENV=production \
               NEXT_PUBLIC_FIREBASE_API_KEY="${{ secrets.NEXT_PUBLIC_FIREBASE_API_KEY }}" \
@@ -144,10 +144,10 @@ jobs:
             --name ${{ vars.AZURE_CONTAINER_APP_NAME }} \
             --resource-group ${{ vars.AZURE_RESOURCE_GROUP }} \
             --environment ${{ vars.AZURE_ENVIRONMENT_NAME }} \
-            --image ${{ steps.acr-login-server-info.outputs.server }}/dungeon-shopkeep:${{ github.sha }} \
+            --image houseofburt.azurecr.io/dungeon-shopkeep:${{ github.sha }} \
             --target-port 3000 \
             --ingress external \
-            --registry-server ${{ steps.acr-login-server-info.outputs.server }} \
+            --registry-server houseofburt.azurecr.io \
             --registry-username ${{ steps.acr-credentials.outputs.acr-username }} \
             --registry-password ${{ steps.acr-credentials.outputs.acr-password }} \
             --cpu 0.5 \
@@ -174,4 +174,4 @@ jobs:
       run: |
         echo "🚀 Deployment completed successfully!"
         echo "📱 App URL: ${{ steps.get-url.outputs.app-url }}"
-        echo "🐳 Image: ${{ steps.acr-login-server-info.outputs.server }}/dungeon-shopkeep:${{ github.sha }}"
+        echo "🐳 Image: houseofburt.azurecr.io/dungeon-shopkeep:${{ github.sha }}"
