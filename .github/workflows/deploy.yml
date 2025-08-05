@@ -16,6 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: production
+      
     
     steps:
     - name: Checkout code
@@ -65,18 +66,40 @@ jobs:
           --sku Basic \
           --admin-enabled true || true
 
+    - name: Get ACR login server
+      id: acr-login-server
+      run: |
+        ACR_LOGIN_SERVER=$(az acr show --name ${{ vars.AZURE_CONTAINER_REGISTRY }} --resource-group ${{ vars.AZURE_RESOURCE_GROUP }} --query loginServer --output tsv)
+        echo "acr-login-server=$ACR_LOGIN_SERVER" >> $GITHUB_OUTPUT
+
+    - name: Log in to Azure Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ steps.acr-login-server-info.outputs.server }}
+        username: ${{ steps.acr-credentials.outputs.username }}
+        password: ${{ steps.acr-credentials.outputs.password }}
+
     - name: Build and push Docker image
       run: |
-        az acr build --registry ${{ vars.AZURE_CONTAINER_REGISTRY }} \
-          --image dungeon-shopkeep:${{ github.sha }} \
-          --image dungeon-shopkeep:latest \
+        # Build the Docker image
+        docker build \
           --build-arg NEXT_PUBLIC_FIREBASE_API_KEY="${{ secrets.NEXT_PUBLIC_FIREBASE_API_KEY }}" \
           --build-arg NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN="${{ secrets.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN }}" \
           --build-arg NEXT_PUBLIC_FIREBASE_PROJECT_ID="${{ secrets.NEXT_PUBLIC_FIREBASE_PROJECT_ID }}" \
           --build-arg NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET="${{ secrets.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET }}" \
           --build-arg NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID="${{ secrets.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID }}" \
           --build-arg NEXT_PUBLIC_FIREBASE_APP_ID="${{ secrets.NEXT_PUBLIC_FIREBASE_APP_ID }}" \
+          -t dungeon-shopkeep:${{ github.sha }} \
+          -t dungeon-shopkeep:latest \
           .
+        
+        # Tag the images with the ACR server
+        docker tag dungeon-shopkeep:${{ github.sha }} ${{ steps.acr-login-server-info.outputs.server }}/dungeon-shopkeep:${{ github.sha }}
+        docker tag dungeon-shopkeep:latest ${{ steps.acr-login-server-info.outputs.server }}/dungeon-shopkeep:latest
+        
+        # Push the images to ACR
+        docker push ${{ steps.acr-login-server-info.outputs.server }}/dungeon-shopkeep:${{ github.sha }}
+        docker push ${{ steps.acr-login-server-info.outputs.server }}/dungeon-shopkeep:latest
 
     - name: Create Container Apps Environment (if not exists)
       run: |
@@ -86,18 +109,18 @@ jobs:
           --location eastus || true
 
     - name: Get ACR login server
-      id: acr-login-server
+      id: acr-login-server-info
       run: |
         ACR_LOGIN_SERVER=$(az acr show --name ${{ vars.AZURE_CONTAINER_REGISTRY }} --resource-group ${{ vars.AZURE_RESOURCE_GROUP }} --query loginServer --output tsv)
-        echo "acr-login-server=$ACR_LOGIN_SERVER" >> $GITHUB_OUTPUT
+        echo "server=$ACR_LOGIN_SERVER" >> $GITHUB_OUTPUT
 
     - name: Get ACR credentials
       id: acr-credentials
       run: |
         ACR_USERNAME=$(az acr credential show --name ${{ vars.AZURE_CONTAINER_REGISTRY }} --query username --output tsv)
         ACR_PASSWORD=$(az acr credential show --name ${{ vars.AZURE_CONTAINER_REGISTRY }} --query passwords[0].value --output tsv)
-        echo "acr-username=$ACR_USERNAME" >> $GITHUB_OUTPUT
-        echo "acr-password=$ACR_PASSWORD" >> $GITHUB_OUTPUT
+        echo "username=$ACR_USERNAME" >> $GITHUB_OUTPUT
+        echo "password=$ACR_PASSWORD" >> $GITHUB_OUTPUT
 
     - name: Deploy Container App (Create or Update)
       run: |
