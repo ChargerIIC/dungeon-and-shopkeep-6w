@@ -1,6 +1,6 @@
 "use client"
 import { useState, useEffect } from "react"
-import { PlusCircle, Trash2, LogOut, User, AlertCircle, Package2, Save, FolderOpen, Trash } from "lucide-react"
+import { PlusCircle, Trash2, LogOut, User, AlertCircle, Package2, Save, FolderOpen, Trash, Currency } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
@@ -22,14 +22,16 @@ import { PrintButton } from "@/components/print-button"
 import { ShopDisplay } from "@/components/shop-display"
 import { useAuth } from "@/components/auth-provider"
 import { signOutUser, saveShop, updateShop, getUserShops, deleteShop, type Shop } from "@/lib/firebase"
+import { openPrintWindow } from "@/lib/print-utils"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { toast } from "@/hooks/use-toast"
+import { commonItems } from "@/app/creator/commonItems"
 
 // Item categories
 const categories = ["Weapon", "MartialWeapon", "Armor", "Potions", "Gear", "Scroll", "Misc"]
 // Currency types
-const currencies = ["GP", "SP", "CP", "Credits", "Coins"]
+const currencies = ["GP", "SP", "CP"]
 // Theme options
 const themes = [
   { id: "parchment", name: "Parchment" },
@@ -40,113 +42,14 @@ const themes = [
 ]
 
 // Pre-configured common items by category
-const commonItems = {
-  Weapon: [
-    { name: "Club", price: 1, currency: "SP" },
-    { name: "Dagger", price: 2, currency: "GP" },
-    { name: "Greatclub", price: 2, currency: "SP" },
-    { name: "Handaxe", price: 5, currency: "GP" },
-    { name: "Javelin", price: 5, currency: "SP" },
-    { name: "Light Hammer", price: 2, currency: "GP" },
-    { name: "Mace", price: 5, currency: "GP" },
-    { name: "Quarterstaff", price: 2, currency: "SP" },
-    { name: "Sickle", price: 1, currency: "GP" },
-    { name: "Spear", price: 1, currency: "GP" },
-    { name: "Light Crossbow", price: 25, currency: "GP" },
-    { name: "Dart", price: 5, currency: "CP" },
-    { name: "Shortbow", price: 25, currency: "GP" },
-    { name: "Sling", price: 1, currency: "SP" },
-  ],
-  MartialWeapon: [
-    { name: "Battleaxe", price: 10, currency: "GP" },
-    { name: "Flail", price: 10, currency: "GP" },
-    { name: "Glaive", price: 20, currency: "GP" },
-    { name: "Greataxe", price: 30, currency: "GP" },
-    { name: "Greatsword", price: 50, currency: "GP" },
-    { name: "Halberd", price: 20, currency: "GP" },
-    { name: "Lance", price: 10, currency: "GP" },
-    { name: "Longsword", price: 15, currency: "GP" },
-    { name: "Maul", price: 10, currency: "GP" },
-    { name: "Morningstar", price: 15, currency: "GP" },
-    { name: "Pike", price: 5, currency: "GP" },
-    { name: "Rapier", price: 25, currency: "GP" },
-    { name: "Scimitar", price: 25, currency: "GP" },
-    { name: "Shortsword", price: 10, currency: "GP" },
-    { name: "Trident", price: 5, currency: "GP" },
-    { name: "War Pick", price: 5, currency: "GP" },
-    { name: "Warhammer", price: 15, currency: "GP" },
-    { name: "Whip", price: 2, currency: "GP" },
-    { name: "Blow Gun", price: 10, currency: "GP" },
-    { name: "Hand Crossbow", price: 75, currency: "GP" },
-    { name: "Heavy Crossbow", price: 50, currency: "GP" },
-    { name: "Long Bow", price: 50, currency: "GP" },
-    { name: "Net", price: 1, currency: "GP" },
-  ],
-  Armor: [
-    { name: "Padded Armor", price: 5, currency: "GP" },
-    { name: "Leather Armor", price: 10, currency: "GP" },
-    { name: "Studded Leather", price: 45, currency: "GP" },
-    { name: "Hide Armor", price: 10, currency: "GP" },
-    { name: "Chain Shirt", price: 50, currency: "GP" },
-    { name: "Scale Mail", price: 50, currency: "GP" },
-    { name: "Breastplate", price: 400, currency: "GP" },
-    { name: "Half Plate", price: 750, currency: "GP" },
-    { name: "Ring Mail", price: 30, currency: "GP" },
-    { name: "Chain Mail", price: 75, currency: "GP" },
-    { name: "Splint Armor", price: 200, currency: "GP" },
-    { name: "Plate Armor", price: 1500, currency: "GP" },
-    { name: "Shield", price: 10, currency: "GP" },
-    { name: "Buckler", price: 5, currency: "GP" },
-    { name: "Tower Shield", price: 30, currency: "GP" },
-  ],
-  Potions: [
-    { name: "Potion of Healing", price: 50, currency: "GP" },
-    { name: "Greater Healing Potion", price: 200, currency: "GP" },
-    { name: "Mana Potion", price: 100, currency: "GP" },
-    { name: "Antidote", price: 50, currency: "GP" },
-    { name: "Potion of Strength", price: 300, currency: "GP" },
-    { name: "Potion of Speed", price: 400, currency: "GP" },
-    { name: "Potion of Invisibility", price: 500, currency: "GP" },
-    { name: "Stamina Potion", price: 75, currency: "GP" },
-    { name: "Night Vision Elixir", price: 150, currency: "GP" },
-    { name: "Fire Resistance Brew", price: 250, currency: "GP" },
-  ],
-  Gear: [
-    { name: "Backpack", price: 2, currency: "GP" },
-    { name: "Bedroll", price: 1, currency: "GP" },
-    { name: "Rope (50 ft)", price: 2, currency: "GP" },
-    { name: "Torch", price: 1, currency: "CP" },
-    { name: "Lantern", price: 5, currency: "GP" },
-    { name: "Oil Flask", price: 1, currency: "SP" },
-    { name: "Rations (1 day)", price: 2, currency: "SP" },
-    { name: "Waterskin", price: 2, currency: "GP" },
-    { name: "Thieves' Tools", price: 25, currency: "GP" },
-    { name: "Grappling Hook", price: 2, currency: "GP" },
-  ],
-  Scroll: [
-    { name: "Scroll of Fireball", price: 150, currency: "GP" },
-    { name: "Scroll of Healing", price: 75, currency: "GP" },
-    { name: "Scroll of Magic Missile", price: 50, currency: "GP" },
-    { name: "Scroll of Shield", price: 25, currency: "GP" },
-    { name: "Scroll of Identify", price: 100, currency: "GP" },
-    { name: "Scroll of Light", price: 10, currency: "GP" },
-    { name: "Scroll of Teleport", price: 500, currency: "GP" },
-    { name: "Scroll of Dispel Magic", price: 300, currency: "GP" },
-    { name: "Scroll of Invisibility", price: 200, currency: "GP" },
-    { name: "Scroll of Lightning Bolt", price: 175, currency: "GP" },
-  ],
-  Misc: [
-    { name: "Gemstone", price: 100, currency: "GP" },
-    { name: "Silver Ring", price: 25, currency: "GP" },
-    { name: "Gold Necklace", price: 150, currency: "GP" },
-    { name: "Ancient Coin", price: 50, currency: "GP" },
-    { name: "Crystal Orb", price: 300, currency: "GP" },
-    { name: "Mysterious Key", price: 10, currency: "GP" },
-    { name: "Spell Component Pouch", price: 25, currency: "GP" },
-    { name: "Holy Symbol", price: 5, currency: "GP" },
-    { name: "Magnifying Glass", price: 100, currency: "GP" },
-    { name: "Music Box", price: 75, currency: "GP" },
-  ],
+type CommonItem = {
+  name: string
+  price: number
+  currency: string
+}
+
+export type CommonItemsByCategory = {
+  [key in (typeof categories)[number]]: CommonItem[]
 }
 
 // Item type definition
@@ -224,13 +127,6 @@ export default function ShopCreator() {
 
   // Handle print functionality
   const handlePrint = () => {
-    // Create a new window for printing
-    const printWindow = window.open("", "_blank")
-    if (!printWindow) {
-      alert("Please allow pop-ups to enable printing")
-      return
-    }
-
     // Get the shop display content
     const shopDisplayElement = document.getElementById("shop-display-print")
     if (!shopDisplayElement) {
@@ -238,184 +134,8 @@ export default function ShopCreator() {
       return
     }
 
-    // Create the print document
-    const printContent = `
-      <!DOCTYPE html>
-      <html lang="en">
-        <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Print - ${shopTitle}</title>
-          <style>
-            /* Import Tailwind CSS for print */
-            @import url('https://cdn.tailwindcss.com/3.4.0');
-            
-            /* Print-specific styles */
-            @media print {
-              @page {
-                margin: 0.75in;
-                size: letter;
-              }
-              
-              body {
-                font-family: 'Georgia', 'Times New Roman', serif;
-                line-height: 1.4;
-                color: #000;
-                background: white !important;
-              }
-              
-              * {
-                -webkit-print-color-adjust: exact !important;
-                color-adjust: exact !important;
-                print-color-adjust: exact !important;
-              }
-              
-              .print-hide {
-                display: none !important;
-              }
-              
-              .print-mode {
-                width: 100% !important;
-                max-width: none !important;
-                margin: 0 !important;
-                padding: 0 !important;
-              }
-              
-              /* Card styling for print */
-              [data-slot="card"] {
-                box-shadow: none !important;
-                border: 2px solid #666 !important;
-                border-radius: 8px !important;
-                background: white !important;
-                page-break-inside: avoid;
-              }
-              
-              /* Header styling */
-              [data-slot="card-header"] {
-                border-bottom: 2px solid #666 !important;
-                padding: 1.5rem !important;
-                background: #f8f9fa !important;
-              }
-              
-              /* Content styling */
-              [data-slot="card-content"] {
-                padding: 2rem !important;
-                background: white !important;
-              }
-              
-              /* Typography */
-              .font-fantasy {
-                font-family: 'Georgia', 'Times New Roman', serif !important;
-                font-weight: bold !important;
-              }
-              
-              /* Category sections */
-              .print\\:break-inside-avoid {
-                break-inside: avoid;
-                page-break-inside: avoid;
-              }
-              
-              /* Item list styling */
-              li {
-                border-bottom: 1px dotted #999 !important;
-                padding: 0.5rem 0.75rem !important;
-                margin: 0.25rem 0 !important;
-                background: rgba(0,0,0,0.02) !important;
-                display: flex !important;
-                justify-content: space-between !important;
-                align-items: baseline !important;
-                min-height: 1.75rem !important;
-                line-height: 1.6 !important;
-              }
-              
-              /* Item spacing improvements */
-              .print\\:item-spacing {
-                display: flex !important;
-                justify-content: space-between !important;
-                align-items: baseline !important;
-                min-height: 1.75rem !important;
-                padding-left: 0.75rem !important;
-                padding-right: 0.75rem !important;
-              }
-              
-              .print\\:item-name {
-                padding-right: 3rem !important;
-                flex: 1 !important;
-                font-weight: 500 !important;
-              }
-              
-              .print\\:item-price {
-                white-space: nowrap !important;
-                padding-left: 1rem !important;
-                font-weight: 700 !important;
-                text-align: right !important;
-              }
-              
-              .print\\:line-spacing {
-                line-height: 1.6 !important;
-                margin-bottom: 0.25rem !important;
-              }
-              
-              /* Ensure icons print */
-              svg {
-                width: 16px !important;
-                height: 16px !important;
-                display: inline-block !important;
-              }
-              
-              /* Theme-specific print colors */
-              .print\\:text-amber-900 { color: #92400e !important; }
-              .print\\:text-amber-800 { color: #a16207 !important; }
-              .print\\:text-amber-950 { color: #451a03 !important; }
-              .print\\:text-stone-800 { color: #292524 !important; }
-              .print\\:text-purple-800 { color: #6b21a8 !important; }
-              .print\\:text-purple-900 { color: #581c87 !important; }
-              .print\\:text-emerald-800 { color: #065f46 !important; }
-              .print\\:text-emerald-900 { color: #064e3b !important; }
-              .print\\:text-red-700 { color: #b91c1c !important; }
-              
-              .print\\:bg-amber-100\\/30 { background-color: rgba(254, 243, 199, 0.3) !important; }
-              .print\\:bg-stone-200 { background-color: #e7e5e4 !important; }
-              .print\\:bg-purple-100 { background-color: #f3e8ff !important; }
-              .print\\:bg-emerald-100 { background-color: #dcfce7 !important; }
-              
-              .print\\:border-amber-900\\/40 { border-color: rgba(120, 53, 15, 0.4) !important; }
-              .print\\:border-stone-600 { border-color: #57534e !important; }
-              .print\\:border-purple-700 { border-color: #7c3aed !important; }
-              .print\\:border-emerald-700 { border-color: #047857 !important; }
-              .print\\:border-red-900\\/50 { border-color: rgba(127, 29, 29, 0.5) !important; }
-            }
-            
-            /* Base styles that work in both screen and print */
-            body {
-              margin: 0;
-              padding: 20px;
-              font-family: 'Georgia', 'Times New Roman', serif;
-            }
-            
-            .font-fantasy {
-              font-family: 'Georgia', 'Times New Roman', serif;
-              font-weight: bold;
-            }
-          </style>
-        </head>
-        <body>
-          ${shopDisplayElement.outerHTML}
-          <script>
-            window.onload = function() {
-              window.print();
-              window.onafterprint = function() {
-                window.close();
-              };
-            };
-          </script>
-        </body>
-      </html>
-    `
-
-    // Write content to print window and trigger print
-    printWindow.document.write(printContent)
-    printWindow.document.close()
+    // Use the print utility to open the print window
+    openPrintWindow(shopTitle, shopDisplayElement)
   }
 
   // Handle sign out
@@ -455,6 +175,7 @@ export default function ShopCreator() {
         owner: ownerName,
         items: items,
         theme: theme,
+        creatorId: user?.uid || "",
       }
 
       if (currentShopId) {
