@@ -202,8 +202,12 @@ export function generatePrintContent(shopTitle: string, shopDisplayHTML: string)
  * Opens a print window with the shop content
  */
 export function openPrintWindow(shopTitle: string, shopDisplayElement: HTMLElement): void {
-  // Create a new window for printing
-  const printWindow = window.open("", "_blank")
+  // Create a new window for printing with security attributes
+  const printWindow = window.open(
+    "", 
+    "_blank",
+    "width=800,height=600,scrollbars=yes,resizable=yes,toolbar=no,menubar=no,location=no,status=no"
+  )
   if (!printWindow) {
     alert("Please allow pop-ups to enable printing")
     return

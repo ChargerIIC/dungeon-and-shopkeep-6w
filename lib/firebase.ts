@@ -37,8 +37,9 @@ const isFirebaseConfigured = () => {
     requiredEnvVars.projectId !== "your-project-id"
   )
 }
-console.log(missingVars);
-if (missingVars.length > 0) {
+
+// Only log missing variables in development
+if (missingVars.length > 0 && process.env.NODE_ENV === 'development') {
   console.warn("Missing or invalid Firebase environment variables:", missingVars.join(", "))
   console.warn("Please check your .env.local file and ensure all Firebase environment variables are properly set.")
 }

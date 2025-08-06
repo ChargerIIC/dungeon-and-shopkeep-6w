@@ -23,6 +23,19 @@ import { ShopDisplay } from "@/components/shop-display"
 import { useAuth } from "@/components/auth-provider"
 import { signOutUser, saveShop, updateShop, getUserShops, deleteShop, type Shop } from "@/lib/firebase"
 import { openPrintWindow } from "@/lib/print-utils"
+import { 
+  validateShopTitle, 
+  validateOwnerName, 
+  validateItemName, 
+  validateItemPrice, 
+  validateItemCategory, 
+  validateItemCurrency,
+  validateTheme,
+  validateShop,
+  sanitizeString 
+} from "@/lib/validation"
+import { useFormValidation } from "@/hooks/use-validation"
+import { ValidatedInput } from "@/components/ui/validated-input"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { toast } from "@/hooks/use-toast"
@@ -90,6 +103,55 @@ export default function ShopCreator() {
 
   // Selected theme state
   const [theme, setTheme] = useState("parchment")
+
+  // Form validation setup
+  const shopFormValidation = useFormValidation(
+    {
+      shopTitle: validateShopTitle,
+      ownerName: validateOwnerName,
+      theme: validateTheme,
+    },
+    {
+      shopTitle,
+      ownerName,
+      theme,
+    }
+  )
+
+  const newItemValidation = useFormValidation(
+    {
+      name: validateItemName,
+      category: validateItemCategory,
+      price: validateItemPrice,
+      currency: validateItemCurrency,
+    },
+    {
+      name: newItem.name,
+      category: newItem.category,
+      price: newItem.price,
+      currency: newItem.currency,
+    }
+  )
+
+  // Update form validation when state changes
+  useEffect(() => {
+    shopFormValidation.updateField('shopTitle', shopTitle)
+  }, [shopTitle])
+
+  useEffect(() => {
+    shopFormValidation.updateField('ownerName', ownerName)
+  }, [ownerName])
+
+  useEffect(() => {
+    shopFormValidation.updateField('theme', theme)
+  }, [theme])
+
+  useEffect(() => {
+    newItemValidation.updateField('name', newItem.name)
+    newItemValidation.updateField('category', newItem.category)
+    newItemValidation.updateField('price', newItem.price)
+    newItemValidation.updateField('currency', newItem.currency)
+  }, [newItem])
 
   // Selected category for common items
   const [selectedCommonCategory, setSelectedCommonCategory] = useState<string>("")
@@ -159,10 +221,36 @@ export default function ShopCreator() {
       return
     }
 
-    if (!shopTitle.trim()) {
+    // Validate all shop form fields
+    const shopValidationResult = shopFormValidation.validateAllFields()
+    
+    if (!shopValidationResult.isValid) {
       toast({
-        title: "Shop Title Required",
-        description: "Please enter a shop title before saving.",
+        title: "Validation Error",
+        description: `Please fix the following errors: ${shopValidationResult.errors.join(', ')}`,
+        variant: "destructive",
+      })
+      return
+    }
+
+    // Validate the complete shop object
+    const shopData = {
+      title: sanitizeString(shopTitle),
+      owner: sanitizeString(ownerName),
+      items: items.map(item => ({
+        ...item,
+        name: sanitizeString(item.name)
+      })),
+      theme: theme,
+      creatorId: user?.uid || "",
+    }
+
+    const completeShopValidation = validateShop(shopData)
+    
+    if (!completeShopValidation.isValid) {
+      toast({
+        title: "Shop Validation Failed",
+        description: `Please fix the following issues: ${completeShopValidation.errors.join(', ')}`,
         variant: "destructive",
       })
       return
@@ -170,20 +258,12 @@ export default function ShopCreator() {
 
     setSavingShop(true)
     try {
-      const shopData = {
-        title: shopTitle,
-        owner: ownerName,
-        items: items,
-        theme: theme,
-        creatorId: user?.uid || "",
-      }
-
       if (currentShopId) {
         // Update existing shop
         await updateShop(currentShopId, shopData)
         toast({
           title: "Shop Updated",
-          description: `"${shopTitle}" has been updated successfully.`,
+          description: `"${sanitizeString(shopTitle)}" has been updated successfully.`,
         })
       } else {
         // Save new shop
@@ -269,11 +349,46 @@ export default function ShopCreator() {
 
   // Add new item
   const addItem = () => {
-    if (newItem.name.trim() === "" || newItem.price <= 0) return
+    // Validate all new item fields
+    const validationResult = newItemValidation.validateAllFields()
+    
+    if (!validationResult.isValid) {
+      toast({
+        title: "Validation Error",
+        description: "Please fix the errors before adding the item.",
+        variant: "destructive",
+      })
+      return
+    }
+
+    // Additional business logic validation
+    if (newItem.name.trim() === "" || newItem.price <= 0) {
+      toast({
+        title: "Invalid Item",
+        description: "Item name is required and price must be greater than 0.",
+        variant: "destructive",
+      })
+      return
+    }
+
+    // Check for duplicate item names
+    const isDuplicate = items.some(item => 
+      item.name.toLowerCase().trim() === newItem.name.toLowerCase().trim()
+    )
+    
+    if (isDuplicate) {
+      toast({
+        title: "Duplicate Item",
+        description: "An item with this name already exists.",
+        variant: "destructive",
+      })
+      return
+    }
 
     const item = {
       ...newItem,
       id: Date.now().toString(),
+      name: sanitizeString(newItem.name),
     }
 
     setItems([...items, item])
@@ -283,6 +398,19 @@ export default function ShopCreator() {
       category: "Weapon",
       price: 0,
       currency: "GP",
+    })
+    
+    // Reset validation for new item form
+    newItemValidation.resetForm({
+      name: "",
+      category: "Weapon",
+      price: 0,
+      currency: "GP",
+    })
+
+    toast({
+      title: "Item Added",
+      description: `${item.name} has been added to your shop.`,
     })
   }
 
@@ -525,30 +653,26 @@ export default function ShopCreator() {
                 <div className="space-y-6">
                   {/* Shop Details */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="shop-title" className="text-foreground font-medium">
-                        Shop Title
-                      </Label>
-                      <Input
-                        id="shop-title"
-                        value={shopTitle}
-                        onChange={(e) => setShopTitle(e.target.value)}
-                        placeholder="Enter shop name"
-                        className="input-3d"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="owner-name" className="text-foreground font-medium">
-                        Shop Owner
-                      </Label>
-                      <Input
-                        id="owner-name"
-                        value={ownerName}
-                        onChange={(e) => setOwnerName(e.target.value)}
-                        placeholder="Enter owner name"
-                        className="input-3d"
-                      />
-                    </div>
+                    <ValidatedInput
+                      id="shop-title"
+                      label="Shop Title"
+                      onChange={(value) => setShopTitle(sanitizeString(value))}
+                      onBlur={() => shopFormValidation.markFieldAsTouched('shopTitle')}
+                      placeholder="Enter shop name"
+                      required
+                      {...shopFormValidation.getFieldState('shopTitle')}
+                      helperText="Enter a creative name for your shop (1-100 characters)"
+                    />
+                    <ValidatedInput
+                      id="owner-name"
+                      label="Shop Owner"
+                      onChange={(value) => setOwnerName(sanitizeString(value))}
+                      onBlur={() => shopFormValidation.markFieldAsTouched('ownerName')}
+                      placeholder="Enter owner name"
+                      required
+                      {...shopFormValidation.getFieldState('ownerName')}
+                      helperText="Enter the name of the shop owner (1-100 characters)"
+                    />
                   </div>
 
                   {/* Add New Item */}
@@ -580,16 +704,19 @@ export default function ShopCreator() {
 
                     {/* Manual Item Entry Row */}
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-2 items-end">
-                      <div className="space-y-2 md:col-span-2">
-                        <Label htmlFor="item-name" className="text-foreground font-medium">
-                          Item Name
-                        </Label>
-                        <Input
+                      <div className="md:col-span-2">
+                        <ValidatedInput
                           id="item-name"
-                          value={newItem.name}
-                          onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
+                          label="Item Name"
+                          value={String(newItemValidation.getFieldState('name').value || '')}
+                          onChange={(value) => setNewItem({ ...newItem, name: sanitizeString(value) })}
+                          onBlur={() => newItemValidation.markFieldAsTouched('name')}
                           placeholder="Enter item name"
-                          className="input-3d"
+                          required
+                          isValid={newItemValidation.getFieldState('name').isValid}
+                          errors={newItemValidation.getFieldState('name').errors}
+                          hasBeenTouched={newItemValidation.getFieldState('name').hasBeenTouched}
+                          helperText="Enter a unique item name (1-50 characters)"
                         />
                       </div>
                       <div className="space-y-2">
