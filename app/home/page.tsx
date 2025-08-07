@@ -17,22 +17,22 @@ export default function HomePage() {
     },
     {
       id: "character-builder",
-      title: "Character Forge",
-      description: "Build and manage detailed character sheets for multiple RPG systems",
-      icon: Shield,
+      title: "Rusty Stat Generation",
+      description: "Lets you roll and arrange stats for Rusty's 4d6 dice generation system",
+      icon: Dice6,
       color: "emerald",
       demoLink: "#",
-      features: ["Multiple Systems", "Stat Tracking", "Equipment Manager"],
+      features: ["Multiple Systems", "Stat Tracking", "Select Dice to Drop"],
       comingSoon: true
     },
     {
-      id: "campaign-manager",
-      title: "Campaign Chronicles",
-      description: "Organize your campaigns, track sessions, and manage player information",
+      id: "npc-cards",
+      title: "NPC Cards",
+      description: "Organize your NPCs and print summary cards that you can refernce as part of your DM deck or behind a Gamemaster screen",
       icon: BookOpen,
       color: "purple",
       demoLink: "#",
-      features: ["Session Notes", "Player Tracking", "Story Arcs"],
+      features: ["NPC Stats", "Inventory Customization", "Vocal Notes"],
       comingSoon: true
     },
     {
@@ -89,7 +89,7 @@ export default function HomePage() {
               <Dice6 className="h-8 w-8 text-primary" />
               <Link href="/home">
                 <h1 className="text-2xl font-bold text-foreground hover:text-primary transition-colors cursor-pointer font-fantasy">
-                  Tabletop Toolkit
+                  House of Burt's Tabletop Toolkit
                 </h1>
               </Link>
             </div>
@@ -106,9 +106,9 @@ export default function HomePage() {
       {/* Hero Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 paper-texture">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-5xl font-bold text-foreground mb-6 font-fantasy">Your Complete Tabletop Gaming Hub</h2>
+          <h2 className="text-5xl font-bold text-foreground mb-6 font-fantasy">Our Tabletop Gaming Hub</h2>
           <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Everything you need to enhance your tabletop RPG experience. From shop creation to character management, 
+            Several things you can use to enhance your tabletop RPG experience. From shop creation to npc management, 
             campaign organization to world building - all in one powerful toolkit.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -260,7 +260,7 @@ export default function HomePage() {
               <span className="text-xl font-bold font-fantasy">Tabletop Toolkit</span>
             </div>
             <div className="text-muted-foreground text-sm">
-              © 2024 Tabletop Toolkit. Built for the tabletop gaming community.
+              © 2025 House Of Burt. Built for the tabletop gaming community.
             </div>
           </div>
         </div>
