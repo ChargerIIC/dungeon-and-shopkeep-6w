@@ -30,18 +30,18 @@ Enhanced the inline print styles in the `handlePrint` function to include:
 ## How It Works
 
 ### Before:
-```
+\`\`\`
 Item Name                    Price
 Another Item                 Cost
-```
+\`\`\`
 Items were justified to opposite ends with minimal spacing control.
 
 ### After:
-```
+\`\`\`
 Item Name          15 GP
 Another Item       25 SP
 Very Long Item Name That Extends    100 GP
-```
+\`\`\`
 Items now have:
 - Consistent baseline alignment
 - Proper spacing between name and price

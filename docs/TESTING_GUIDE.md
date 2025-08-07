@@ -22,9 +22,9 @@ This guide explains the testing setup and best practices for testing React compo
 
 Install the testing dependencies:
 
-```bash
+\`\`\`bash
 npm install --save-dev @testing-library/react @testing-library/jest-dom @testing-library/user-event @types/jest jest jest-environment-jsdom
-```
+\`\`\`
 
 ## Configuration Files
 
@@ -38,7 +38,7 @@ The testing setup includes these configuration files:
 
 ### Test File Structure
 
-```typescript
+\`\`\`typescript
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ComponentName } from '@/components/component-name'
@@ -49,20 +49,20 @@ describe('ComponentName', () => {
     expect(screen.getByText('Expected Text')).toBeInTheDocument()
   })
 })
-```
+\`\`\`
 
 ### Testing Patterns
 
 #### 1. Component Rendering
-```typescript
+\`\`\`typescript
 it('renders component with correct text', () => {
   render(<PrintButton onPrint={mockFn} />)
   expect(screen.getByText('Print Shop')).toBeInTheDocument()
 })
-```
+\`\`\`
 
 #### 2. User Interactions
-```typescript
+\`\`\`typescript
 it('calls function when clicked', async () => {
   const user = userEvent.setup()
   const mockFn = jest.fn()
@@ -72,10 +72,10 @@ it('calls function when clicked', async () => {
   
   expect(mockFn).toHaveBeenCalledTimes(1)
 })
-```
+\`\`\`
 
 #### 3. Form Interactions
-```typescript
+\`\`\`typescript
 it('updates input value', async () => {
   const user = userEvent.setup()
   render(<ShopCreator />)
@@ -85,39 +85,39 @@ it('updates input value', async () => {
   
   expect(input).toHaveValue('New Shop Name')
 })
-```
+\`\`\`
 
 #### 4. Conditional Rendering
-```typescript
+\`\`\`typescript
 it('shows empty state when no items', () => {
   render(<ShopDisplay items={[]} />)
   expect(screen.getByText(/No items available/)).toBeInTheDocument()
 })
-```
+\`\`\`
 
 #### 5. Props Testing
-```typescript
+\`\`\`typescript
 it('applies disabled state correctly', () => {
   render(<PrintButton onPrint={mockFn} disabled={true} />)
   expect(screen.getByRole('button')).toBeDisabled()
 })
-```
+\`\`\`
 
 ## Testing Firebase Integration
 
 ### Mocking Firebase
 Firebase is automatically mocked in `jest.setup.js`:
 
-```typescript
+\`\`\`typescript
 jest.mock('@/lib/firebase', () => ({
   signInWithGoogle: jest.fn(),
   saveShop: jest.fn(),
   // ... other Firebase functions
 }))
-```
+\`\`\`
 
 ### Testing Firebase-dependent Components
-```typescript
+\`\`\`typescript
 import { saveShop } from '@/lib/firebase'
 
 it('saves shop when save button clicked', async () => {
@@ -126,12 +126,12 @@ it('saves shop when save button clicked', async () => {
   
   // Test implementation
 })
-```
+\`\`\`
 
 ## Common Testing Scenarios
 
 ### 1. Testing Theme Changes
-```typescript
+\`\`\`typescript
 it('applies theme classes correctly', () => {
   const { rerender } = render(<ShopDisplay theme="parchment" />)
   // Assert parchment theme classes
@@ -139,10 +139,10 @@ it('applies theme classes correctly', () => {
   rerender(<ShopDisplay theme="tavern" />)
   // Assert tavern theme classes
 })
-```
+\`\`\`
 
 ### 2. Testing Error States
-```typescript
+\`\`\`typescript
 it('displays error message on save failure', async () => {
   const mockSaveShop = saveShop as jest.MockedFunction<typeof saveShop>
   mockSaveShop.mockRejectedValue(new Error('Save failed'))
@@ -150,10 +150,10 @@ it('displays error message on save failure', async () => {
   // Trigger save action
   // Assert error message is displayed
 })
-```
+\`\`\`
 
 ### 3. Testing Loading States
-```typescript
+\`\`\`typescript
 it('shows loading spinner during save', async () => {
   const mockSaveShop = saveShop as jest.MockedFunction<typeof saveShop>
   mockSaveShop.mockImplementation(() => new Promise(resolve => setTimeout(resolve, 100)))
@@ -161,22 +161,22 @@ it('shows loading spinner during save', async () => {
   // Trigger save action
   expect(screen.getByText('Saving...')).toBeInTheDocument()
 })
-```
+\`\`\`
 
 ### 4. Testing Authentication Flow
-```typescript
+\`\`\`typescript
 it('shows sign in prompt when not authenticated', () => {
   // Mock unauthenticated state
   render(<ShopCreator />)
   expect(screen.getByText('Please sign in')).toBeInTheDocument()
 })
-```
+\`\`\`
 
 ## Running Tests
 
 ### Available Commands
 
-```bash
+\`\`\`bash
 # Run all tests once
 npm test
 
@@ -185,7 +185,7 @@ npm run test:watch
 
 # Run tests with coverage report
 npm run test:coverage
-```
+\`\`\`
 
 ### Test Coverage Goals
 
@@ -198,16 +198,16 @@ The configuration sets these coverage thresholds:
 ## Best Practices
 
 ### 1. Test User Behavior, Not Implementation
-```typescript
+\`\`\`typescript
 // ✅ Good - tests user behavior
 expect(screen.getByText('Shop saved!')).toBeInTheDocument()
 
 // ❌ Bad - tests implementation details
 expect(component.state.isSaved).toBe(true)
-```
+\`\`\`
 
 ### 2. Use Semantic Queries
-```typescript
+\`\`\`typescript
 // ✅ Good - accessible and semantic
 screen.getByRole('button', { name: /save shop/i })
 screen.getByLabelText('Shop Title')
@@ -215,27 +215,27 @@ screen.getByLabelText('Shop Title')
 // ❌ Bad - fragile and not accessible
 screen.getByClassName('save-button')
 screen.getByTestId('shop-title')
-```
+\`\`\`
 
 ### 3. Test Edge Cases
-```typescript
+\`\`\`typescript
 it('handles empty shop title gracefully', () => {
   render(<ShopDisplay shopTitle="" />)
   expect(screen.getByText('Unnamed Shop')).toBeInTheDocument()
 })
-```
+\`\`\`
 
 ### 4. Use Descriptive Test Names
-```typescript
+\`\`\`typescript
 // ✅ Good - clear and descriptive
 it('displays error message when save fails due to network error')
 
 // ❌ Bad - vague and unclear
 it('handles error')
-```
+\`\`\`
 
 ### 5. Group Related Tests
-```typescript
+\`\`\`typescript
 describe('ShopDisplay', () => {
   describe('when rendering items', () => {
     // Tests for item rendering
@@ -245,7 +245,7 @@ describe('ShopDisplay', () => {
     // Tests for empty state
   })
 })
-```
+\`\`\`
 
 ## Testing Specific Components
 
@@ -278,25 +278,25 @@ describe('ShopDisplay', () => {
 4. **Firebase mocks**: Verify mocks are properly configured in jest.setup.js
 
 ### Debugging Commands
-```typescript
+\`\`\`typescript
 // See what's rendered
 screen.debug()
 
 // Find elements by different queries
 screen.logTestingPlaygroundURL() // Interactive query builder
-```
+\`\`\`
 
 ## CI/CD Integration
 
 The tests can be integrated into your GitHub Actions workflow:
 
-```yaml
+\`\`\`yaml
 - name: Run tests
   run: npm test -- --coverage --watchAll=false
 
 - name: Upload coverage
   uses: codecov/codecov-action@v3
-```
+\`\`\`
 
 ## Next Steps
 

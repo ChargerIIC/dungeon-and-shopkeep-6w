@@ -49,17 +49,29 @@ export const VALIDATION_CONSTRAINTS = {
 } as const
 
 /**
- * Sanitizes a string by removing or escaping potentially dangerous characters
+ * Sanitizes a string for real-time input (less aggressive, preserves spaces during typing)
+ */
+export function sanitizeInputString(input: string): string {
+  return input
+    .replace(/[<>]/g, '') // Remove HTML brackets
+    .replace(/javascript:/gi, '') // Remove javascript: protocols
+    .replace(/on\w+=/gi, '') // Remove event handlers
+    .replace(/alert\s*$$[^)]*$$/gi, '') // Remove JavaScript alert commands
+    .slice(0, 1000) // Limit length as a safety measure
+}
+
+/**
+ * Sanitizes a string by removing or escaping potentially dangerous characters (for final processing)
  */
 export function sanitizeString(input: string): string {
-    return input
-        .trim()
-        .replace(/[<>]/g, '') // Remove HTML brackets
-        .replace(/javascript:/gi, '') // Remove javascript: protocols
-        .replace(/on\w+=/gi, '') // Remove event handlers
-        .replace(/alert\s*\([^)]*\)/gi, '') // Remove JavaScript alert commands
-        .trim() // Remove leading/trailing whitespace
-        .slice(0, 1000) // Limit length as a safety measure
+  return input
+    .trim()
+    .replace(/[<>]/g, '') // Remove HTML brackets
+    .replace(/javascript:/gi, '') // Remove javascript: protocols
+    .replace(/on\w+=/gi, '') // Remove event handlers
+    .replace(/alert\s*$$[^)]*$$/gi, '') // Remove JavaScript alert commands
+    .trim() // Remove leading/trailing whitespace
+    .slice(0, 1000) // Limit length as a safety measure
 }
 
 /**

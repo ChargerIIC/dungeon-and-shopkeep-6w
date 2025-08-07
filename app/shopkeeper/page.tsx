@@ -1,6 +1,6 @@
 "use client"
 import { useState, useEffect } from "react"
-import { PlusCircle, Trash2, LogOut, User, AlertCircle, Package2, Save, FolderOpen, Trash, Currency } from "lucide-react"
+import { PlusCircle, Trash2, LogOut, User, AlertCircle, Package2, Save, FolderOpen, Trash, Currency } from 'lucide-react'
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
@@ -32,14 +32,15 @@ import {
   validateItemCurrency,
   validateTheme,
   validateShop,
-  sanitizeString 
+  sanitizeString,
+  sanitizeInputString
 } from "@/lib/validation"
 import { useFormValidation } from "@/hooks/use-validation"
 import { ValidatedInput } from "@/components/ui/validated-input"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { toast } from "@/hooks/use-toast"
-import { commonItems } from "@/app/creator/commonItems"
+import { commonItems } from "@/app/shopkeeper/commonItems"
 
 // Item categories
 const categories = ["Weapon", "MartialWeapon", "Armor", "Potions", "Gear", "Scroll", "Misc"]
@@ -656,7 +657,7 @@ export default function ShopCreator() {
                     <ValidatedInput
                       id="shop-title"
                       label="Shop Title"
-                      onChange={(value) => setShopTitle(sanitizeString(value))}
+                      onChange={(value) => setShopTitle(sanitizeInputString(value))}
                       onBlur={() => shopFormValidation.markFieldAsTouched('shopTitle')}
                       placeholder="Enter shop name"
                       required
@@ -666,7 +667,7 @@ export default function ShopCreator() {
                     <ValidatedInput
                       id="owner-name"
                       label="Shop Owner"
-                      onChange={(value) => setOwnerName(sanitizeString(value))}
+                      onChange={(value) => setOwnerName(sanitizeInputString(value))}
                       onBlur={() => shopFormValidation.markFieldAsTouched('ownerName')}
                       placeholder="Enter owner name"
                       required
@@ -677,10 +678,8 @@ export default function ShopCreator() {
 
                   {/* Add New Item */}
                   <div className="border rounded-lg p-4 card-3d">
-                    <h3 className="font-medium mb-3 text-foreground font-fantasy">Add New Item</h3>
-
-                    {/* Add Common Items Button - Above manual entry */}
-                    <div className="mb-4 flex justify-start">
+                    <div className="flex justify-between items-center mb-4">
+                      <h3 className="font-medium text-foreground font-fantasy">Add New Item</h3>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button className="flex items-center gap-2 button-3d text-primary-foreground">
@@ -703,13 +702,13 @@ export default function ShopCreator() {
                     </div>
 
                     {/* Manual Item Entry Row */}
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-2 items-end">
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-start">
                       <div className="md:col-span-2">
                         <ValidatedInput
                           id="item-name"
                           label="Item Name"
                           value={String(newItemValidation.getFieldState('name').value || '')}
-                          onChange={(value) => setNewItem({ ...newItem, name: sanitizeString(value) })}
+                          onChange={(value) => setNewItem({ ...newItem, name: sanitizeInputString(value) })}
                           onBlur={() => newItemValidation.markFieldAsTouched('name')}
                           placeholder="Enter item name"
                           required
@@ -719,7 +718,7 @@ export default function ShopCreator() {
                           helperText="Enter a unique item name (1-50 characters)"
                         />
                       </div>
-                      <div className="space-y-2">
+                      <div>
                         <Label htmlFor="item-category" className="text-foreground font-medium">
                           Category
                         </Label>
@@ -727,7 +726,7 @@ export default function ShopCreator() {
                           value={newItem.category}
                           onValueChange={(value) => setNewItem({ ...newItem, category: value })}
                         >
-                          <SelectTrigger id="item-category" className="input-3d">
+                          <SelectTrigger id="item-category" className="input-3d mt-2">
                             <SelectValue placeholder="Select category" />
                           </SelectTrigger>
                           <SelectContent className="card-3d">
@@ -738,9 +737,10 @@ export default function ShopCreator() {
                             ))}
                           </SelectContent>
                         </Select>
+                        <div className="min-h-[1.25rem]" /> {/* Spacer to match ValidatedInput helper text space */}
                       </div>
-                      <div className="grid grid-cols-4 gap-1">
-                        <div className="col-span-2 space-y-2">
+                      <div className="grid grid-cols-2 gap-2">
+                        <div>
                           <Label htmlFor="item-price" className="text-foreground font-medium">
                             Price
                           </Label>
@@ -751,10 +751,10 @@ export default function ShopCreator() {
                             value={newItem.price || ""}
                             onChange={(e) => setNewItem({ ...newItem, price: Number.parseFloat(e.target.value) || 0 })}
                             placeholder="0"
-                            className="input-3d"
+                            className="input-3d mt-2"
                           />
                         </div>
-                        <div className="col-span-2 space-y-2">
+                        <div>
                           <Label htmlFor="item-currency" className="text-foreground font-medium">
                             Currency
                           </Label>
@@ -762,7 +762,7 @@ export default function ShopCreator() {
                             value={newItem.currency}
                             onValueChange={(value) => setNewItem({ ...newItem, currency: value })}
                           >
-                            <SelectTrigger id="item-currency" className="input-3d">
+                            <SelectTrigger id="item-currency" className="input-3d mt-2">
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent className="card-3d">
@@ -774,13 +774,14 @@ export default function ShopCreator() {
                             </SelectContent>
                           </Select>
                         </div>
+                        <div className="min-h-[1.25rem] col-span-2" /> {/* Spacer to match ValidatedInput helper text space */}
                       </div>
-                      <div className="md:col-span-4 flex justify-end">
-                        <Button onClick={addItem} className="flex items-center gap-2 button-3d text-primary-foreground">
-                          <PlusCircle className="h-4 w-4" />
-                          Add Item
-                        </Button>
-                      </div>
+                    </div>
+                    <div className="flex justify-end mt-4">
+                      <Button onClick={addItem} className="flex items-center gap-2 button-3d text-primary-foreground">
+                        <PlusCircle className="h-4 w-4" />
+                        Add Item
+                      </Button>
                     </div>
                   </div>
 
@@ -803,7 +804,7 @@ export default function ShopCreator() {
                               <TableCell>
                                 <Input
                                   value={item.name}
-                                  onChange={(e) => updateItem(item.id, "name", e.target.value)}
+                                  onChange={(e) => updateItem(item.id, "name", sanitizeInputString(e.target.value))}
                                   className="border-0 p-0 h-auto focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent text-foreground"
                                 />
                               </TableCell>
