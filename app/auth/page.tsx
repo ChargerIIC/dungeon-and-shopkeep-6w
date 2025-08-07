@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Sword, Shield, Sparkles, AlertCircle } from "lucide-react"
+import { Sword, Shield, Sparkles, AlertCircle } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
@@ -27,7 +27,7 @@ export default function AuthPage() {
 
     try {
       await signInWithGoogle()
-      router.push("/creator")
+      router.push("/shopkeeper")
     } catch (error: any) {
       console.error("Sign in failed:", error)
       setError(error.message || "Failed to sign in. Please try again.")
@@ -129,7 +129,7 @@ export default function AuthPage() {
             {/* Free Mode Button */}
             <div className="text-center">
               {firebaseConfigured && <div className="text-sm text-muted-foreground mb-2">or</div>}
-              <Link href="/creator">
+              <Link href="/shopkeeper">
                 <Button variant="outline" className="w-full card-3d text-foreground border-border bg-transparent">
                   <div className="flex items-center space-x-2">
                     <Sparkles className="h-4 w-4" />

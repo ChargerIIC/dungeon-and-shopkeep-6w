@@ -36,10 +36,10 @@
 
 ### 5. **Weak Error Handling** (MEDIUM RISK)
 **Location**: Multiple Firebase functions
-```typescript
+\`\`\`typescript
 console.error("Error saving shop:", error)
 throw new Error("Failed to save shop. Please try again.")
-```
+\`\`\`
 **Risk**: Generic error messages might hide security issues; detailed errors logged to console
 **Impact**: Poor user experience, potential information leakage
 **Fix**: Implement structured error handling with appropriate user messaging
@@ -60,10 +60,10 @@ throw new Error("Failed to save shop. Please try again.")
 
 ### 8. **Information Exposure via Build Configuration** (LOW RISK)
 **Location**: `next.config.mjs`
-```javascript
+\`\`\`javascript
 eslint: { ignoreDuringBuilds: true },
 typescript: { ignoreBuildErrors: true }
-```
+\`\`\`
 **Risk**: Build warnings/errors are ignored, potentially hiding security issues
 **Impact**: Security linting rules might be bypassed
 **Fix**: Remove ignore flags and fix underlying issues
@@ -129,15 +129,15 @@ typescript: { ignoreBuildErrors: true }
 ## 🔧 Recommended Fixes
 
 ### 1. Fix Information Disclosure
-```typescript
+\`\`\`typescript
 // Replace in lib/firebase.ts
 if (missingVars.length > 0 && process.env.NODE_ENV === 'development') {
   console.warn("Missing Firebase environment variables:", missingVars.join(", "))
 }
-```
+\`\`\`
 
 ### 2. Fix XSS in Print Function
-```typescript
+\`\`\`typescript
 // Add input sanitization
 const sanitizeHTML = (str: string) => {
   return str.replace(/[<>'"]/g, (char) => {
@@ -154,10 +154,10 @@ const sanitizeHTML = (str: string) => {
 // Use in print content
 const sanitizedTitle = sanitizeHTML(shopTitle)
 const sanitizedOwner = sanitizeHTML(ownerName)
-```
+\`\`\`
 
 ### 3. Add Input Validation
-```typescript
+\`\`\`typescript
 // Add validation schemas
 const shopValidation = {
   title: (value: string) => value.length > 0 && value.length <= 100,
@@ -165,10 +165,10 @@ const shopValidation = {
   itemName: (value: string) => value.length > 0 && value.length <= 50,
   price: (value: number) => value >= 0 && value <= 999999
 }
-```
+\`\`\`
 
 ### 4. Strengthen Firestore Rules
-```javascript
+\`\`\`javascript
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -190,7 +190,7 @@ service cloud.firestore {
            data.theme in ['parchment', 'tavern', 'arcane', 'forest', 'dungeon'];
   }
 }
-```
+\`\`\`
 
 ## 🎯 Security Testing Recommendations
 

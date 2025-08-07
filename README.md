@@ -1,32 +1,43 @@
-# Dungeon & Shopkeep
+# Tabletop Toolkit
 
-A fantasy RPG shop creator and inventory display tool built with Next.js, React, and Firebase. Create, customize, and share beautiful shop inventories for your tabletop RPG campaigns.
+A comprehensive hub for tabletop RPG tools and applications built with Next.js, React, and Firebase. Create, customize, and manage all aspects of your tabletop gaming experience from one unified platform.
 
-![Dungeon & Shopkeep Preview](https://via.placeholder.com/800x400/1a1a2e/eee?text=Dungeon+%26+Shopkeep)
+![Tabletop Toolkit Preview](https://via.placeholder.com/800x400/1a1a2e/eee?text=Tabletop+Toolkit)
 
-## ✨ Features
+## ✨ Applications
 
-### 🏪 **Shop Creation**
+### 🏪 **Dungeon & Shopkeeps** (Available)
 - **Interactive Shop Builder** - Create shops with custom titles and owner names
 - **Item Management** - Add, edit, and remove items with categories (Weapons, Armor, Potions, Gear, Scrolls)
 - **Multi-Currency Support** - Gold Pieces (GP), Silver Pieces (SP), Copper Pieces (CP)
-- **Live Preview** - See your shop design update in real-time
-
-### 🎨 **Themes & Customization**
 - **5 Beautiful Themes**: Parchment, Tavern, Arcane, Forest, Dungeon
 - **Print-Optimized Layouts** - Professional print formatting with proper spacing
-- **Responsive Design** - Works on desktop, tablet, and mobile devices
-
-### 💾 **Save & Share**
 - **Cloud Storage** - Save shops to Firebase with user authentication
-- **Google Sign-In** - Secure authentication for saving and managing shops
-- **Shop Library** - Load and manage your saved shop designs
-- **Export Options** - Print or save as PDF for use in campaigns
 
-### 🖨️ **Print Features**
-- **Professional Layouts** - Optimized spacing between item names and prices
-- **Theme-Aware Printing** - Colors and styles that work well in print
-- **Page Break Management** - Categories stay together on printed pages
+### 🛡️ **Character Forge** (Coming Soon)
+- **Multi-System Support** - D&D 5e, Pathfinder, and more
+- **Stat Tracking** - Comprehensive character statistics
+- **Equipment Manager** - Track gear and inventory
+
+### 📚 **Campaign Chronicles** (Coming Soon)
+- **Session Management** - Track campaign progress
+- **Player Management** - Organize player information
+- **Story Arc Tracking** - Plan and follow narrative threads
+
+### 🗺️ **Realm Mapper** (Coming Soon)
+- **Interactive Maps** - Create detailed world maps
+- **Custom Markers** - Add locations and points of interest
+- **Layer System** - Organize map elements
+
+### 🎲 **Dice Sanctum** (Coming Soon)
+- **Advanced Rolling** - Custom dice formulas
+- **Roll History** - Track previous rolls
+- **Probability Analysis** - Statistical insights
+
+### 📜 **Lore Keeper** (Coming Soon)
+- **World Building** - Document your campaign world
+- **NPC Database** - Track non-player characters
+- **Timeline Management** - Organize historical events
 
 ## 🚀 Quick Start
 
@@ -38,28 +49,28 @@ A fantasy RPG shop creator and inventory display tool built with Next.js, React,
 ### Installation
 
 1. **Clone the repository**
-   ```bash
-   git clone https://github.com/ChargerIIC/dungeon-and-shopkeep-6w.git
-   cd dungeon-and-shopkeep-6w
-   ```
+   \`\`\`bash
+   git clone https://github.com/ChargerIIC/tabletop-toolkit.git
+   cd tabletop-toolkit
+   \`\`\`
 
 2. **Install dependencies**
-   ```bash
+   \`\`\`bash
    npm install
    # or
    pnpm install
-   ```
+   \`\`\`
 
 3. **Set up environment variables**
-   ```bash
+   \`\`\`bash
    cp .env.example .env.local
    # Edit .env.local with your Firebase configuration
-   ```
+   \`\`\`
 
 4. **Run the development server**
-   ```bash
+   \`\`\`bash
    npm run dev
-   ```
+   \`\`\`
 
 5. **Open your browser**
    Navigate to [http://localhost:3000](http://localhost:3000)
@@ -74,7 +85,7 @@ To enable the save functionality, you'll need to configure Firebase:
 3. **Configure authentication and Firestore security rules**
 
 ### Environment Variables
-```bash
+\`\`\`bash
 # Firebase Configuration
 NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
 NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
@@ -82,7 +93,7 @@ NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
 NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
 NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=123456789012
 NEXT_PUBLIC_FIREBASE_APP_ID=1:123456789012:web:abcdef123456
-```
+\`\`\`
 
 ## 📚 Documentation
 
@@ -90,13 +101,11 @@ NEXT_PUBLIC_FIREBASE_APP_ID=1:123456789012:web:abcdef123456
 - **[Testing Guide](TESTING_GUIDE.md)** - Unit testing with Jest and React Testing Library
 - **[GitHub Actions Setup](docs/GITHUB_ACTIONS_SETUP.md)** - Automated deployment to Azure
 - **[Azure Deployment Guide](AZURE_DEPLOYMENT.md)** - Manual Azure Container Apps deployment
-- **[Print Spacing Improvements](PRINT_SPACING_IMPROVEMENTS.md)** - Print layout enhancements
-- **[Save Shop Troubleshooting](SAVE_SHOP_TROUBLESHOOTING.md)** - Common issues and solutions
 
 ## 🧪 Testing
 
 ### Run Tests
-```bash
+\`\`\`bash
 # Run all tests
 npm test
 
@@ -105,14 +114,7 @@ npm run test:watch
 
 # Run tests with coverage
 npm run test:coverage
-```
-
-### Testing Stack
-- **Jest** - Test runner and assertions
-- **React Testing Library** - Component testing utilities
-- **@testing-library/user-event** - User interaction simulation
-
-See the [Testing Guide](TESTING_GUIDE.md) for detailed testing documentation.
+\`\`\`
 
 ## 🚀 Deployment
 
@@ -122,11 +124,6 @@ See the [Testing Guide](TESTING_GUIDE.md) for detailed testing documentation.
 - **Scalable** - Auto-scaling based on demand
 
 Follow the [GitHub Actions Setup Guide](docs/GITHUB_ACTIONS_SETUP.md) for automated deployment.
-
-### Option 2: Manual Deployment
-- **Vercel** - Simple Next.js deployment
-- **Netlify** - Static site deployment
-- **Azure Static Web Apps** - Microsoft Azure hosting
 
 ## 🛠️ Built With
 
@@ -146,20 +143,15 @@ Follow the [GitHub Actions Setup Guide](docs/GITHUB_ACTIONS_SETUP.md) for automa
 - **[Cloud Firestore](https://firebase.google.com/products/firestore)** - NoSQL database
 - **[Google Sign-In](https://developers.google.com/identity)** - OAuth authentication
 
-### Development Tools
-- **[Jest](https://jestjs.io/)** - Testing framework
-- **[React Testing Library](https://testing-library.com/)** - Component testing
-- **[ESLint](https://eslint.org/)** - Code linting
-- **[Prettier](https://prettier.io/)** - Code formatting
-
 ## 📁 Project Structure
 
-```
-dungeon-and-shopkeep-6w/
+\`\`\`
+tabletop-toolkit/
 ├── app/                    # Next.js app directory
 │   ├── auth/              # Authentication pages
-│   ├── creator/           # Shop creator page
-│   ├── home/              # Home page
+│   ├── dashboard/         # User dashboard
+│   ├── shopkeeper/        # Shop creator application
+│   ├── home/              # Public home page
 │   └── layout.tsx         # Root layout
 ├── components/            # React components
 │   ├── ui/               # UI component library
@@ -170,11 +162,45 @@ dungeon-and-shopkeep-6w/
 │   ├── firebase.ts       # Firebase configuration
 │   └── utils.ts          # Helper functions
 ├── __tests__/            # Test files
-│   ├── components/       # Component tests
-│   └── lib/             # Utility tests
 ├── docs/                 # Documentation
 └── public/              # Static assets
-```
+\`\`\`
+
+## 🎯 Roadmap
+
+### Phase 1 (Current)
+- ✅ **Dungeon & Shopkeeps** - Complete shop creation tool
+- ✅ **User Authentication** - Firebase integration
+- ✅ **Responsive Design** - Mobile and desktop support
+
+### Phase 2 (Q2 2024)
+- 🔄 **Character Forge** - Character sheet builder
+- 🔄 **Dice Sanctum** - Advanced dice rolling
+
+### Phase 3 (Q3 2024)
+- 📅 **Campaign Chronicles** - Campaign management
+- 📅 **Realm Mapper** - Interactive map creation
+
+### Phase 4 (Q4 2024)
+- 📅 **Lore Keeper** - World building tools
+- 📅 **Mobile Apps** - Native mobile applications
+
+## 💡 Use Cases
+
+### For Dungeon Masters
+- **Unified Toolkit** - All tools in one place
+- **Campaign Management** - Organize entire campaigns
+- **Professional Materials** - Print-ready handouts
+
+### For Players
+- **Character Management** - Track character progression
+- **Session Tools** - Dice rolling and note-taking
+- **Campaign Resources** - Access shared materials
+
+### For Content Creators
+- **Adventure Modules** - Create professional content
+- **Community Sharing** - Share custom creations
+- **Streaming Tools** - Display materials during live games
 
 ## 🤝 Contributing
 
@@ -186,50 +212,9 @@ dungeon-and-shopkeep-6w/
 6. **Push to the branch** (`git push origin feature/amazing-feature`)
 7. **Open a Pull Request**
 
-### Development Guidelines
-- Follow TypeScript best practices
-- Write tests for new components and features
-- Use semantic commit messages
-- Ensure all tests pass before submitting PR
-
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🎯 Roadmap
-
-### Planned Features
-- **🎲 Dice Roll Integration** - Random shop generation
-- **🗺️ Shop Templates** - Pre-built shop types (Blacksmith, Alchemist, etc.)
-- **💰 Currency Conversion** - Automatic currency calculations
-- **🖼️ Item Images** - Visual item representations
-- **📊 Analytics** - Usage statistics and popular items
-- **🌐 Sharing** - Public shop sharing links
-- **📱 Mobile App** - Native mobile applications
-
-### Technical Improvements
-- **⚡ Performance** - Code splitting and optimization
-- **🔒 Security** - Enhanced security rules and validation
-- **🧪 Testing** - Increased test coverage
-- **📚 Documentation** - API documentation and guides
-- **♿ Accessibility** - WCAG compliance improvements
-
-## 💡 Use Cases
-
-### For Dungeon Masters
-- **Quick Shop Creation** - Generate shop inventories on the fly
-- **Campaign Management** - Save shops for different locations
-- **Print Materials** - Professional handouts for players
-
-### For Players
-- **Character Shopping** - Browse available items
-- **Equipment Planning** - Track potential purchases
-- **Campaign Notes** - Record visited shops
-
-### For Content Creators
-- **Adventure Modules** - Include professional shop inventories
-- **Streaming** - Display shops during live games
-- **Community Sharing** - Share custom shop designs
 
 ## 🙏 Acknowledgments
 
@@ -237,14 +222,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Tailwind CSS** for the utility-first CSS framework
 - **Firebase** for the backend services
 - **Next.js team** for the amazing React framework
-- **The D&D community** for inspiration and feedback
-
-## 📞 Support
-
-- **GitHub Issues** - [Report bugs or request features](https://github.com/ChargerIIC/dungeon-and-shopkeep-6w/issues)
-- **Documentation** - Check the guides in this repository
-- **Firebase Troubleshooting** - See [SAVE_SHOP_TROUBLESHOOTING.md](SAVE_SHOP_TROUBLESHOOTING.md)
+- **The tabletop gaming community** for inspiration and feedback
 
 ---
 
-**Made with ❤️ for the tabletop RPG community**
+**Made with ❤️ for the tabletop gaming community**

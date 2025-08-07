@@ -1,5 +1,5 @@
 "use client";
-import { CommonItemsByCategory } from "./page";
+import { CommonItemsByCategory } from "./commonItemsByCategory"; // Updated import path reference
 
 export const commonItems: CommonItemsByCategory = {
   Weapon: [

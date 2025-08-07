@@ -52,7 +52,7 @@ Your app uses the following Firebase services:
 
 Replace the default Firestore rules with these security rules:
 
-```javascript
+\`\`\`javascript
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -70,7 +70,7 @@ service cloud.firestore {
     }
   }
 }
-```
+\`\`\`
 
 **Important:** These rules ensure that:
 - Only authenticated users can create shops
@@ -95,7 +95,7 @@ service cloud.firestore {
 4. Register your app with a nickname (e.g., "Dungeon Shopkeep Web")
 5. Copy the configuration values:
 
-```javascript
+\`\`\`javascript
 const firebaseConfig = {
   apiKey: "AIzaSyC...",                    // ← Copy this
   authDomain: "your-project.firebaseapp.com",  // ← Copy this
@@ -104,13 +104,13 @@ const firebaseConfig = {
   messagingSenderId: "123456789012",           // ← Copy this
   appId: "1:123456789012:web:abcdef123456"     // ← Copy this
 };
-```
+\`\`\`
 
 ## Step 5: Configure Environment Variables
 
 Create a `.env.local` file in your project root with the Firebase configuration:
 
-```bash
+\`\`\`bash
 # Firebase Configuration
 NEXT_PUBLIC_FIREBASE_API_KEY=AIzaSyC...
 NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
@@ -118,16 +118,16 @@ NEXT_PUBLIC_FIREBASE_PROJECT_ID=your-project-id
 NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your-project.appspot.com
 NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=123456789012
 NEXT_PUBLIC_FIREBASE_APP_ID=1:123456789012:web:abcdef123456
-```
+\`\`\`
 
 **Note:** Replace the values with your actual Firebase configuration.
 
 ## Step 6: Test the Save Feature
 
 1. **Start your development server**:
-   ```bash
+   \`\`\`bash
    npm run dev
-   ```
+   \`\`\`
 
 2. **Test the authentication flow**:
    - Click "Sign In" button
@@ -148,7 +148,7 @@ NEXT_PUBLIC_FIREBASE_APP_ID=1:123456789012:web:abcdef123456
 
 The app stores shop data in Firestore with this structure:
 
-```typescript
+\`\`\`typescript
 // Collection: shops
 // Document ID: auto-generated
 {
@@ -169,13 +169,13 @@ The app stores shop data in Firestore with this structure:
   createdAt: Timestamp,
   updatedAt: Timestamp
 }
-```
+\`\`\`
 
 ## Production Considerations
 
 ### Update Security Rules for Production:
 
-```javascript
+\`\`\`javascript
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -195,7 +195,7 @@ service cloud.firestore {
            data.creatorId is string;
   }
 }
-```
+\`\`\`
 
 ### Monitor Usage:
 
@@ -227,13 +227,13 @@ service cloud.firestore {
 
 ### Testing Commands:
 
-```bash
+\`\`\`bash
 # Check if Firebase config is loaded
 console.log(process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID)
 
 # Test Firebase initialization in browser console
 console.log(firebase.apps.length > 0 ? 'Firebase initialized' : 'Firebase not initialized')
-```
+\`\`\`
 
 ## Security Best Practices
 

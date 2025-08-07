@@ -8,9 +8,9 @@ import { Toaster } from "@/components/ui/toaster"
 import "./globals.css"
 
 export const metadata: Metadata = {
-  title: "Dungeon and Shopkeeps - Create Fantasy Shop Menus",
+  title: "Tabletop Toolkit - Complete RPG Gaming Hub",
   description:
-    "Design beautiful, immersive shop inventories for your tabletop RPG campaigns. Perfect for D&D, Pathfinder, and other fantasy games.",
+    "Your all-in-one platform for tabletop RPG tools. Create shop inventories, manage characters, organize campaigns, and more. Perfect for D&D, Pathfinder, and other fantasy games.",
   generator: "v0.dev",
 }
 

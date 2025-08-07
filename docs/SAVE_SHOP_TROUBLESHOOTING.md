@@ -15,10 +15,10 @@ Quick troubleshooting guide for common issues with the Save Shop functionality.
 - Try signing out and signing in again
 
 **Test**:
-```javascript
+\`\`\`javascript
 // In browser console
 console.log('Auth state:', firebase.auth().currentUser)
-```
+\`\`\`
 
 ### 2. "Firebase is not configured" Error
 
@@ -31,10 +31,10 @@ console.log('Auth state:', firebase.auth().currentUser)
 - Run the config extraction script: `node extract-firebase-config.js`
 
 **Test**:
-```bash
+\`\`\`bash
 # Check if variables are loaded
 echo $NEXT_PUBLIC_FIREBASE_PROJECT_ID
-```
+\`\`\`
 
 ### 3. "Permission denied" Error When Saving
 
@@ -46,12 +46,12 @@ echo $NEXT_PUBLIC_FIREBASE_PROJECT_ID
 - Verify the `creatorId` field matches the authenticated user's UID
 
 **Required Security Rule**:
-```javascript
+\`\`\`javascript
 match /shops/{shopId} {
   allow create: if request.auth != null && 
                 request.auth.uid == request.resource.data.creatorId;
 }
-```
+\`\`\`
 
 ### 4. Save Button Doesn't Respond
 
@@ -73,12 +73,12 @@ match /shops/{shopId} {
 - Check browser network tab for failed Firestore requests
 
 **Required Security Rule**:
-```javascript
+\`\`\`javascript
 match /shops/{shopId} {
   allow read: if request.auth != null && 
               request.auth.uid == resource.data.creatorId;
 }
-```
+\`\`\`
 
 ### 6. Authentication Popup Blocked
 
@@ -102,28 +102,28 @@ match /shops/{shopId} {
 ## Quick Diagnostic Steps
 
 ### 1. Check Firebase Configuration
-```javascript
+\`\`\`javascript
 // In browser console
 console.log('Firebase config:', {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY ? 'Set' : 'Missing',
   projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID ? 'Set' : 'Missing',
   // ... check other vars
 })
-```
+\`\`\`
 
 ### 2. Check Authentication State
-```javascript
+\`\`\`javascript
 // In browser console
 import { auth } from './lib/firebase'
 console.log('Auth:', auth?.currentUser ? 'Signed in' : 'Not signed in')
-```
+\`\`\`
 
 ### 3. Test Firestore Connection
-```javascript
+\`\`\`javascript
 // In browser console
 import { db } from './lib/firebase'
 console.log('Firestore:', db ? 'Connected' : 'Not connected')
-```
+\`\`\`
 
 ### 4. Check Network Requests
 1. Open browser Developer Tools
