@@ -1,7 +1,8 @@
 import Link from "next/link"
-import { Card, CardHeader, CardTitle, CardContent, Button } from "ui"
 import { Dice6 } from "lucide-react"
 import { ArrowRight } from "lucide-react"
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 
 export default function Page() {
   return (
