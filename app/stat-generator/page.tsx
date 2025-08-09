@@ -182,160 +182,193 @@ export default function StatGenerator() {
   // Print function
   const handlePrint = () => {
     const printContent = `
-      <html>
-        <head>
-          <title>D&D Ability Scores - Dungeon Coach Method</title>
-          <style>
-            body { 
-              font-family: Arial, sans-serif; 
-              margin: 20px; 
-              background: white;
-              color: black;
+    <!DOCTYPE html>
+    <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>D&D Ability Scores - Dungeon Coach Method</title>
+        <style>
+          @media print {
+            @page {
+              margin: 0.75in;
+              size: letter;
             }
-            .header { 
-              text-align: center; 
-              margin-bottom: 30px; 
-              border-bottom: 2px solid #333;
-              padding-bottom: 20px;
-            }
-            .stats-grid { 
-              display: grid; 
-              grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
-              gap: 20px; 
-              margin-bottom: 30px;
-            }
-            .stat-card { 
-              border: 2px solid #333; 
-              padding: 15px; 
-              text-align: center;
-              background: #f9f9f9;
-            }
-            .stat-name { 
-              font-weight: bold; 
-              font-size: 18px; 
-              margin-bottom: 10px;
-              text-transform: capitalize;
-            }
-            .stat-score { 
-              font-size: 36px; 
-              font-weight: bold; 
-              color: #d97706;
-              margin-bottom: 5px;
-            }
-            .stat-modifier { 
-              font-size: 14px; 
-              color: #666;
-            }
-            .dice-details {
-              margin-top: 30px;
-              border-top: 2px solid #333;
-              padding-top: 20px;
-            }
-            .column-details {
-              margin-bottom: 15px;
-              padding: 10px;
-              border: 1px solid #ccc;
-              background: #f5f5f5;
-            }
-            .dice-row {
-              display: flex;
-              gap: 10px;
-              align-items: center;
-              margin-top: 5px;
-            }
-            .die {
-              width: 30px;
-              height: 30px;
-              border: 1px solid #333;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              font-weight: bold;
-            }
-            .ignored {
-              background: #ffcccc;
-              text-decoration: line-through;
-            }
-            .summary {
-              margin-top: 20px;
-              text-align: center;
-              font-size: 16px;
-            }
-          </style>
-        </head>
-        <body>
-          <div class="header">
-            <h1>D&D Ability Scores</h1>
-            <h2>Dungeon Coach Stat Generation Method</h2>
-            <p>Generated on ${new Date().toLocaleDateString()}</p>
-          </div>
-          
-          <div class="stats-grid">
-            ${getAbilitySummary()
-              .map(
-                (item) => `
-              <div class="stat-card">
-                <div class="stat-name">${item.ability}</div>
-                <div class="stat-score">${item.score}</div>
-                <div class="stat-modifier">
-                  Modifier: ${Math.floor((item.score - 10) / 2) >= 0 ? "+" : ""}${Math.floor((item.score - 10) / 2)}
-                </div>
+          }
+          body { 
+            font-family: 'Georgia', 'Times New Roman', serif;
+            margin: 20px; 
+            background: white;
+            color: black;
+            line-height: 1.4;
+          }
+          .header { 
+            text-align: center; 
+            margin-bottom: 30px; 
+            border-bottom: 2px solid #333;
+            padding-bottom: 20px;
+          }
+          .stats-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+            gap: 20px; 
+            margin-bottom: 30px;
+          }
+          .stat-card { 
+            border: 2px solid #333; 
+            padding: 15px; 
+            text-align: center;
+            background: #f9f9f9;
+            border-radius: 8px;
+          }
+          .stat-name { 
+            font-weight: bold; 
+            font-size: 18px; 
+            margin-bottom: 10px;
+            text-transform: capitalize;
+          }
+          .stat-score { 
+            font-size: 36px; 
+            font-weight: bold; 
+            color: #d97706;
+            margin-bottom: 5px;
+          }
+          .stat-modifier { 
+            font-size: 14px; 
+            color: #666;
+          }
+          .dice-details {
+            margin-top: 30px;
+            border-top: 2px solid #333;
+            padding-top: 20px;
+          }
+          .column-details {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background: #f5f5f5;
+            border-radius: 5px;
+          }
+          .dice-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-top: 5px;
+          }
+          .die {
+            width: 30px;
+            height: 30px;
+            border: 1px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            border-radius: 4px;
+          }
+          .ignored {
+            background: #ffcccc;
+            text-decoration: line-through;
+            color: #999;
+          }
+          .summary {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 16px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <h1>D&D Ability Scores</h1>
+          <h2>Dungeon Coach Stat Generation Method</h2>
+          <p>Generated on ${new Date().toLocaleDateString()}</p>
+        </div>
+        
+        <div class="stats-grid">
+          ${getAbilitySummary()
+            .map(
+              (item) => `
+            <div class="stat-card">
+              <div class="stat-name">${item.ability}</div>
+              <div class="stat-score">${item.score}</div>
+              <div class="stat-modifier">
+                Modifier: ${Math.floor((item.score - 10) / 2) >= 0 ? "+" : ""}${Math.floor((item.score - 10) / 2)}
               </div>
-            `,
-              )
-              .join("")}
-          </div>
+            </div>
+          `,
+            )
+            .join("")}
+        </div>
 
-          <div class="dice-details">
-            <h3>Dice Roll Details</h3>
-            ${columns
-              .map(
-                (column, index) => `
-              <div class="column-details">
-                <strong>Column ${index + 1}${column.ability ? ` (${column.ability})` : ""}: ${getColumnTotal(column)}</strong>
-                <div class="dice-row">
-                  Dice: ${column.dice
-                    .map(
-                      (die) => `
-                    <span class="die ${die.ignored ? "ignored" : ""}">${die.value}</span>
-                  `,
-                    )
-                    .join("")}
-                </div>
+        <div class="dice-details">
+          <h3>Dice Roll Details</h3>
+          ${columns
+            .map(
+              (column, index) => `
+            <div class="column-details">
+              <strong>Column ${index + 1}${column.ability ? ` (${column.ability})` : ""}: ${getColumnTotal(column)}</strong>
+              <div class="dice-row">
+                Dice: ${column.dice
+                  .map(
+                    (die) => `
+                  <span class="die ${die.ignored ? "ignored" : ""}">${die.value}</span>
+                `,
+                  )
+                  .join("")}
               </div>
-            `,
-              )
-              .join("")}
-            ${
-              remainingColumnAbility
-                ? `
-              <div class="column-details">
-                <strong>Remaining Points Column (${remainingColumnAbility}): ${getRemainingPoints()}</strong>
-                <div class="dice-row">
-                  Calculated: 72 - ${getTotalUsed()} = ${getRemainingPoints()}
-                </div>
+            </div>
+          `,
+            )
+            .join("")}
+          ${
+            remainingColumnAbility
+              ? `
+            <div class="column-details">
+              <strong>Remaining Points Column (${remainingColumnAbility}): ${getRemainingPoints()}</strong>
+              <div class="dice-row">
+                Calculated: 72 - ${getTotalUsed()} = ${getRemainingPoints()}
               </div>
-            `
-                : ""
-            }
-          </div>
+            </div>
+          `
+              : ""
+          }
+        </div>
 
-          <div class="summary">
-            <p><strong>Total Points Used:</strong> ${getTotalUsed()} / 72</p>
-            <p><strong>Remaining Points:</strong> ${getRemainingPoints()}</p>
-          </div>
-        </body>
-      </html>
-    `
+        <div class="summary">
+          <p><strong>Total Points Used:</strong> ${getTotalUsed()} / 72</p>
+          <p><strong>Remaining Points:</strong> ${getRemainingPoints()}</p>
+        </div>
 
-    const printWindow = window.open("", "_blank")
-    if (printWindow) {
-      printWindow.document.write(printContent)
-      printWindow.document.close()
-      printWindow.focus()
-      printWindow.print()
-      printWindow.close()
+        <script>
+          window.onload = function() {
+            window.print();
+            window.onafterprint = function() {
+              window.close();
+            };
+          };
+        </script>
+      </body>
+    </html>
+  `
+
+    const printWindow = window.open(
+      "",
+      "_blank",
+      "width=800,height=600,scrollbars=yes,resizable=yes,toolbar=no,menubar=no,location=no,status=no",
+    )
+
+    if (!printWindow) {
+      alert("Please allow pop-ups to enable printing")
+      return
     }
+
+    printWindow.document.open()
+    printWindow.document.write(printContent)
+    printWindow.document.close()
   }
 
   return (
