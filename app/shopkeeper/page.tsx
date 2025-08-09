@@ -1,6 +1,6 @@
 "use client"
 import { useState, useEffect } from "react"
-import { PlusCircle, Trash2, LogOut, User, AlertCircle, Package2, Save, FolderOpen, Trash, Currency } from 'lucide-react'
+import { PlusCircle, Trash2, LogOut, User, AlertCircle, Package2, Save, FolderOpen, Trash } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
@@ -23,17 +23,17 @@ import { ShopDisplay } from "@/components/shop-display"
 import { useAuth } from "@/components/auth-provider"
 import { signOutUser, saveShop, updateShop, getUserShops, deleteShop, type Shop } from "@/lib/firebase"
 import { openPrintWindow } from "@/lib/print-utils"
-import { 
-  validateShopTitle, 
-  validateOwnerName, 
-  validateItemName, 
-  validateItemPrice, 
-  validateItemCategory, 
+import {
+  validateShopTitle,
+  validateOwnerName,
+  validateItemName,
+  validateItemPrice,
+  validateItemCategory,
   validateItemCurrency,
   validateTheme,
   validateShop,
   sanitizeString,
-  sanitizeInputString
+  sanitizeInputString,
 } from "@/lib/validation"
 import { useFormValidation } from "@/hooks/use-validation"
 import { ValidatedInput } from "@/components/ui/validated-input"
@@ -41,6 +41,7 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { toast } from "@/hooks/use-toast"
 import { commonItems } from "@/app/shopkeeper/commonItems"
+import { SharedHeader } from "@/components/shared-header"
 
 // Item categories
 const categories = ["Weapon", "MartialWeapon", "Armor", "Potions", "Gear", "Scroll", "Misc"]
@@ -116,7 +117,7 @@ export default function ShopCreator() {
       shopTitle,
       ownerName,
       theme,
-    }
+    },
   )
 
   const newItemValidation = useFormValidation(
@@ -131,27 +132,27 @@ export default function ShopCreator() {
       category: newItem.category,
       price: newItem.price,
       currency: newItem.currency,
-    }
+    },
   )
 
   // Update form validation when state changes
   useEffect(() => {
-    shopFormValidation.updateField('shopTitle', shopTitle)
+    shopFormValidation.updateField("shopTitle", shopTitle)
   }, [shopTitle])
 
   useEffect(() => {
-    shopFormValidation.updateField('ownerName', ownerName)
+    shopFormValidation.updateField("ownerName", ownerName)
   }, [ownerName])
 
   useEffect(() => {
-    shopFormValidation.updateField('theme', theme)
+    shopFormValidation.updateField("theme", theme)
   }, [theme])
 
   useEffect(() => {
-    newItemValidation.updateField('name', newItem.name)
-    newItemValidation.updateField('category', newItem.category)
-    newItemValidation.updateField('price', newItem.price)
-    newItemValidation.updateField('currency', newItem.currency)
+    newItemValidation.updateField("name", newItem.name)
+    newItemValidation.updateField("category", newItem.category)
+    newItemValidation.updateField("price", newItem.price)
+    newItemValidation.updateField("currency", newItem.currency)
   }, [newItem])
 
   // Selected category for common items
@@ -224,11 +225,11 @@ export default function ShopCreator() {
 
     // Validate all shop form fields
     const shopValidationResult = shopFormValidation.validateAllFields()
-    
+
     if (!shopValidationResult.isValid) {
       toast({
         title: "Validation Error",
-        description: `Please fix the following errors: ${shopValidationResult.errors.join(', ')}`,
+        description: `Please fix the following errors: ${shopValidationResult.errors.join(", ")}`,
         variant: "destructive",
       })
       return
@@ -238,20 +239,20 @@ export default function ShopCreator() {
     const shopData = {
       title: sanitizeString(shopTitle),
       owner: sanitizeString(ownerName),
-      items: items.map(item => ({
+      items: items.map((item) => ({
         ...item,
-        name: sanitizeString(item.name)
+        name: sanitizeString(item.name),
       })),
       theme: theme,
       creatorId: user?.uid || "",
     }
 
     const completeShopValidation = validateShop(shopData)
-    
+
     if (!completeShopValidation.isValid) {
       toast({
         title: "Shop Validation Failed",
-        description: `Please fix the following issues: ${completeShopValidation.errors.join(', ')}`,
+        description: `Please fix the following issues: ${completeShopValidation.errors.join(", ")}`,
         variant: "destructive",
       })
       return
@@ -352,7 +353,7 @@ export default function ShopCreator() {
   const addItem = () => {
     // Validate all new item fields
     const validationResult = newItemValidation.validateAllFields()
-    
+
     if (!validationResult.isValid) {
       toast({
         title: "Validation Error",
@@ -373,10 +374,8 @@ export default function ShopCreator() {
     }
 
     // Check for duplicate item names
-    const isDuplicate = items.some(item => 
-      item.name.toLowerCase().trim() === newItem.name.toLowerCase().trim()
-    )
-    
+    const isDuplicate = items.some((item) => item.name.toLowerCase().trim() === newItem.name.toLowerCase().trim())
+
     if (isDuplicate) {
       toast({
         title: "Duplicate Item",
@@ -400,7 +399,7 @@ export default function ShopCreator() {
       price: 0,
       currency: "GP",
     })
-    
+
     // Reset validation for new item form
     newItemValidation.resetForm({
       name: "",
@@ -458,8 +457,10 @@ export default function ShopCreator() {
   const displayName = isFreeMode ? "Free Mode User" : user?.displayName || user?.email || "User"
 
   return (
-    <div className="min-h-screen bg-background p-4 md:p-8 print:hidden">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-background">
+      <SharedHeader />
+
+      <div className="max-w-7xl mx-auto p-4 md:p-8 print:hidden">
         {/* Free Mode Alert */}
         {isFreeMode && (
           <Alert className="mb-6 border-amber-600/30 bg-amber-50/80 dark:border-amber-400/30 dark:bg-amber-950/30 print:hidden card-3d">
@@ -498,7 +499,7 @@ export default function ShopCreator() {
                   onClick={handleNewShop}
                   variant="outline"
                   size="sm"
-                  className="flex items-center space-x-2 button-3d text-primary-foreground"
+                  className="flex items-center space-x-2 button-3d text-primary-foreground bg-transparent"
                 >
                   <PlusCircle className="w-4 h-4" />
                   <span>New</span>
@@ -658,20 +659,20 @@ export default function ShopCreator() {
                       id="shop-title"
                       label="Shop Title"
                       onChange={(value) => setShopTitle(sanitizeInputString(value))}
-                      onBlur={() => shopFormValidation.markFieldAsTouched('shopTitle')}
+                      onBlur={() => shopFormValidation.markFieldAsTouched("shopTitle")}
                       placeholder="Enter shop name"
                       required
-                      {...shopFormValidation.getFieldState('shopTitle')}
+                      {...shopFormValidation.getFieldState("shopTitle")}
                       helperText="Enter a creative name for your shop (1-100 characters)"
                     />
                     <ValidatedInput
                       id="owner-name"
                       label="Shop Owner"
                       onChange={(value) => setOwnerName(sanitizeInputString(value))}
-                      onBlur={() => shopFormValidation.markFieldAsTouched('ownerName')}
+                      onBlur={() => shopFormValidation.markFieldAsTouched("ownerName")}
                       placeholder="Enter owner name"
                       required
-                      {...shopFormValidation.getFieldState('ownerName')}
+                      {...shopFormValidation.getFieldState("ownerName")}
                       helperText="Enter the name of the shop owner (1-100 characters)"
                     />
                   </div>
@@ -707,14 +708,14 @@ export default function ShopCreator() {
                         <ValidatedInput
                           id="item-name"
                           label="Item Name"
-                          value={String(newItemValidation.getFieldState('name').value || '')}
+                          value={String(newItemValidation.getFieldState("name").value || "")}
                           onChange={(value) => setNewItem({ ...newItem, name: sanitizeInputString(value) })}
-                          onBlur={() => newItemValidation.markFieldAsTouched('name')}
+                          onBlur={() => newItemValidation.markFieldAsTouched("name")}
                           placeholder="Enter item name"
                           required
-                          isValid={newItemValidation.getFieldState('name').isValid}
-                          errors={newItemValidation.getFieldState('name').errors}
-                          hasBeenTouched={newItemValidation.getFieldState('name').hasBeenTouched}
+                          isValid={newItemValidation.getFieldState("name").isValid}
+                          errors={newItemValidation.getFieldState("name").errors}
+                          hasBeenTouched={newItemValidation.getFieldState("name").hasBeenTouched}
                           helperText="Enter a unique item name (1-50 characters)"
                         />
                       </div>
@@ -774,7 +775,8 @@ export default function ShopCreator() {
                             </SelectContent>
                           </Select>
                         </div>
-                        <div className="min-h-[1.25rem] col-span-2" /> {/* Spacer to match ValidatedInput helper text space */}
+                        <div className="min-h-[1.25rem] col-span-2" />{" "}
+                        {/* Spacer to match ValidatedInput helper text space */}
                       </div>
                     </div>
                     <div className="flex justify-end mt-4">

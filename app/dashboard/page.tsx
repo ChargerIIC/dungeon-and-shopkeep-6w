@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { Dice6, Package, Shield, BookOpen, MapPin, Scroll, LogOut, User, Sparkles, ArrowRight, Clock } from 'lucide-react'
+import { useEffect } from "react"
+import { Dice6, Package, Shield, BookOpen, MapPin, Scroll, LogOut, User, ArrowRight, Clock } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ThemeToggle } from "@/components/theme-toggle"
@@ -40,7 +40,7 @@ export default function DashboardPage() {
       link: "/shopkeeper",
       status: "available",
       lastUsed: "2 days ago",
-      features: ["5 Fantasy Themes", "Save & Load Shops", "Print Ready"]
+      features: ["5 Fantasy Themes", "Save & Load Shops", "Print Ready"],
     },
     {
       id: "character-builder",
@@ -50,7 +50,7 @@ export default function DashboardPage() {
       color: "emerald",
       link: "#",
       status: "coming-soon",
-      features: ["Multiple Systems", "Stat Tracking", "Equipment Manager"]
+      features: ["Multiple Systems", "Stat Tracking", "Equipment Manager"],
     },
     {
       id: "campaign-manager",
@@ -60,7 +60,7 @@ export default function DashboardPage() {
       color: "purple",
       link: "#",
       status: "coming-soon",
-      features: ["Session Notes", "Player Tracking", "Story Arcs"]
+      features: ["Session Notes", "Player Tracking", "Story Arcs"],
     },
     {
       id: "map-maker",
@@ -70,7 +70,7 @@ export default function DashboardPage() {
       color: "blue",
       link: "#",
       status: "coming-soon",
-      features: ["Interactive Maps", "Custom Markers", "Layer System"]
+      features: ["Interactive Maps", "Custom Markers", "Layer System"],
     },
     {
       id: "dice-roller",
@@ -80,7 +80,7 @@ export default function DashboardPage() {
       color: "red",
       link: "#",
       status: "beta",
-      features: ["Custom Formulas", "Roll History", "Probability Stats"]
+      features: ["Custom Formulas", "Roll History", "Probability Stats"],
     },
     {
       id: "lore-keeper",
@@ -90,8 +90,8 @@ export default function DashboardPage() {
       color: "stone",
       link: "#",
       status: "coming-soon",
-      features: ["World Building", "NPC Database", "Timeline Tracking"]
-    }
+      features: ["World Building", "NPC Database", "Timeline Tracking"],
+    },
   ]
 
   const getColorClasses = (color: string) => {
@@ -101,7 +101,7 @@ export default function DashboardPage() {
       purple: "bg-purple-100 dark:bg-purple-900/50 text-purple-600 dark:text-purple-400",
       blue: "bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400",
       red: "bg-red-100 dark:bg-red-900/50 text-red-600 dark:text-red-400",
-      stone: "bg-stone-100 dark:bg-stone-900/50 text-stone-600 dark:text-stone-400"
+      stone: "bg-stone-100 dark:bg-stone-900/50 text-stone-600 dark:text-stone-400",
     }
     return colorMap[color as keyof typeof colorMap] || colorMap.amber
   }
@@ -109,11 +109,23 @@ export default function DashboardPage() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "available":
-        return <div className="bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300 text-xs px-2 py-1 rounded-full font-medium">Available</div>
+        return (
+          <div className="bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300 text-xs px-2 py-1 rounded-full font-medium">
+            Available
+          </div>
+        )
       case "beta":
-        return <div className="bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 text-xs px-2 py-1 rounded-full font-medium">Beta</div>
+        return (
+          <div className="bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 text-xs px-2 py-1 rounded-full font-medium">
+            Beta
+          </div>
+        )
       case "coming-soon":
-        return <div className="bg-gray-100 dark:bg-gray-900/50 text-gray-700 dark:text-gray-300 text-xs px-2 py-1 rounded-full font-medium">Coming Soon</div>
+        return (
+          <div className="bg-gray-100 dark:bg-gray-900/50 text-gray-700 dark:text-gray-300 text-xs px-2 py-1 rounded-full font-medium">
+            Coming Soon
+          </div>
+        )
       default:
         return null
     }
@@ -183,7 +195,7 @@ export default function DashboardPage() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-8">
             <h2 className="text-4xl font-bold text-foreground mb-4 font-fantasy">
-              Welcome back, {displayName.split(' ')[0]}!
+              Welcome back, {displayName.split(" ")[0]}!
             </h2>
             <p className="text-xl text-muted-foreground">
               Ready to enhance your tabletop gaming experience? Choose from your available tools below.
@@ -199,28 +211,29 @@ export default function DashboardPage() {
             {applications.map((app) => {
               const IconComponent = app.icon
               const isAvailable = app.status === "available" || app.status === "beta"
-              
+
               return (
-                <Card key={app.id} className="card-3d hover:shadow-lg transition-all duration-300 paper-texture relative">
-                  <div className="absolute top-4 right-4">
-                    {getStatusBadge(app.status)}
-                  </div>
+                <Card
+                  key={app.id}
+                  className="card-3d hover:shadow-lg transition-all duration-300 paper-texture relative"
+                >
+                  <div className="absolute top-4 right-4">{getStatusBadge(app.status)}</div>
                   <CardHeader>
-                    <div className={`w-12 h-12 rounded-lg flex items-center justify-center mb-4 card-3d ${getColorClasses(app.color)}`}>
+                    <div
+                      className={`w-12 h-12 rounded-lg flex items-center justify-center mb-4 card-3d ${getColorClasses(app.color)}`}
+                    >
                       <IconComponent className="h-6 w-6" />
                     </div>
                     <CardTitle className="text-foreground font-fantasy pr-20">{app.title}</CardTitle>
-                    <CardDescription className="text-muted-foreground mb-4">
-                      {app.description}
-                    </CardDescription>
-                    
+                    <CardDescription className="text-muted-foreground mb-4">{app.description}</CardDescription>
+
                     {app.lastUsed && (
                       <div className="flex items-center text-xs text-muted-foreground mb-3">
                         <Clock className="w-3 h-3 mr-1" />
                         Last used {app.lastUsed}
                       </div>
                     )}
-                    
+
                     <div className="space-y-2 mb-4">
                       {app.features.map((feature, index) => (
                         <div key={index} className="flex items-center text-sm text-muted-foreground">
@@ -239,7 +252,7 @@ export default function DashboardPage() {
                         </Button>
                       </Link>
                     ) : (
-                      <Button disabled className="w-full" variant="outline">
+                      <Button disabled className="w-full bg-transparent" variant="outline">
                         Coming Soon
                       </Button>
                     )}
@@ -254,9 +267,7 @@ export default function DashboardPage() {
       {/* Quick Actions */}
       <section className="py-12 px-4 sm:px-6 lg:px-8 bg-muted/30">
         <div className="max-w-4xl mx-auto text-center">
-          <h3 className="text-2xl font-bold text-foreground mb-6 font-fantasy">
-            Need Help Getting Started?
-          </h3>
+          <h3 className="text-2xl font-bold text-foreground mb-6 font-fantasy">Need Help Getting Started?</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Card className="card-3d paper-texture">
               <CardHeader>
@@ -264,7 +275,7 @@ export default function DashboardPage() {
                 <CardDescription className="text-muted-foreground">
                   Check out our beginner's guide to get started with your first campaign.
                 </CardDescription>
-                <Button variant="outline" className="mt-4 card-3d">
+                <Button variant="outline" className="mt-4 card-3d bg-transparent">
                   View Guide
                 </Button>
               </CardHeader>
@@ -275,7 +286,7 @@ export default function DashboardPage() {
                 <CardDescription className="text-muted-foreground">
                   Connect with other Game Masters and share your creations.
                 </CardDescription>
-                <Button variant="outline" className="mt-4 card-3d">
+                <Button variant="outline" className="mt-4 card-3d bg-transparent">
                   Join Discord
                 </Button>
               </CardHeader>

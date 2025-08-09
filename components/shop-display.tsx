@@ -103,7 +103,8 @@ const themeConfig = {
 }
 
 export function ShopDisplay({ shopTitle, ownerName, items, theme, isPrintMode = false }: ShopDisplayProps) {
-  const styles = themeConfig[theme as keyof typeof themeConfig]
+  // Get theme styles with fallback to parchment theme
+  const styles = themeConfig[theme as keyof typeof themeConfig] || themeConfig.parchment
 
   // Get category icon
   const getCategoryIcon = (category: string) => {
