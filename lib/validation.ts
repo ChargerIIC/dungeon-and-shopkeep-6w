@@ -15,37 +15,61 @@ export const VALIDATION_CONSTRAINTS = {
     minLength: 1,
     maxLength: 100,
     pattern: /^[a-zA-Z0-9\s\-'.&!()]+$/,
-    description: "Shop title must be 1-100 characters and contain only letters, numbers, spaces, and basic punctuation"
+    description: "Shop title must be 1-100 characters and contain only letters, numbers, spaces, and basic punctuation",
   },
   ownerName: {
     minLength: 1,
     maxLength: 100,
     pattern: /^[a-zA-Z\s\-'.]+$/,
-    description: "Owner name must be 1-100 characters and contain only letters, spaces, hyphens, apostrophes, and periods"
+    description:
+      "Owner name must be 1-100 characters and contain only letters, spaces, hyphens, apostrophes, and periods",
   },
   itemName: {
     minLength: 1,
     maxLength: 50,
     pattern: /^[a-zA-Z0-9\s\-'.&!()]+$/,
-    description: "Item name must be 1-50 characters and contain only letters, numbers, spaces, and basic punctuation"
+    description: "Item name must be 1-50 characters and contain only letters, numbers, spaces, and basic punctuation",
   },
   itemPrice: {
     min: 0,
     max: 999999,
-    description: "Price must be between 0 and 999,999"
+    description: "Price must be between 0 and 999,999",
   },
   itemCategory: {
     allowedValues: ["Weapon", "MartialWeapon", "Armor", "Potions", "Gear", "Scroll", "Misc"],
-    description: "Category must be one of the predefined values"
+    description: "Category must be one of the predefined values",
   },
   itemCurrency: {
     allowedValues: ["GP", "SP", "CP", "PP"],
-    description: "Currency must be GP, SP, CP, or PP"
+    description: "Currency must be GP, SP, CP, or PP",
   },
   theme: {
     allowedValues: ["parchment", "tavern", "arcane", "forest", "dungeon"],
-    description: "Theme must be one of the predefined values"
-  }
+    description: "Theme must be one of the predefined values",
+  },
+} as const
+
+// NPC validation constraints
+export const NPC_VALIDATION_CONSTRAINTS = {
+  npcName: {
+    minLength: 1,
+    maxLength: 100,
+    pattern: /^[a-zA-Z0-9\s\-'.&!()]+$/,
+    description: "NPC name must be 1-100 characters and contain only letters, numbers, spaces, and basic punctuation",
+  },
+  profession: {
+    minLength: 1,
+    maxLength: 50,
+    pattern: /^[a-zA-Z\s\-'.&!()]+$/,
+    description: "Profession must be 1-50 characters and contain only letters, spaces, and basic punctuation",
+  },
+  description: {
+    minLength: 0,
+    maxLength: 1000,
+    pattern: /^[a-zA-Z0-9\s\-'.&!(),;:?"\n\r]+$/,
+    description:
+      "Description must be no more than 1000 characters and contain only letters, numbers, spaces, and basic punctuation",
+  },
 } as const
 
 /**
@@ -53,10 +77,10 @@ export const VALIDATION_CONSTRAINTS = {
  */
 export function sanitizeInputString(input: string): string {
   return input
-    .replace(/[<>]/g, '') // Remove HTML brackets
-    .replace(/javascript:/gi, '') // Remove javascript: protocols
-    .replace(/on\w+=/gi, '') // Remove event handlers
-    .replace(/alert\s*$$[^)]*$$/gi, '') // Remove JavaScript alert commands
+    .replace(/[<>]/g, "") // Remove HTML brackets
+    .replace(/javascript:/gi, "") // Remove javascript: protocols
+    .replace(/on\w+=/gi, "") // Remove event handlers
+    .replace(/alert\s*$$[^)]*$$/gi, "") // Remove JavaScript alert commands
     .slice(0, 1000) // Limit length as a safety measure
 }
 
@@ -66,10 +90,10 @@ export function sanitizeInputString(input: string): string {
 export function sanitizeString(input: string): string {
   return input
     .trim()
-    .replace(/[<>]/g, '') // Remove HTML brackets
-    .replace(/javascript:/gi, '') // Remove javascript: protocols
-    .replace(/on\w+=/gi, '') // Remove event handlers
-    .replace(/alert\s*$$[^)]*$$/gi, '') // Remove JavaScript alert commands
+    .replace(/[<>]/g, "") // Remove HTML brackets
+    .replace(/javascript:/gi, "") // Remove javascript: protocols
+    .replace(/on\w+=/gi, "") // Remove event handlers
+    .replace(/alert\s*$$[^)]*$$/gi, "") // Remove JavaScript alert commands
     .trim() // Remove leading/trailing whitespace
     .slice(0, 1000) // Limit length as a safety measure
 }
@@ -85,7 +109,7 @@ export function validateStringField(
     maxLength: number
     pattern: RegExp
     description: string
-  }
+  },
 ): ValidationResult {
   const errors: string[] = []
   const sanitizedValue = sanitizeString(value)
@@ -112,7 +136,7 @@ export function validateStringField(
 
   return {
     isValid: errors.length === 0,
-    errors
+    errors,
   }
 }
 
@@ -126,7 +150,7 @@ export function validateNumericField(
     min: number
     max: number
     description: string
-  }
+  },
 ): ValidationResult {
   const errors: string[] = []
 
@@ -147,7 +171,7 @@ export function validateNumericField(
 
   return {
     isValid: errors.length === 0,
-    errors
+    errors,
   }
 }
 
@@ -160,17 +184,17 @@ export function validateEnumField(
   constraints: {
     allowedValues: readonly string[]
     description: string
-  }
+  },
 ): ValidationResult {
   const errors: string[] = []
 
   if (!constraints.allowedValues.includes(value)) {
-    errors.push(`${fieldName} must be one of: ${constraints.allowedValues.join(', ')}`)
+    errors.push(`${fieldName} must be one of: ${constraints.allowedValues.join(", ")}`)
   }
 
   return {
     isValid: errors.length === 0,
-    errors
+    errors,
   }
 }
 
@@ -246,7 +270,7 @@ export function validateItem(item: {
 
   return {
     isValid: allErrors.length === 0,
-    errors: allErrors
+    errors: allErrors,
   }
 }
 
@@ -288,7 +312,7 @@ export function validateShop(shop: {
     shop.items.forEach((item, index) => {
       const itemResult = validateItem(item)
       if (!itemResult.isValid) {
-        itemResult.errors.forEach(error => {
+        itemResult.errors.forEach((error) => {
           allErrors.push(`Item ${index + 1}: ${error}`)
         })
       }
@@ -297,17 +321,152 @@ export function validateShop(shop: {
 
   return {
     isValid: allErrors.length === 0,
-    errors: allErrors
+    errors: allErrors,
+  }
+}
+
+/**
+ * Validates NPC name
+ */
+export function validateNPCName(name: string): ValidationResult {
+  return validateStringField(name, "NPC name", NPC_VALIDATION_CONSTRAINTS.npcName)
+}
+
+/**
+ * Validates NPC profession
+ */
+export function validateProfession(profession: string): ValidationResult {
+  return validateStringField(profession, "Profession", NPC_VALIDATION_CONSTRAINTS.profession)
+}
+
+/**
+ * Validates NPC description
+ */
+export function validateDescription(description: string): ValidationResult {
+  const errors: string[] = []
+  const sanitizedValue = sanitizeString(description)
+
+  // Description can be empty, so only validate if it has content
+  if (sanitizedValue.length > 0) {
+    if (sanitizedValue.length > NPC_VALIDATION_CONSTRAINTS.description.maxLength) {
+      errors.push(
+        `Description must be no more than ${NPC_VALIDATION_CONSTRAINTS.description.maxLength} characters long`,
+      )
+    }
+
+    if (!NPC_VALIDATION_CONSTRAINTS.description.pattern.test(sanitizedValue)) {
+      errors.push(`Description contains invalid characters. ${NPC_VALIDATION_CONSTRAINTS.description.description}`)
+    }
+  }
+
+  return {
+    isValid: errors.length === 0,
+    errors,
+  }
+}
+
+/**
+ * Validates a complete NPC object
+ */
+export function validateNPC(npc: {
+  name: string
+  profession: string
+  description: string
+  vocalNotes: string
+  inventory: Array<{
+    name: string
+    description: string
+  }>
+  stats: {
+    STR: number
+    DEX: number
+    CON: number
+    INT: number
+    WIS: number
+    CHA: number
+    armorClass: number
+    hitPoints: number
+    speed: number
+    proficiencyBonus: number
+  }
+  theme: string
+}): ValidationResult {
+  const allErrors: string[] = []
+
+  // Validate basic NPC fields
+  const nameResult = validateNPCName(npc.name)
+  const professionResult = validateProfession(npc.profession)
+  const descriptionResult = validateDescription(npc.description)
+  const vocalNotesResult = validateDescription(npc.vocalNotes) // Reuse description validation
+  const themeResult = validateTheme(npc.theme)
+
+  allErrors.push(...nameResult.errors)
+  allErrors.push(...professionResult.errors)
+  allErrors.push(...descriptionResult.errors)
+  allErrors.push(...vocalNotesResult.errors)
+  allErrors.push(...themeResult.errors)
+
+  // Validate stats
+  const statNames = ["STR", "DEX", "CON", "INT", "WIS", "CHA"] as const
+  statNames.forEach((stat) => {
+    const value = npc.stats[stat]
+    if (isNaN(value) || value < 1 || value > 30) {
+      allErrors.push(`${stat} must be between 1 and 30`)
+    }
+  })
+
+  // Validate combat stats
+  if (isNaN(npc.stats.armorClass) || npc.stats.armorClass < 1 || npc.stats.armorClass > 30) {
+    allErrors.push("Armor Class must be between 1 and 30")
+  }
+  if (isNaN(npc.stats.hitPoints) || npc.stats.hitPoints < 1 || npc.stats.hitPoints > 999) {
+    allErrors.push("Hit Points must be between 1 and 999")
+  }
+  if (isNaN(npc.stats.speed) || npc.stats.speed < 0 || npc.stats.speed > 120) {
+    allErrors.push("Speed must be between 0 and 120")
+  }
+  if (isNaN(npc.stats.proficiencyBonus) || npc.stats.proficiencyBonus < 1 || npc.stats.proficiencyBonus > 6) {
+    allErrors.push("Proficiency Bonus must be between 1 and 6")
+  }
+
+  // Validate inventory array
+  if (!Array.isArray(npc.inventory)) {
+    allErrors.push("Inventory must be an array")
+  } else {
+    // Check inventory item count limit
+    if (npc.inventory.length > 50) {
+      allErrors.push("NPC cannot have more than 50 inventory items")
+    }
+
+    // Validate each inventory item
+    npc.inventory.forEach((item, index) => {
+      const itemNameResult = validateNPCName(item.name) // Reuse NPC name validation
+      const itemDescResult = validateDescription(item.description)
+
+      if (!itemNameResult.isValid) {
+        itemNameResult.errors.forEach((error) => {
+          allErrors.push(`Inventory item ${index + 1} name: ${error}`)
+        })
+      }
+
+      if (!itemDescResult.isValid) {
+        itemDescResult.errors.forEach((error) => {
+          allErrors.push(`Inventory item ${index + 1} description: ${error}`)
+        })
+      }
+    })
+  }
+
+  return {
+    isValid: allErrors.length === 0,
+    errors: allErrors,
   }
 }
 
 /**
  * Higher-order function to create a debounced validator for real-time validation
  */
-export function createDebouncedValidator<T>(
-  validator: (value: T) => ValidationResult,
-  delay: number = 300
-) {
+export function createDebouncedValidator<T>(validator: (value: T) => ValidationResult, delay = 300) {
   let timeoutId: NodeJS.Timeout | null = null
 
   return (value: T, callback: (result: ValidationResult) => void) => {

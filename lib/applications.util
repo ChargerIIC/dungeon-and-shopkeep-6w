@@ -1,5 +1,6 @@
-import { Package, Dice6, BookOpen, MapPin, Scroll } from "lucide-react"
+import { Package, Dice6, BookOpen, MapPin, Scroll } from 'lucide-react'
 
+// Ensuring proper named export for applications array
 export const applications = [
   {
     id: "shopkeeper",
@@ -20,6 +21,15 @@ export const applications = [
     features: ["4d6 Drop Lowest", "Point Budget", "Ability Assignment"],
   },
   {
+    id: "npc-cards",
+    title: "NPC Cards",
+    description: "Create and manage Non-Player Characters for D&D 5e with stats, inventory, and vocal notes",
+    icon: BookOpen,
+    color: "purple",
+    demoLink: "/npc-cards",
+    features: ["D&D 5e Stats", "Inventory Management", "Vocal Notes", "Print Ready"],
+  },
+  {
     id: "character-builder",
     title: "Character Builder",
     description: "Build complete D&D characters with stats, equipment, and background",
@@ -27,17 +37,6 @@ export const applications = [
     color: "blue",
     demoLink: "#",
     features: ["Multiple Systems", "Stat Tracking", "Equipment Lists"],
-    comingSoon: true,
-  },
-  {
-    id: "npc-cards",
-    title: "NPC Cards",
-    description:
-      "Organize your NPCs and print summary cards that you can reference as part of your DM deck or behind a Gamemaster screen",
-    icon: BookOpen,
-    color: "purple",
-    demoLink: "#",
-    features: ["NPC Stats", "Inventory Customization", "Vocal Notes"],
     comingSoon: true,
   },
   {

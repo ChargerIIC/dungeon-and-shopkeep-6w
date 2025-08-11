@@ -39,7 +39,7 @@ const isFirebaseConfigured = () => {
 }
 
 // Only log missing variables in development
-if (missingVars.length > 0 && process.env.NODE_ENV === 'development') {
+if (missingVars.length > 0 && process.env.NODE_ENV === "development") {
   console.warn("Missing or invalid Firebase environment variables:", missingVars.join(", "))
   console.warn("Please check your .env.local file and ensure all Firebase environment variables are properly set.")
 }
@@ -248,5 +248,136 @@ export const deleteShop = async (shopId: string) => {
   } catch (error) {
     console.error("Error deleting shop:", error)
     throw new Error("Failed to delete shop. Please try again.")
+  }
+}
+
+// NPC data types
+export interface NPCInventoryItem {
+  id: string
+  name: string
+  description: string
+}
+
+export interface NPCStats {
+  STR: number
+  DEX: number
+  CON: number
+  INT: number
+  WIS: number
+  CHA: number
+  armorClass: number
+  hitPoints: number
+  speed: number
+  proficiencyBonus: number
+}
+
+export interface NPC {
+  id?: string
+  name: string
+  profession: string
+  description: string
+  vocalNotes: string
+  inventory: NPCInventoryItem[]
+  stats: NPCStats
+  theme: string
+  creatorId: string
+  createdAt: Date
+  updatedAt: Date
+}
+
+// Save NPC to Firestore
+export const saveNPC = async (npc: Omit<NPC, "id" | "createdAt" | "updatedAt">) => {
+  if (!db || !auth?.currentUser) {
+    throw new Error("Firebase is not configured or user is not authenticated.")
+  }
+
+  try {
+    const npcData = {
+      ...npc,
+      creatorId: auth.currentUser.uid,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }
+
+    const docRef = await addDoc(collection(db, "npcs"), npcData)
+    return docRef.id
+  } catch (error) {
+    console.error("Error saving NPC:", error)
+    throw new Error("Failed to save NPC. Please try again.")
+  }
+}
+
+// Update existing NPC
+export const updateNPC = async (npcId: string, npc: Omit<NPC, "id" | "creatorId" | "createdAt" | "updatedAt">) => {
+  if (!db || !auth?.currentUser) {
+    throw new Error("Firebase is not configured or user is not authenticated.")
+  }
+
+  try {
+    const npcData = {
+      ...npc,
+      updatedAt: new Date(),
+    }
+
+    const npcRef = doc(db, "npcs", npcId)
+    await updateDoc(npcRef, npcData)
+  } catch (error) {
+    console.error("Error updating NPC:", error)
+    throw new Error("Failed to update NPC. Please try again.")
+  }
+}
+
+// Get user's NPCs
+export const getUserNPCs = async (): Promise<NPC[]> => {
+  if (!db || !auth?.currentUser) {
+    throw new Error("Firebase is not configured or user is not authenticated.")
+  }
+
+  try {
+    const npcsQuery = query(
+      collection(db, "npcs"),
+      where("creatorId", "==", auth.currentUser.uid),
+      orderBy("updatedAt", "desc"),
+    )
+
+    const querySnapshot = await getDocs(npcsQuery)
+    const npcs: NPC[] = []
+
+    querySnapshot.forEach((doc) => {
+      const data = doc.data()
+      npcs.push({
+        id: doc.id,
+        name: data.name,
+        profession: data.profession,
+        description: data.description,
+        vocalNotes: data.vocalNotes,
+        inventory: data.inventory,
+        stats: data.stats,
+        theme: data.theme,
+        creatorId: data.creatorId,
+        createdAt: data.createdAt.toDate(),
+        updatedAt: data.updatedAt.toDate(),
+      })
+    })
+
+    return npcs
+  } catch (error) {
+    console.error("Error getting user NPCs:", error)
+    throw new Error("Failed to load NPCs. Please try again.")
+  }
+}
+
+// Delete NPC
+export const deleteNPC = async (npcId: string) => {
+  if (!db || !auth?.currentUser) {
+    throw new Error("Firebase is not configured or user is not authenticated.")
+  }
+
+  try {
+    const npcRef = doc(db, "npcs", npcId)
+    await deleteDoc(npcRef)
+  } catch (error) {
+    console.error("Error deleting NPC:", error)
+    throw new Error("Failed to delete NPC. Please try again.")
   }
 }
