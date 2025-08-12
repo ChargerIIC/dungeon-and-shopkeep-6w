@@ -1,7 +1,9 @@
+"use client"
 import { Sparkles, Users, Download, Dice6, Package, BookOpen, MapPin, Scroll } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { useAuth } from "@/components/auth-provider"
 import Link from "next/link"
 
 const applications = [
@@ -75,6 +77,8 @@ const applications = [
 ]
 
 export default function HomePage() {
+  const { user, loading } = useAuth()
+
   const getColorClasses = (color: string) => {
     const colorMap = {
       amber: "bg-amber-100 dark:bg-amber-900/50 text-amber-600 dark:text-amber-400",
@@ -132,7 +136,7 @@ export default function HomePage() {
                 variant="outline"
                 className="text-lg px-8 py-3 card-3d text-foreground border-border/50 bg-transparent"
               >
-                Try Shop Creator Free
+                {user ? "Use Shop Creator" : "Try Shop Creator Free"}
               </Button>
             </Link>
           </div>
@@ -185,7 +189,9 @@ export default function HomePage() {
                         </Button>
                       ) : (
                         <Link href={app.demoLink} className="block">
-                          <Button className="w-full button-3d text-primary-foreground">Try Free</Button>
+                          <Button className="w-full button-3d text-primary-foreground">
+                            {user ? "Use App" : "Try Free"}
+                          </Button>
                         </Link>
                       )}
                     </div>
