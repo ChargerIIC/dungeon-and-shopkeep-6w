@@ -18,7 +18,7 @@ export function PrintButton({ onPrint, disabled = false }: PrintButtonProps) {
       className="flex items-center space-x-2 card-3d text-foreground border-border hover:shadow-md transition-all duration-200 bg-transparent"
     >
       <Printer className="w-4 h-4" />
-      <span>Print Shop</span>
+      <span>Print Card</span>
     </Button>
   )
 }

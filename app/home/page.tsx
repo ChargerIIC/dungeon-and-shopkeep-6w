@@ -132,7 +132,7 @@ export default function HomePage() {
                 variant="outline"
                 className="text-lg px-8 py-3 card-3d text-foreground border-border/50 bg-transparent"
               >
-                Try Shop Creator Demo
+                Try Shop Creator Free
               </Button>
             </Link>
           </div>
@@ -185,7 +185,7 @@ export default function HomePage() {
                         </Button>
                       ) : (
                         <Link href={app.demoLink} className="block">
-                          <Button className="w-full button-3d text-primary-foreground">Try Demo</Button>
+                          <Button className="w-full button-3d text-primary-foreground">Try Free</Button>
                         </Link>
                       )}
                     </div>
