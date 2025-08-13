@@ -9,7 +9,7 @@ export const applications = [
     icon: Package,
     color: "amber",
     demoLink: "/shopkeeper",
-    features: ["5 Fantasy Themes", "Item Categories", "Print Ready"],
+    features: ["5 Fantasy Themes", "Item Categories", "Print Results", "Save Shops"],
   },
   {
     id: "stat-generator",
@@ -18,7 +18,7 @@ export const applications = [
     icon: Dice6,
     color: "emerald",
     demoLink: "/stat-generator",
-    features: ["4d6 Drop Lowest", "Point Budget", "Ability Assignment"],
+    features: ["4d6 Drop Lowest", "Point Budget", "Ability Assignment", "Print Proof"],
   },
   {
     id: "npc-cards",
@@ -30,13 +30,13 @@ export const applications = [
     features: ["D&D 5e Stats", "Inventory Management", "Vocal Notes", "Print Ready"],
   },
   {
-    id: "character-builder",
-    title: "Character Builder",
-    description: "Build complete D&D characters with stats, equipment, and background",
-    icon: Dice6,
-    color: "blue",
-    demoLink: "#",
-    features: ["Multiple Systems", "Stat Tracking", "Equipment Lists"],
+    id: "mockery",
+    title: "Vicious Insults",
+    description: "Summon the best insults for your unfortunate enemies,
+    icon: Zap,
+    color: "red",
+    demoLink: "/mockery",
+    features: ["Choose by target", "Insult your enemies", "Fantasy tones", "DND 5E compatible'],
     comingSoon: true,
   },
   {
