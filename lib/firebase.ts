@@ -1,5 +1,13 @@
 import { initializeApp } from "firebase/app"
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, type User } from "firebase/auth"
+import {
+  getAuth,
+  GoogleAuthProvider,
+  FacebookAuthProvider,
+  signInWithPopup,
+  signOut,
+  onAuthStateChanged,
+  type User,
+} from "firebase/auth"
 import {
   getFirestore,
   collection,
@@ -58,6 +66,7 @@ let app: any = null
 let auth: any = null
 let db: any = null
 let googleProvider: GoogleAuthProvider | null = null
+let facebookProvider: FacebookAuthProvider | null = null
 
 try {
   if (isFirebaseConfigured()) {
@@ -67,6 +76,10 @@ try {
     googleProvider = new GoogleAuthProvider()
     googleProvider.setCustomParameters({
       prompt: "select_account",
+    })
+    facebookProvider = new FacebookAuthProvider()
+    facebookProvider.setCustomParameters({
+      display: "popup",
     })
   }
 } catch (error) {
@@ -106,6 +119,41 @@ export const signInWithGoogle = async () => {
     }
 
     throw new Error(error.message || "Failed to sign in with Google. Please try again.")
+  }
+}
+
+// Sign in with Facebook
+export const signInWithFacebook = async () => {
+  if (!isFirebaseConfigured()) {
+    throw new Error("Firebase is not properly configured. Please check your environment variables.")
+  }
+
+  if (!auth || !facebookProvider) {
+    throw new Error("Firebase authentication is not initialized.")
+  }
+
+  try {
+    const result = await signInWithPopup(auth, facebookProvider)
+    return result.user
+  } catch (error: any) {
+    console.error("Error signing in with Facebook:", error)
+
+    // Provide more helpful error messages
+    if (error.code === "auth/api-key-not-valid") {
+      throw new Error(
+        "Firebase API key is invalid. Please check your NEXT_PUBLIC_FIREBASE_API_KEY environment variable.",
+      )
+    } else if (error.code === "auth/popup-closed-by-user") {
+      throw new Error("Sign-in was cancelled. Please try again.")
+    } else if (error.code === "auth/popup-blocked") {
+      throw new Error("Pop-up was blocked by your browser. Please allow pop-ups and try again.")
+    } else if (error.code === "auth/unauthorized-domain") {
+      throw new Error("This domain is not authorized for OAuth operations. Please check your Firebase configuration.")
+    } else if (error.code === "auth/account-exists-with-different-credential") {
+      throw new Error("An account already exists with the same email address but different sign-in credentials.")
+    }
+
+    throw new Error(error.message || "Failed to sign in with Facebook. Please try again.")
   }
 }
 
