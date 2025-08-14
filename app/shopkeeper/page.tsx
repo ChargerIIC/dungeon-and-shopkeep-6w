@@ -42,6 +42,7 @@ import Link from "next/link"
 import { toast } from "@/hooks/use-toast"
 import { commonItems } from "@/app/shopkeeper/commonItems"
 import { SharedHeader } from "@/components/shared-header"
+import { LazyShopDisplay } from "@/lib/lazy-components"
 
 // Item categories
 const categories = ["Weapon", "MartialWeapon", "Armor", "Potions", "Gear", "Scroll", "Misc"]
@@ -886,7 +887,7 @@ export default function ShopCreator() {
 
           {/* Preview Section */}
           <div className="flex-1">
-            <ShopDisplay shopTitle={shopTitle} ownerName={ownerName} items={items} theme={theme} isPrintMode={false} />
+            <LazyShopDisplay shopTitle={shopTitle} ownerName={ownerName} items={items} theme={theme} isPrintMode={false} />
           </div>
         </div>
       </div>

@@ -1,0 +1,81 @@
+/* Optimized theme system CSS classes */
+
+/* Base theme variables */
+.theme-parchment {
+  --theme-bg: rgb(245, 245, 220);
+  --theme-card: rgb(255, 248, 220);
+  --theme-border: rgba(139, 69, 19, 0.3);
+  --theme-text: rgb(139, 69, 19);
+  --theme-accent: rgb(255, 235, 205);
+  --theme-item-bg: rgba(255, 235, 205, 0.8);
+  --theme-divider: linear-gradient(to right, rgb(245, 158, 11), rgb(217, 119, 6));
+}
+
+.theme-tavern {
+  --theme-bg: rgb(92, 51, 23);
+  --theme-card: rgb(120, 63, 4);
+  --theme-border: rgba(168, 85, 247, 0.6);
+  --theme-text: rgb(245, 158, 11);
+  --theme-accent: rgb(217, 119, 6);
+  --theme-item-bg: rgba(120, 63, 4, 0.8);
+  --theme-divider: linear-gradient(to right, rgb(245, 158, 11), rgb(217, 119, 6));
+}
+
+.theme-arcane {
+  --theme-bg: rgb(59, 7, 100);
+  --theme-card: rgb(88, 28, 135);
+  --theme-border: rgba(147, 51, 234, 0.6);
+  --theme-text: rgb(196, 181, 253);
+  --theme-accent: rgb(139, 92, 246);
+  --theme-item-bg: rgba(139, 92, 246, 0.7);
+  --theme-divider: linear-gradient(to right, rgb(147, 51, 234), rgb(126, 34, 206));
+}
+
+.theme-forest {
+  --theme-bg: rgb(6, 78, 59);
+  --theme-card: rgb(22, 101, 52);
+  --theme-border: rgba(34, 197, 94, 0.6);
+  --theme-text: rgb(187, 247, 208);
+  --theme-accent: rgb(74, 222, 128);
+  --theme-item-bg: rgba(74, 222, 128, 0.7);
+  --theme-divider: linear-gradient(to right, rgb(34, 197, 94), rgb(22, 163, 74));
+}
+
+.theme-dungeon {
+  --theme-bg: rgb(28, 25, 23);
+  --theme-card: rgb(41, 37, 36);
+  --theme-border: rgba(239, 68, 68, 0.6);
+  --theme-text: rgb(252, 165, 165);
+  --theme-accent: rgb(248, 113, 113);
+  --theme-item-bg: rgba(248, 113, 113, 0.8);
+  --theme-divider: linear-gradient(to right, rgb(239, 68, 68), rgb(220, 38, 38));
+}
+
+/* Utility classes that use theme variables */
+.theme-bg { background-color: var(--theme-bg); }
+.theme-card-bg { background-color: var(--theme-card); }
+.theme-border { border-color: var(--theme-border); }
+.theme-text { color: var(--theme-text); }
+.theme-accent { background-color: var(--theme-accent); }
+.theme-item-bg { background-color: var(--theme-item-bg); }
+.theme-divider { background: var(--theme-divider); }
+
+/* Responsive theme classes */
+@media (min-width: 768px) {
+  .theme-card-bg {
+    background: linear-gradient(135deg, var(--theme-card) 0%, var(--theme-accent) 100%);
+  }
+}
+
+/* Print optimizations */
+@media print {
+  .theme-parchment,
+  .theme-tavern,
+  .theme-arcane,
+  .theme-forest,
+  .theme-dungeon {
+    --theme-bg: white;
+    --theme-text: black;
+    --theme-border: rgba(0, 0, 0, 0.2);
+  }
+}

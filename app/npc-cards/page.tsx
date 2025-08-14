@@ -30,6 +30,7 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { toast } from "@/hooks/use-toast"
 import { SharedHeader } from "@/components/shared-header"
+import { LazyNPCDisplay } from "@/lib/lazy-components"
 
 // D&D 5e ability scores
 const abilityScores = ["STR", "DEX", "CON", "INT", "WIS", "CHA"]
@@ -858,7 +859,7 @@ export default function NPCCreator() {
 
           {/* NPC Display Preview */}
           <div className="lg:sticky lg:top-8">
-            <NPCDisplay
+            <LazyNPCDisplay
               npcName={npcName}
               profession={profession}
               description={description}

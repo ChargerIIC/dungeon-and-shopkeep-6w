@@ -1,34 +1,65 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Zap, RotateCcw } from "lucide-react"
 import { SharedHeader } from "@/components/shared-header"
-import { GetInsultByTag, Insult, InsultCategory } from "./insults.repo"
+import { loadInsultsData } from "@/lib/lazy-components"
 
+// Types imported lazily
+type Insult = {
+  id: number
+  text: string
+  category: string
+}
+
+type InsultCategory = string
 
 export default function MockeryPage() {
-  const [selectedCategory, setSelectedCategory] = useState<InsultCategory>(InsultCategory.COWARD)
+  const [selectedCategory, setSelectedCategory] = useState<InsultCategory>("coward")
   const [currentInsult, setCurrentInsult] = useState<Insult>()
   const [isGenerating, setIsGenerating] = useState(false)
-  const INSULT_CATEGORIES = Object.keys(typeof InsultCategory)
+  const [insultsModule, setInsultsModule] = useState<any>(null)
+  const [categories, setCategories] = useState<string[]>([])
+
+  // Load insults data dynamically
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const module = await loadInsultsData()
+        setInsultsModule(module)
+        // Extract categories from enum
+        const categoryKeys = Object.keys(module.InsultCategory)
+          .filter(key => isNaN(Number(key)))
+        setCategories(categoryKeys)
+      } catch (error) {
+        console.error('Failed to load insults data:', error)
+      }
+    }
+    loadData()
+  }, [])
+
   const generateInsult = () => {
+    if (!insultsModule) return
+    
     setIsGenerating(true)
 
     // Add a small delay for dramatic effect
     setTimeout(() => {
-      const insult = GetInsultByTag(selectedCategory);
-      setCurrentInsult(insult); 
+      const insult = insultsModule.GetInsultByTag(selectedCategory)
+      setCurrentInsult(insult)
       setIsGenerating(false)
     }, 300)
   }
 
-  // Generate initial insult on component mount
-  useState(() => {
-    generateInsult()
-  })
+  // Generate initial insult when data is loaded
+  useEffect(() => {
+    if (insultsModule && !currentInsult) {
+      generateInsult()
+    }
+  }, [insultsModule])
 
   return (
     <div className="min-h-screen bg-background">
@@ -55,21 +86,19 @@ export default function MockeryPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <Select value={selectedCategory} onValueChange={(value: InsultCategory) => setSelectedCategory(value)}>
+              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Choose a target" />
                 </SelectTrigger>
                 <SelectContent>
-                  {(Object.keys(InsultCategory) as Array<keyof InsultCategory>)
-                    .filter(key => isNaN(Number(key)))
-                    .map(category => (
-                      <SelectItem 
-                        key={category.toString()} 
-                        value={category.toString().toLowerCase()}
-                      >
-                        {category.toString().charAt(0).toUpperCase() + category.toString().slice(1).toLowerCase()}
-                      </SelectItem>
-                    ))}
+                  {categories.map(category => (
+                    <SelectItem 
+                      key={category} 
+                      value={category.toLowerCase()}
+                    >
+                      {category.charAt(0).toUpperCase() + category.slice(1).toLowerCase()}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </CardContent>
@@ -98,7 +127,7 @@ export default function MockeryPage() {
           {/* Generate Button */}
           <Button
             onClick={generateInsult}
-            disabled={isGenerating}
+            disabled={isGenerating || !insultsModule}
             size="lg"
             className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 text-lg"
           >
