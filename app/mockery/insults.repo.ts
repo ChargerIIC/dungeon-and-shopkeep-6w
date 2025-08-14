@@ -72,7 +72,7 @@ export const InsultsRepo: Array<Insult> = [
     { text: "I will tan your skin for my lioncloth!", tag: [InsultCategory.MONSTER]},
     { text: "Tall, Dark, and Despicable!", tag: [InsultCategory.VILLAIN]},
     { text: "I don't know wether to use Charm Person or Speak with Animals!", tag: [InsultCategory.VILLAIN]},
-    { text: "You look like you were personally shit out by Shame itself.", tag: [InsultCategory.NSFW, InsultCategory.VILLAIN, InsultCategory.WEAKLING]},
+    { text: "You look like you were personally shit out by Shame itself.", tag: [InsultCategory.NSFW]},
     { text: "Your face is proof against a loving god!", tag: [InsultCategory.NSFW, InsultCategory.VILLAIN]},
     { text: "I've seen fiercer puppies!", tag: [InsultCategory.MONSTER, InsultCategory.COWARD, InsultCategory.WEAKLING]},
     { text: "Looks like my time of not taking you seriously is coming to a crescendo!", tag:[InsultCategory.VILLAIN, InsultCategory.LIAR]},
@@ -88,6 +88,13 @@ export const InsultsRepo: Array<Insult> = [
     { text: "Your father was so ugly, even the local lich figured she could do better!", tag: [InsultCategory.VILLAIN] },
     { text: "Why do I hear Benny Hill music every time I see you?", tag: [InsultCategory.VILLAIN, InsultCategory.COWARD] },
     { text: "You sure you want to do this? Have a younger sibling or small child that could provide us with a greater challenge?", tag: [InsultCategory.VILLAIN, InsultCategory.WEAKLING, InsultCategory.MONSTER]},
+    { text: "If only I had a Disguise Others spell for you", tag: [InsultCategory.MONSTER]},
+    { text: "I've seen more muscles on a skeleton", tag: [InsultCategory.MONSTER]},
+    { text: "A body like that could have only been made with the aid of the Darkness spell", tag: [InsultCategory.MONSTER]},
+    { text: "Have you ever considered just not breathing?", tag: [InsultCategory.MONSTER, InsultCategory.NSFW]},
+    { text: "I can't tell if you are fighting or flailing!", tag: [InsultCategory.MONSTER, InsultCategory.WEAKLING]},
+    { text: "Is that your war face or did you eat a lemon?", tag: [InsultCategory.VILLAIN, InsultCategory.FOOL]},
+    { text: "Have you considered donating your weapons to someone who knows how to use them?", tag: [InsultCategory.VILLAIN, InsultCategory.WEAKLING]}
   ]
 
 export const GetInsultByTag = (tag: InsultCategory): Insult | undefined => {
