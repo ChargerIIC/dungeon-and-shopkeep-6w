@@ -6,22 +6,21 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Zap, RotateCcw } from "lucide-react"
 import { SharedHeader } from "@/components/shared-header"
-import { Insult, InsultCategory, insultsByCategory } from "./insults.repo"
+import { GetInsultByTag, Insult, InsultCategory } from "./insults.repo"
 
 
 export default function MockeryPage() {
-  const [selectedCategory, setSelectedCategory] = useState<InsultCategory>("coward")
+  const [selectedCategory, setSelectedCategory] = useState<InsultCategory>(InsultCategory.COWARD)
   const [currentInsult, setCurrentInsult] = useState<Insult>()
   const [isGenerating, setIsGenerating] = useState(false)
-
+  const INSULT_CATEGORIES = Object.keys(typeof InsultCategory)
   const generateInsult = () => {
     setIsGenerating(true)
 
     // Add a small delay for dramatic effect
     setTimeout(() => {
-      const insults = insultsByCategory[selectedCategory] as Insult[];
-      const randomIndex = Math.floor(Math.random() * insults?.length)
-      setCurrentInsult(insults[randomIndex] as Insult)
+      const insult = GetInsultByTag(selectedCategory);
+      setCurrentInsult(insult); 
       setIsGenerating(false)
     }, 300)
   }
@@ -61,11 +60,16 @@ export default function MockeryPage() {
                   <SelectValue placeholder="Choose a target" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="coward">Coward</SelectItem>
-                  <SelectItem value="fool">Fool</SelectItem>
-                  <SelectItem value="liar">Liar</SelectItem>
-                  <SelectItem value="weakling">Weakling</SelectItem>
-                  <SelectItem value="villain">Villain</SelectItem>
+                  {(Object.keys(InsultCategory) as Array<keyof InsultCategory>)
+                    .filter(key => isNaN(Number(key)))
+                    .map(category => (
+                      <SelectItem 
+                        key={category.toString()} 
+                        value={category.toString().toLowerCase()}
+                      >
+                        {category.toString().charAt(0).toUpperCase() + category.toString().slice(1).toLowerCase()}
+                      </SelectItem>
+                    ))}
                 </SelectContent>
               </Select>
             </CardContent>
