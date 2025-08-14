@@ -1,0 +1,67 @@
+import { ta } from "date-fns/locale";
+
+export const insultsByCategory = {
+  coward: [
+    { text: "You yellow-bellied cur! Your spine is made of jelly!", tag: ["coward"] },
+    { text: "Thou art a craven wretch who flees at shadows!", tag: ["coward"] },
+    { text: "You couldn't face a sleeping kitten without trembling!", tag: ["coward"] },
+    { text: "Your courage is as absent as your common sense!", tag: ["coward"] },
+    { text: "You're more chicken than a henhouse full of roosters!", tag: ["coward"] },
+    { text: "Even a frightened rabbit shows more bravery than you!", tag: ["coward"] },
+    { text: "You'd run from your own reflection if it looked threatening!", tag: ["coward"] },
+    { text: "Your backbone must be made of overcooked spaghetti!", tag: ["coward"] },
+    { text: "You're so cowardly, you apologize to doors before opening them!", tag: ["coward"] },
+    { text: "A wet paper bag could intimidate you into submission!", tag: ["coward"] },
+  ],
+  fool: [
+    { text: "You witless buffoon! Your brain is smoother than a bowling ball!", tag: ["fool"] },
+    { text: "Thou art a most addled-pated nincompoop!", tag: ["fool"] },
+    { text: "Your intelligence rivals that of a particularly dim rock!", tag: ["fool"] },
+    { text: "You couldn't find your way out of a paper bag with a map and GPS!", tag: ["fool"] },
+    { text: "Your head is emptier than a politician's promises!", tag: ["fool"] },
+    { text: "You're about as sharp as a marble!", tag: ["fool"] },
+    { text: "If brains were gunpowder, you couldn't blow your nose!", tag: ["fool"] },
+    { text: "You make a goldfish look like a genius!", tag: ["fool"] },
+    { text: "Your thought process moves slower than continental drift!", tag: ["fool"] },
+    { text: "You're living proof that evolution can go in reverse!", tag: ["fool"] },
+  ],
+  liar: [
+    { text: "You silver-tongued serpent! Truth flees from your lips!", tag: ["liar"] },
+    { text: "Thou art a most perjured and false-hearted knave!", tag: ["liar"] },
+    { text: "Your words are worth less than fool's gold!", tag: ["liar"] },
+    { text: "You couldn't tell the truth if your life depended on it!", tag: ["liar"] },
+    { text: "Your nose should be longer than Pinocchio's by now!", tag: ["liar"] },
+    { text: "You spin tales like a spider spins webs - all lies!", tag: ["liar"] },
+    { text: "Your honesty is as rare as a unicorn in a stable!", tag: ["liar"] },
+    { text: "You'd lie about the color of the sky on a clear day!", tag: ["liar"] },
+    { text: "Your tongue is forked like the serpent you are!", tag: ["liar"] },
+    { text: "Truth and you are strangers who've never been introduced!", tag: ["liar"] },
+  ],
+  weakling: [
+    { text: "You feeble-armed milksop! A butterfly could overpower you!", tag: ["weakling"] },
+    { text: "Thou art weaker than watered-down ale!", tag: ["weakling"] },
+    { text: "Your muscles have the strength of overcooked noodles!", tag: ["weakling"] },
+    { text: "You couldn't lift a feather without straining yourself!", tag: ["weakling"] },
+    { text: "Your arms are more decorative than functional!", tag: ["weakling"] },
+    { text: "A gentle breeze could knock you over!", tag: ["weakling"] },
+    { text: "You make a newborn kitten look mighty!", tag: ["weakling"] },
+    { text: "Your grip is weaker than a politician's handshake!", tag: ["weakling"] },
+    { text: "You couldn't punch your way out of a soap bubble!", tag: ["weakling"] },
+    { text: "Your strength is as impressive as a wilted flower!", tag: ["weakling"] },
+  ],
+  villain: [
+    { text: "You black-hearted scoundrel! Evil flows through your veins!", tag: ["villain"] },
+    { text: "Thou art a most villainous and treacherous cur!", tag: ["villain"] },
+    { text: "Your soul is blacker than a moonless night!", tag: ["villain"] },
+    { text: "You're more twisted than a pretzel factory explosion!", tag: ["villain"] },
+    { text: "Your heart is colder than a witch's cauldron!", tag: ["villain"] },
+    { text: "You make demons look like choir boys!", tag: ["villain"] },
+    { text: "Your wickedness knows no bounds, you fiend!", tag: ["villain"] },
+    { text: "You're so evil, you make villains look like saints!", tag: ["villain"] },
+    { text: "Your malice is matched only by your stupidity!", tag: ["villain"] },
+    { text: "You're the reason good people lock their doors at night!", tag: ["villain"] },
+  ],
+}
+export type InsultCategory = "coward" | "fool" | "liar" | "weakling" | "villain";
+
+export type Insult = { tag: InsultCategory[]; text: string }

@@ -1,5 +1,6 @@
 import { BookOpen, CloudLightningIcon, Dice6, MapPin, Package, Scroll } from "lucide-react";
-
+// This file contains the definitions for various applications available in the system.
+/*** Each application shown to users has data here. Each lists a title, description, feature list, and the application's status  ***/
 export const applications = [
   {
     id: "shopkeeper",
@@ -51,7 +52,7 @@ export const applications = [
     demoLink: "#",
     features: ["Interactive Maps", "Custom Markers", "Layer System"],
     status: "coming-soon",
- },
+  },
   {
     id: "dice-roller",
     title: "Dice Sanctum",
@@ -72,4 +73,4 @@ export const applications = [
     features: ["World Building", "NPC Database", "Timeline Tracking"],
     status: "coming-soon",
   },
-  ]
+]

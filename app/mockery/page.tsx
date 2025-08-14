@@ -6,76 +6,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Zap, RotateCcw } from "lucide-react"
 import { SharedHeader } from "@/components/shared-header"
+import { Insult, InsultCategory, insultsByCategory } from "./insults.repo"
 
-// Insult collections by target type
-const insultsByCategory = {
-  coward: [
-    "You yellow-bellied cur! Your spine is made of jelly!",
-    "Thou art a craven wretch who flees at shadows!",
-    "You couldn't face a sleeping kitten without trembling!",
-    "Your courage is as absent as your common sense!",
-    "You're more chicken than a henhouse full of roosters!",
-    "Even a frightened rabbit shows more bravery than you!",
-    "You'd run from your own reflection if it looked threatening!",
-    "Your backbone must be made of overcooked spaghetti!",
-    "You're so cowardly, you apologize to doors before opening them!",
-    "A wet paper bag could intimidate you into submission!",
-  ],
-  fool: [
-    "You witless buffoon! Your brain is smoother than a bowling ball!",
-    "Thou art a most addled-pated nincompoop!",
-    "Your intelligence rivals that of a particularly dim rock!",
-    "You couldn't find your way out of a paper bag with a map and GPS!",
-    "Your head is emptier than a politician's promises!",
-    "You're about as sharp as a marble!",
-    "If brains were gunpowder, you couldn't blow your nose!",
-    "You make a goldfish look like a genius!",
-    "Your thought process moves slower than continental drift!",
-    "You're living proof that evolution can go in reverse!",
-  ],
-  liar: [
-    "You silver-tongued serpent! Truth flees from your lips!",
-    "Thou art a most perjured and false-hearted knave!",
-    "Your words are worth less than fool's gold!",
-    "You couldn't tell the truth if your life depended on it!",
-    "Your nose should be longer than Pinocchio's by now!",
-    "You spin tales like a spider spins webs - all lies!",
-    "Your honesty is as rare as a unicorn in a stable!",
-    "You'd lie about the color of the sky on a clear day!",
-    "Your tongue is forked like the serpent you are!",
-    "Truth and you are strangers who've never been introduced!",
-  ],
-  weakling: [
-    "You feeble-armed milksop! A butterfly could overpower you!",
-    "Thou art weaker than watered-down ale!",
-    "Your muscles have the strength of overcooked noodles!",
-    "You couldn't lift a feather without straining yourself!",
-    "Your arms are more decorative than functional!",
-    "A gentle breeze could knock you over!",
-    "You make a newborn kitten look mighty!",
-    "Your grip is weaker than a politician's handshake!",
-    "You couldn't punch your way out of a soap bubble!",
-    "Your strength is as impressive as a wilted flower!",
-  ],
-  villain: [
-    "You black-hearted scoundrel! Evil flows through your veins!",
-    "Thou art a most villainous and treacherous cur!",
-    "Your soul is blacker than a moonless night!",
-    "You're more twisted than a pretzel factory explosion!",
-    "Your heart is colder than a witch's cauldron!",
-    "You make demons look like choir boys!",
-    "Your wickedness knows no bounds, you fiend!",
-    "You're so evil, you make villains look like saints!",
-    "Your malice is matched only by your stupidity!",
-    "You're the reason good people lock their doors at night!",
-  ],
-}
-
-type InsultCategory = keyof typeof insultsByCategory
 
 export default function MockeryPage() {
-  const [selectedCategory, setSelectedCategory] = useState<InsultCategory>("fool")
-  const [currentInsult, setCurrentInsult] = useState<string>("")
+  const [selectedCategory, setSelectedCategory] = useState<InsultCategory>("coward")
+  const [currentInsult, setCurrentInsult] = useState<Insult>()
   const [isGenerating, setIsGenerating] = useState(false)
 
   const generateInsult = () => {
@@ -83,9 +19,9 @@ export default function MockeryPage() {
 
     // Add a small delay for dramatic effect
     setTimeout(() => {
-      const insults = insultsByCategory[selectedCategory]
-      const randomIndex = Math.floor(Math.random() * insults.length)
-      setCurrentInsult(insults[randomIndex])
+      const insults = insultsByCategory[selectedCategory] as Insult[];
+      const randomIndex = Math.floor(Math.random() * insults?.length)
+      setCurrentInsult(insults[randomIndex] as Insult)
       setIsGenerating(false)
     }, 300)
   }
@@ -147,7 +83,7 @@ export default function MockeryPage() {
                     </div>
                   ) : (
                     <blockquote className="text-xl md:text-2xl font-medium leading-relaxed text-center italic">
-                      "{currentInsult}"
+                      "{currentInsult?.text}"
                     </blockquote>
                   )}
                 </div>
