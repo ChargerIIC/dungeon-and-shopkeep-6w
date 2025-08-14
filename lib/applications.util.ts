@@ -1,40 +1,75 @@
-export interface Application {
-  title: string
-  description: string
-  icon: string
-  href: string
-  color: string
-  comingSoon?: boolean
-}
+import { BookOpen, CloudLightningIcon, Dice6, MapPin, Package, Scroll } from "lucide-react";
 
-export const applications: Application[] = [
+export const applications = [
   {
-    title: "Shop Creator",
-    description: "Create your own shop",
-    icon: "shop",
-    href: "/shopkeeper",
-    color: "blue",
+    id: "shopkeeper",
+    title: "Dungeon & Shopkeeps",
+    description: "Create beautiful fantasy shop inventories with themed layouts and item management",
+    icon: Package,
+    color: "amber",
+    demoLink: "/shopkeeper",
+    status: "available",
+    features: ["5 Fantasy Themes", "Item Categories", "Print Results", "Save Shops"],
   },
   {
-    title: "Stat Generator",
-    description: "Roll ability scores",
-    icon: "dice",
-    href: "/stat-generator",
-    color: "purple",
+    id: "stat-generator",
+    title: "Dungeon Coach Stat Generation",
+    description: "Generate D&D ability scores using the 4d6 drop lowest method with point allocation tracking",
+    icon: Dice6,
+    color: "emerald",
+    demoLink: "/stat-generator",
+    status: "available",
+    features: ["4d6 Drop Lowest", "Point Budget", "Ability Assignment", "Print Proof"],
   },
   {
+    id: "npc-cards",
     title: "NPC Cards",
-    description: "Create character cards",
-    icon: "users",
-    href: "/npc-cards",
-    color: "green",
-    comingSoon: true,
+    description: "Create and manage Non-Player Characters for D&D 5e with stats, inventory, and vocal notes",
+    icon: BookOpen,
+    color: "purple",
+    demoLink: "/npc-cards",
+    status: "beta",
+    features: ["D&D 5e Stats", "Inventory Management", "Vocal Notes", "Print Ready"],
   },
   {
-    title: "Vicious Insult Generator",
-    description: "Generate creative insults",
-    icon: "zap",
-    href: "/mockery",
+    id: "mockery",
+    title: "Vicious Insults",
+    description: "Summon the best insults for your unfortunate enemies",
+    icon: CloudLightningIcon,
     color: "red",
+    demoLink: "/mockery",
+    features: ["Choose by target", "Insult your enemies", "Fantasy tones", "DND 5E compatible"],
+    status: "beta",
+    lastUpdated: "08/14/2025",
   },
-]
+  {
+    id: "map-maker",
+    title: "Realm Mapper",
+    description: "Design interactive maps for your fantasy worlds and adventures",
+    icon: MapPin,
+    color: "blue",
+    demoLink: "#",
+    features: ["Interactive Maps", "Custom Markers", "Layer System"],
+    status: "coming-soon",
+ },
+  {
+    id: "dice-roller",
+    title: "Dice Sanctum",
+    description: "Advanced dice rolling with custom formulas and probability analysis",
+    icon: Dice6,
+    color: "red",
+    demoLink: "#",
+    features: ["Custom Formulas", "Roll History", "Probability Stats"],
+    status: "coming-soon",
+  },
+  {
+    id: "lore-keeper",
+    title: "Lore Keeper",
+    description: "Document and organize your world's history, NPCs, and locations",
+    icon: Scroll,
+    color: "stone",
+    demoLink: "#",
+    features: ["World Building", "NPC Database", "Timeline Tracking"],
+    status: "coming-soon",
+  },
+  ]

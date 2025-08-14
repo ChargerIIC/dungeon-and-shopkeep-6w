@@ -5,76 +5,7 @@ import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/ca
 import { ThemeToggle } from "@/components/theme-toggle"
 import { useAuth } from "@/components/auth-provider"
 import Link from "next/link"
-
-const applications = [
-  {
-    id: "shopkeeper",
-    title: "Dungeon & Shopkeeps",
-    description: "Create beautiful fantasy shop inventories with themed layouts and item management",
-    icon: Package,
-    color: "amber",
-    demoLink: "/shopkeeper",
-    features: ["5 Fantasy Themes", "Item Categories", "Print Ready"],
-  },
-  {
-    id: "stat-generator",
-    title: "Dungeon Coach Stat Generation",
-    description: "Generate D&D ability scores using the 4d6 drop lowest method with point allocation tracking",
-    icon: Dice6,
-    color: "emerald",
-    demoLink: "/stat-generator",
-    features: ["4d6 Drop Lowest", "Point Budget", "Ability Assignment"],
-  },
-  {
-    id: "npc-cards",
-    title: "NPC Cards",
-    description: "Create and manage Non-Player Characters for D&D 5e with stats, inventory, and vocal notes",
-    icon: BookOpen,
-    color: "purple",
-    demoLink: "/npc-cards",
-    features: ["D&D 5e Stats", "Inventory Management", "Vocal Notes", "Print Ready"],
-  },
-  {
-    id: "character-builder",
-    title: "Character Builder",
-    description: "Build complete D&D characters with stats, equipment, and background",
-    icon: Dice6,
-    color: "blue",
-    demoLink: "#",
-    features: ["Multiple Systems", "Stat Tracking", "Equipment Lists"],
-    comingSoon: true,
-  },
-  {
-    id: "map-maker",
-    title: "Realm Mapper",
-    description: "Design interactive maps for your fantasy worlds and adventures",
-    icon: MapPin,
-    color: "blue",
-    demoLink: "#",
-    features: ["Interactive Maps", "Custom Markers", "Layer System"],
-    comingSoon: true,
-  },
-  {
-    id: "dice-roller",
-    title: "Dice Sanctum",
-    description: "Advanced dice rolling with custom formulas and probability analysis",
-    icon: Dice6,
-    color: "red",
-    demoLink: "#",
-    features: ["Custom Formulas", "Roll History", "Probability Stats"],
-    comingSoon: true,
-  },
-  {
-    id: "lore-keeper",
-    title: "Lore Keeper",
-    description: "Document and organize your world's history, NPCs, and locations",
-    icon: Scroll,
-    color: "stone",
-    demoLink: "#",
-    features: ["World Building", "NPC Database", "Timeline Tracking"],
-    comingSoon: true,
-  },
-]
+import { applications } from "@/lib/applications.util"
 
 export default function HomePage() {
   const { user, loading } = useAuth()
@@ -156,12 +87,13 @@ export default function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {applications.map((app) => {
               const IconComponent = app.icon
+              const isAvailable = app.status === "available" || app.status === "beta"
               return (
                 <Card
                   key={app.id}
                   className="card-3d hover:shadow-lg transition-all duration-300 paper-texture relative"
                 >
-                  {app.comingSoon && (
+                  {!isAvailable && (
                     <div className="absolute top-4 right-4 bg-primary text-primary-foreground text-xs px-2 py-1 rounded-full font-medium">
                       Coming Soon
                     </div>
@@ -183,7 +115,7 @@ export default function HomePage() {
                       ))}
                     </div>
                     <div className="mt-auto">
-                      {app.comingSoon ? (
+                      {!isAvailable ? (
                         <Button disabled className="w-full bg-transparent" variant="outline">
                           Coming Soon
                         </Button>

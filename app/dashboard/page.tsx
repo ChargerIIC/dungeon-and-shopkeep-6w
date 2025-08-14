@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect } from "react"
-import { Dice6, Package, Shield, BookOpen, MapPin, Scroll, LogOut, User, ArrowRight, Clock } from "lucide-react"
+import { Dice6, Package, Shield, BookOpen, MapPin, Scroll, LogOut, User, ArrowRight, Clock, LightbulbIcon, CloudLightningIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ThemeToggle } from "@/components/theme-toggle"
@@ -9,6 +9,7 @@ import { useAuth } from "@/components/auth-provider"
 import { signOutUser } from "@/lib/firebase"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import { applications } from "@/lib/applications.util"
 
 export default function DashboardPage() {
   const { user, loading, isConfigured } = useAuth()
@@ -29,70 +30,6 @@ export default function DashboardPage() {
       console.error("Sign out failed:", error)
     }
   }
-
-  const applications = [
-    {
-      id: "shopkeeper",
-      title: "Dungeon & Shopkeeps",
-      description: "Create and manage fantasy shop inventories with beautiful themes",
-      icon: Package,
-      color: "amber",
-      link: "/shopkeeper",
-      status: "available",
-      lastUsed: "2 days ago",
-      features: ["5 Fantasy Themes", "Save & Load Shops", "Print Ready"],
-    },
-    {
-      id: "character-builder",
-      title: "Character Forge",
-      description: "Build detailed character sheets for multiple RPG systems",
-      icon: Shield,
-      color: "emerald",
-      link: "#",
-      status: "coming-soon",
-      features: ["Multiple Systems", "Stat Tracking", "Equipment Manager"],
-    },
-    {
-      id: "campaign-manager",
-      title: "Campaign Chronicles",
-      description: "Organize campaigns, track sessions, and manage players",
-      icon: BookOpen,
-      color: "purple",
-      link: "#",
-      status: "coming-soon",
-      features: ["Session Notes", "Player Tracking", "Story Arcs"],
-    },
-    {
-      id: "map-maker",
-      title: "Realm Mapper",
-      description: "Design interactive maps for your fantasy worlds",
-      icon: MapPin,
-      color: "blue",
-      link: "#",
-      status: "coming-soon",
-      features: ["Interactive Maps", "Custom Markers", "Layer System"],
-    },
-    {
-      id: "dice-roller",
-      title: "Dice Sanctum",
-      description: "Advanced dice rolling with custom formulas",
-      icon: Dice6,
-      color: "red",
-      link: "#",
-      status: "beta",
-      features: ["Custom Formulas", "Roll History", "Probability Stats"],
-    },
-    {
-      id: "lore-keeper",
-      title: "Lore Keeper",
-      description: "Document your world's history, NPCs, and locations",
-      icon: Scroll,
-      color: "stone",
-      link: "#",
-      status: "coming-soon",
-      features: ["World Building", "NPC Database", "Timeline Tracking"],
-    },
-  ]
 
   const getColorClasses = (color: string) => {
     const colorMap = {
@@ -227,10 +164,10 @@ export default function DashboardPage() {
                     <CardTitle className="text-foreground font-fantasy pr-20">{app.title}</CardTitle>
                     <CardDescription className="text-muted-foreground mb-4">{app.description}</CardDescription>
 
-                    {app.lastUsed && (
+                    {app.lastUpdated && (
                       <div className="flex items-center text-xs text-muted-foreground mb-3">
                         <Clock className="w-3 h-3 mr-1" />
-                        Last used {app.lastUsed}
+                        Last used {app.lastUpdated}
                       </div>
                     )}
 
@@ -245,7 +182,7 @@ export default function DashboardPage() {
                   </CardHeader>
                   <CardContent className="pt-0">
                     {isAvailable ? (
-                      <Link href={app.link} className="block">
+                      <Link href={app.demoLink} className="block">
                         <Button className="w-full button-3d text-primary-foreground group">
                           Launch Application
                           <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
