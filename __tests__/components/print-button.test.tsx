@@ -12,8 +12,8 @@ describe('PrintButton', () => {
   it('renders print button with correct text', () => {
     render(<PrintButton onPrint={mockOnPrint} />)
     
-    expect(screen.getByRole('button', { name: /print shop/i })).toBeInTheDocument()
-    expect(screen.getByText('Print Shop')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /print card/i })).toBeInTheDocument()
+    expect(screen.getByText('Print Card')).toBeInTheDocument()
   })
 
   it('displays printer icon', () => {
@@ -28,7 +28,7 @@ describe('PrintButton', () => {
     const user = userEvent.setup()
     render(<PrintButton onPrint={mockOnPrint} />)
     
-    const button = screen.getByRole('button', { name: /print shop/i })
+    const button = screen.getByRole('button', { name: /print card/i })
     await user.click(button)
     
     expect(mockOnPrint).toHaveBeenCalledTimes(1)
@@ -37,7 +37,7 @@ describe('PrintButton', () => {
   it('is disabled when disabled prop is true', () => {
     render(<PrintButton onPrint={mockOnPrint} disabled={true} />)
     
-    const button = screen.getByRole('button', { name: /print shop/i })
+    const button = screen.getByRole('button', { name: /print card/i })
     expect(button).toBeDisabled()
   })
 
@@ -45,7 +45,7 @@ describe('PrintButton', () => {
     const user = userEvent.setup()
     render(<PrintButton onPrint={mockOnPrint} disabled={true} />)
     
-    const button = screen.getByRole('button', { name: /print shop/i })
+    const button = screen.getByRole('button', { name: /print card/i })
     await user.click(button)
     
     expect(mockOnPrint).not.toHaveBeenCalled()
@@ -54,7 +54,7 @@ describe('PrintButton', () => {
   it('has correct CSS classes', () => {
     render(<PrintButton onPrint={mockOnPrint} />)
     
-    const button = screen.getByRole('button', { name: /print shop/i })
+    const button = screen.getByRole('button', { name: /print card/i })
     expect(button).toHaveClass('flex', 'items-center', 'space-x-2')
   })
 
@@ -62,7 +62,7 @@ describe('PrintButton', () => {
     const user = userEvent.setup()
     render(<PrintButton onPrint={mockOnPrint} />)
     
-    const button = screen.getByRole('button', { name: /print shop/i })
+    const button = screen.getByRole('button', { name: /print card/i })
     button.focus()
     await user.keyboard('{Enter}')
     

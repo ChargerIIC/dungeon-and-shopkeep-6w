@@ -149,7 +149,7 @@ describe('ShopDisplay', () => {
     )
 
     // Check for SVG icons (category icons)
-    const icons = screen.queryAllByRole('img')
+    const icons = screen.queryAllByRole('img');
     expect(icons.length).toBeGreaterThan(0)
   })
 

@@ -19,7 +19,6 @@ import {
 } from "@/components/ui/dialog"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { PrintButton } from "@/components/print-button"
-import { ShopDisplay } from "@/components/shop-display"
 import { useAuth } from "@/components/auth-provider"
 import { signOutUser, saveShop, updateShop, getUserShops, deleteShop, type Shop } from "@/lib/firebase"
 import { openPrintWindow } from "@/lib/print-utils"

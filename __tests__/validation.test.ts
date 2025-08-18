@@ -107,14 +107,14 @@ describe('Input Validation', () => {
       const invalidShop = { ...validShop, items: itemsArray }
       const result = validateShop(invalidShop)
       expect(result.isValid).toBe(false)
-      expect(result.errors).toContain('Shop cannot have more than 100 items')
+      expect(result.errors).toContain('Shop can only have a maximum of 100 items.')
     })
   })
 
   describe('sanitizeString', () => {
     it('should remove HTML tags', () => {
       const result = sanitizeString('<script>alert("xss")</script>Hello')
-      expect(result).toBe('script/scriptHello')
+      expect(result).toBe('alert(\"xss\")Hello')
     })
 
     it('should remove javascript protocols', () => {

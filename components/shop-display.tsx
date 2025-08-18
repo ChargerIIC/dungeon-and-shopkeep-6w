@@ -110,15 +110,15 @@ export function ShopDisplay({ shopTitle, ownerName, items, theme, isPrintMode = 
   const getCategoryIcon = (category: string) => {
     switch (category) {
       case "Weapon":
-        return <Sword className="h-4 w-4" />
+        return <Sword role="img" className="h-4 w-4" />
       case "Armor":
-        return <Shield className="h-4 w-4" />
+        return <Shield role="img" className="h-4 w-4" />
       case "Potions":
-        return <Flask className="h-4 w-4" />
+        return <Flask role="img" className="h-4 w-4" />
       case "Gear":
-        return <Package className="h-4 w-4" />
+        return <Package role="img" className="h-4 w-4" />
       case "Scroll":
-        return <Scroll className="h-4 w-4" />
+        return <Scroll role="img"  className="h-4 w-4" />
       default:
         return null
     }
