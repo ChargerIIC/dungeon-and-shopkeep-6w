@@ -5,10 +5,10 @@ import { useState, useEffect, Suspense } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { LazyShopDisplay, loadCommonItems } from "@/lib/lazy-components"
-import { applyTheme, useOptimizedTheme, getThemeClasses } from "@/lib/optimized-themes"
+import { useOptimizedTheme, getThemeClasses } from "@/lib/optimized-themes"
 
 export default function OptimizedShopkeeperPage() {
-  const [items, setItems] = useState([])
+  const [items, setItems] = useState<any[]>([])
   const [theme, setSelectedTheme] = useState('parchment')
   const [commonItemsData, setCommonItemsData] = useState<any>(null)
   const { setTheme: applySelectedTheme } = useOptimizedTheme()

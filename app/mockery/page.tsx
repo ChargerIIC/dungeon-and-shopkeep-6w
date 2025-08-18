@@ -30,10 +30,11 @@ export default function MockeryPage() {
         const module = await loadInsultsData()
         setInsultsModule(module)
         // Extract categories from enum
-        const categoryKeys = Object.keys(module.InsultCategory).filter((key) => isNaN(Number(key)))
+        const categoryKeys = Object.keys(module.InsultCategory)
+          .filter(key => isNaN(Number(key)))
         setCategories(categoryKeys)
       } catch (error) {
-        console.error("Failed to load insults data:", error)
+        console.error('Failed to load insults data:', error)
       }
     }
     loadData()
@@ -41,7 +42,7 @@ export default function MockeryPage() {
 
   const generateInsult = () => {
     if (!insultsModule) return
-
+    
     setIsGenerating(true)
 
     // Add a small delay for dramatic effect

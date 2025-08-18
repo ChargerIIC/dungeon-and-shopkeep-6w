@@ -1,5 +1,5 @@
 "use client";
-import { CommonItemsByCategory } from "./commonItemsByCategory"; // Updated import path reference
+import { CommonItemsByCategory } from "@/app/shopkeeper/commonItemsByCategory";
 
 export const commonItems: CommonItemsByCategory = {
   Weapon: [
