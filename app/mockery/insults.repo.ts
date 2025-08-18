@@ -1,4 +1,3 @@
-
 export enum InsultCategory {
   COWARD = "coward",
   FOOL = "fool",

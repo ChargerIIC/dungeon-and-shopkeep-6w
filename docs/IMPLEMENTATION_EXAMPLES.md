@@ -3,7 +3,7 @@
 ## ✅ **Point 3: Code Splitting Implementation**
 
 ### Before (Heavy Direct Imports)
-```typescript
+\`\`\`typescript
 // ❌ Old way - loads everything immediately
 import { ShopDisplay } from '@/components/shop-display'
 import { GetInsultByTag, Insult, InsultCategory } from './insults.repo'
@@ -17,10 +17,10 @@ export default function MockeryPage() {
   }
   // ...
 }
-```
+\`\`\`
 
 ### After (Lazy Loading)
-```typescript
+\`\`\`typescript
 // ✅ New way - loads on demand
 import { loadInsultsData } from "@/lib/lazy-components"
 
@@ -46,10 +46,10 @@ export default function MockeryPage() {
     setCurrentInsult(insult)
   }
 }
-```
+\`\`\`
 
 ### Lazy Component Usage
-```typescript
+\`\`\`typescript
 // ✅ Use lazy components instead of direct imports
 import { LazyShopDisplay, LazyNPCDisplay } from '@/lib/lazy-components'
 
@@ -62,14 +62,14 @@ import { LazyShopDisplay, LazyNPCDisplay } from '@/lib/lazy-components'
     theme={theme}
   />
 </Suspense>
-```
+\`\`\`
 
 ---
 
 ## ✅ **Point 4: Optimized Theme System Implementation**
 
 ### Before (Large Theme Objects)
-```typescript
+\`\`\`typescript
 // ❌ Old way - massive theme objects loaded immediately
 const themeConfig = {
   parchment: {
@@ -86,10 +86,10 @@ const themeConfig = {
 // Usage requires knowing specific theme classes
 const styles = themeConfig[theme]
 <div className={styles.cardBg + " " + styles.border}>
-```
+\`\`\`
 
 ### After (CSS Custom Properties)
-```typescript
+\`\`\`typescript
 // ✅ New way - lightweight theme system with CSS variables
 import { applyTheme, useOptimizedTheme, getThemeClasses } from '@/lib/optimized-themes'
 
@@ -115,10 +115,10 @@ export default function Component() {
     </div>
   )
 }
-```
+\`\`\`
 
 ### CSS Custom Properties (styles/themes.css)
-```css
+\`\`\`css
 /* ✅ Efficient theme system using CSS variables */
 .theme-parchment {
   --theme-bg: rgb(245, 245, 220);
@@ -133,7 +133,7 @@ export default function Component() {
 .theme-card-bg { background-color: var(--theme-card); }
 .theme-border { border-color: var(--theme-border); }
 .theme-text { color: var(--theme-text); }
-```
+\`\`\`
 
 ---
 

@@ -3,77 +3,77 @@
 ## 🎯 Quick Wins (Immediate Impact)
 
 ### 1. Remove Unused Radix Packages (30-60% bundle reduction)
-```bash
+\`\`\`bash
 # First, run the analysis script
 node scripts/find-unused-radix.js
 
 # Remove unused packages (example)
 npm uninstall @radix-ui/react-accordion @radix-ui/react-alert-dialog @radix-ui/react-aspect-ratio @radix-ui/react-breadcrumb @radix-ui/react-calendar @radix-ui/react-carousel @radix-ui/react-chart @radix-ui/react-checkbox @radix-ui/react-collapsible @radix-ui/react-command @radix-ui/react-context-menu @radix-ui/react-drawer @radix-ui/react-hover-card @radix-ui/react-input-otp @radix-ui/react-menubar @radix-ui/react-navigation-menu @radix-ui/react-pagination @radix-ui/react-progress @radix-ui/react-radio-group @radix-ui/react-resizable @radix-ui/react-scroll-area @radix-ui/react-slider @radix-ui/react-toggle @radix-ui/react-toggle-group @radix-ui/react-tooltip
-```
+\`\`\`
 
 ### 2. Enable Bundle Analysis
-```bash
+\`\`\`bash
 # Add webpack-bundle-analyzer
 npm install --save-dev webpack-bundle-analyzer
 
 # Analyze your bundle
 npm run build
 npx webpack-bundle-analyzer .next/static/chunks/*.js
-```
+\`\`\`
 
 ### 3. Implement Code Splitting
 Replace direct imports with lazy loading:
 
-```typescript
+\`\`\`typescript
 // Before: Heavy import
 import { ShopDisplay } from '@/components/shop-display'
 
 // After: Lazy loading
 import { LazyShopDisplay } from '@/lib/lazy-components'
-```
+\`\`\`
 
 ## 🚀 Medium Impact Changes
 
 ### 4. Optimize Theme System
 Replace large theme objects with CSS custom properties:
 
-```typescript
+\`\`\`typescript
 // Use the optimized theme system
 import { applyTheme } from '@/lib/optimized-themes'
 
 // Apply theme
 applyTheme('parchment', document.documentElement)
-```
+\`\`\`
 
 ### 5. Move Large Data External
 Convert commonItems.tsx to JSON:
 
-```bash
+\`\`\`bash
 # Move data to public folder for caching
 mv app/shopkeeper/commonItems.tsx public/data/common-items.json
-```
+\`\`\`
 
 ## 📈 Long-term Improvements
 
 ### 6. Implement Route Preloading
 Add to your main layout:
 
-```typescript
+\`\`\`typescript
 import { preloadRoutes } from '@/lib/performance'
 
 useEffect(() => {
   preloadRoutes()
 }, [])
-```
+\`\`\`
 
 ### 7. Add Web Vitals Monitoring
-```typescript
+\`\`\`typescript
 import { reportWebVitals } from '@/lib/performance'
 
 export function reportWebVitals(metric) {
   reportWebVitals(metric)
 }
-```
+\`\`\`
 
 ## 🎯 Expected Results
 
@@ -87,7 +87,7 @@ export function reportWebVitals(metric) {
 
 ## 🔍 Monitoring Commands
 
-```bash
+\`\`\`bash
 # Build and analyze
 npm run build
 npm run analyze
@@ -98,7 +98,7 @@ npx @next/bundle-analyzer
 
 # Performance audit
 npx lighthouse https://your-app.com --view
-```
+\`\`\`
 
 ## ⚠️ Important Notes
 

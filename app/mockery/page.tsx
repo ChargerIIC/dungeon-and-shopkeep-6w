@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Zap, RotateCcw } from "lucide-react"
 import { SharedHeader } from "@/components/shared-header"
 import { loadInsultsData } from "@/lib/lazy-components"
@@ -31,11 +30,10 @@ export default function MockeryPage() {
         const module = await loadInsultsData()
         setInsultsModule(module)
         // Extract categories from enum
-        const categoryKeys = Object.keys(module.InsultCategory)
-          .filter(key => isNaN(Number(key)))
+        const categoryKeys = Object.keys(module.InsultCategory).filter((key) => isNaN(Number(key)))
         setCategories(categoryKeys)
       } catch (error) {
-        console.error('Failed to load insults data:', error)
+        console.error("Failed to load insults data:", error)
       }
     }
     loadData()
@@ -43,7 +41,7 @@ export default function MockeryPage() {
 
   const generateInsult = () => {
     if (!insultsModule) return
-    
+
     setIsGenerating(true)
 
     // Add a small delay for dramatic effect
@@ -86,21 +84,27 @@ export default function MockeryPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Choose a target" />
-                </SelectTrigger>
-                <SelectContent>
-                  {categories.map(category => (
-                    <SelectItem 
-                      key={category} 
-                      value={category.toLowerCase()}
-                    >
-                      {category.charAt(0).toUpperCase() + category.slice(1).toLowerCase()}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div className="flex flex-wrap justify-center gap-3 p-4">
+                {categories.map((category) => (
+                  <button
+                    key={category}
+                    onClick={() => {
+                      setSelectedCategory(category.toLowerCase())
+                      generateInsult()
+                    }}
+                    className={`
+                      px-4 py-2 rounded-full border-2 transition-all duration-200 font-medium
+                      ${
+                        selectedCategory === category.toLowerCase()
+                          ? "bg-red-600 text-white border-red-600 shadow-lg scale-105"
+                          : "bg-background text-foreground border-border hover:border-red-300 hover:bg-red-50 dark:hover:bg-red-900/20"
+                      }
+                    `}
+                  >
+                    {category.charAt(0).toUpperCase() + category.slice(1).toLowerCase()}
+                  </button>
+                ))}
+              </div>
             </CardContent>
           </Card>
 
