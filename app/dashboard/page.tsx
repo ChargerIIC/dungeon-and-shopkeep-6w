@@ -1,15 +1,15 @@
 "use client"
 
 import { useEffect } from "react"
-import { Dice6, Package, Shield, BookOpen, MapPin, Scroll, LogOut, User, ArrowRight, Clock, LightbulbIcon, CloudLightningIcon } from "lucide-react"
+import { Package, Shield, BookOpen, MapPin, Scroll, LogOut, User, ArrowRight, Clock, LightbulbIcon, CloudLightningIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { useAuth } from "@/components/auth-provider"
-import { signOutUser } from "@/lib/firebase"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { applications } from "@/lib/applications.util"
+import { SharedHeader } from "@/components/shared-header" // <-- Import the shared header
 
 export default function DashboardPage() {
   const { user, loading, isConfigured } = useAuth()
@@ -22,15 +22,7 @@ export default function DashboardPage() {
     }
   }, [user, loading, isConfigured, router])
 
-  const handleSignOut = async () => {
-    try {
-      await signOutUser()
-      router.push("/home")
-    } catch (error) {
-      console.error("Sign out failed:", error)
-    }
-  }
-
+  
   const getColorClasses = (color: string) => {
     const colorMap = {
       amber: "bg-amber-100 dark:bg-amber-900/50 text-amber-600 dark:text-amber-400",
@@ -87,45 +79,8 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b border-border/50 bg-card/80 backdrop-blur-sm sticky top-0 z-50 card-3d">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <div className="flex items-center space-x-2">
-              <Dice6 className="h-8 w-8 text-primary" />
-              <Link href="/dashboard">
-                <h1 className="text-2xl font-bold text-foreground hover:text-primary transition-colors cursor-pointer font-fantasy">
-                  Tabletop Toolkit
-                </h1>
-              </Link>
-            </div>
-            <div className="flex items-center space-x-4">
-              <ThemeToggle />
-              <div className="flex items-center space-x-2 px-3 py-2 rounded-lg card-3d">
-                {user?.photoURL ? (
-                  <img
-                    src={user.photoURL || "/placeholder.svg"}
-                    alt="Profile"
-                    className="w-8 h-8 rounded-full shadow-sm"
-                  />
-                ) : (
-                  <User className="w-8 h-8 text-muted-foreground" />
-                )}
-                <span className="text-sm text-foreground font-medium">{displayName}</span>
-              </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleSignOut}
-                className="flex items-center space-x-2 button-3d text-primary-foreground bg-transparent"
-              >
-                <LogOut className="w-4 h-4" />
-                <span>Sign Out</span>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
+      {/* Use the shared header */}
+      <SharedHeader />
 
       {/* Welcome Section */}
       <section className="py-12 px-4 sm:px-6 lg:px-8 paper-texture">

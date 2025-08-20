@@ -29,7 +29,7 @@ export default function AuthPage() {
 
     try {
       await signInWithGoogle()
-      router.push("/shopkeeper")
+      router.push("/dashboard")
     } catch (error: any) {
       console.error("Sign in failed:", error)
       setError(error.message || "Failed to sign in. Please try again.")
