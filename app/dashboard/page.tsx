@@ -174,12 +174,14 @@ export default function DashboardPage() {
             </Card>
             <Card className="card-3d paper-texture">
               <CardHeader>
-                <CardTitle className="text-foreground font-fantasy">Join Our Community</CardTitle>
+                <CardTitle className="text-foreground font-fantasy">Join the DND Community</CardTitle>
                 <CardDescription className="text-muted-foreground">
                   Connect with other Game Masters and share your creations.
                 </CardDescription>
                 <Button variant="outline" className="mt-4 card-3d bg-transparent">
-                  Join Discord
+                  <Link href="https://discord.com/invite/dnd">
+                    Join Discord
+                  </Link>
                 </Button>
               </CardHeader>
             </Card>
