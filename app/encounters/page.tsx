@@ -1139,8 +1139,9 @@ export default function EncounterDesigner() {
                     <h3 className="font-medium text-foreground font-fantasy">Treasures & Rewards</h3>
                   </div>
 
-                  <div className="flex flex-wrap items-end gap-4 mb-4">
-                    <div className="flex-1 min-w-[200px]">
+                  <div className="space-y-4 mb-4">
+                    {/* Row 1: Treasure name input */}
+                    <div>
                       <ValidatedInput
                         placeholder="Treasure name"
                         value={newTreasure.name}
@@ -1151,38 +1152,48 @@ export default function EncounterDesigner() {
                         helperText="Enter treasure name"
                       />
                     </div>
-                    <div className="min-w-[120px]">
-                      <Label className="text-foreground font-medium">Type</Label>
-                      <Select
-                        value={newTreasure.type}
-                        onValueChange={(value) => setNewTreasure((prev) => ({ ...prev, type: value }))}
-                      >
-                        <SelectTrigger className="input-3d mt-2">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent className="card-3d">
-                          {treasureTypes.map((type) => (
-                            <SelectItem key={type} value={type} className="hover:bg-accent/50">
-                              {type}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+
+                    {/* Row 2: Type and Value inputs side by side */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label className="text-foreground font-medium">Type</Label>
+                        <Select
+                          value={newTreasure.type}
+                          onValueChange={(value) => setNewTreasure((prev) => ({ ...prev, type: value }))}
+                        >
+                          <SelectTrigger className="input-3d mt-2">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent className="card-3d">
+                            {treasureTypes.map((type) => (
+                              <SelectItem key={type} value={type} className="hover:bg-accent/50">
+                                {type}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <ValidatedInput
+                          placeholder="Value (e.g., 100 gp)"
+                          value={newTreasure.value}
+                          onChange={(value) =>
+                            setNewTreasure((prev) => ({ ...prev, value: sanitizeInputString(value) }))
+                          }
+                          onBlur={() => newTreasureValidation.markFieldAsTouched("value")}
+                          {...newTreasureValidation.getFieldState("value")}
+                          helperText="Optional value"
+                        />
+                      </div>
                     </div>
-                    <div className="min-w-[140px]">
-                      <ValidatedInput
-                        placeholder="Value (e.g., 100 gp)"
-                        value={newTreasure.value}
-                        onChange={(value) => setNewTreasure((prev) => ({ ...prev, value: sanitizeInputString(value) }))}
-                        onBlur={() => newTreasureValidation.markFieldAsTouched("value")}
-                        {...newTreasureValidation.getFieldState("value")}
-                        helperText="Optional value"
-                      />
+
+                    {/* Row 3: Add Treasure button */}
+                    <div>
+                      <Button onClick={addTreasure} className="button-3d text-primary-foreground">
+                        <PlusCircle className="h-4 w-4 mr-2" />
+                        Add Treasure
+                      </Button>
                     </div>
-                    <Button onClick={addTreasure} className="button-3d text-primary-foreground">
-                      <PlusCircle className="h-4 w-4 mr-2" />
-                      Add Treasure
-                    </Button>
                   </div>
 
                   <div className="space-y-2">
