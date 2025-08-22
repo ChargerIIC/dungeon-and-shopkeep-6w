@@ -855,10 +855,10 @@ export default function EncounterDesigner() {
                   <Save className="w-4 h-4" />
                   <span>{savingEncounter ? "Saving..." : currentEncounterId ? "Update" : "Save"}</span>
                 </Button>
-
-                <PrintButton onPrint={handlePrint} disabled={!encounter.title} />
               </>
             )}
+
+            <PrintButton onPrint={handlePrint} disabled={!encounter.title} />
           </div>
         </div>
 
