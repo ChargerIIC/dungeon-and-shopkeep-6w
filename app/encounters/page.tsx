@@ -1,5 +1,7 @@
 "use client"
 
+import { DialogDescription } from "@/components/ui/dialog"
+
 import { useState, useEffect } from "react"
 import { PlusCircle, Trash2, Save, FolderOpen, Trash, Upload, X, Users, MapPin, Coins, Link2 } from "lucide-react"
 import { Input } from "@/components/ui/input"
@@ -9,14 +11,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { SharedHeader } from "@/components/shared-header"
 import { useAuth } from "@/components/auth-provider"
 import { toast } from "@/hooks/use-toast"
@@ -986,72 +981,74 @@ export default function EncounterDesigner() {
                       <Users className="h-5 w-5 text-primary" />
                       <h3 className="font-medium text-foreground font-fantasy">NPCs & Creatures</h3>
                     </div>
-                    {user && isConfigured && savedNPCs.length > 0 && (
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="flex items-center space-x-2 button-3d bg-transparent text-primary-foreground"
-                            disabled={loadingNPCs}
-                          >
-                            <Link2 className="w-4 h-4" />
-                            <span>Link Saved NPC</span>
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent className="card-3d max-w-2xl">
-                          <DialogHeader>
-                            <DialogTitle className="font-fantasy">Link Saved NPC</DialogTitle>
-                            <DialogDescription>
-                              Choose an NPC from your saved collection to link to this encounter.
-                            </DialogDescription>
-                          </DialogHeader>
-                          <div className="max-h-96 overflow-y-auto">
-                            {loadingNPCs ? (
-                              <div className="flex items-center justify-center py-8">
-                                <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                              </div>
-                            ) : savedNPCs.length === 0 ? (
-                              <div className="text-center py-8">
-                                <p className="text-muted-foreground mb-4">No saved NPCs found.</p>
-                                <Link href="/npc-cards">
-                                  <Button className="button-3d text-primary-foreground">Create NPCs</Button>
-                                </Link>
-                              </div>
-                            ) : (
-                              <div className="space-y-2">
-                                {savedNPCs.map((savedNPC) => (
-                                  <div
-                                    key={savedNPC.id}
-                                    className="flex items-center justify-between p-3 border rounded-lg hover:bg-accent/50 transition-colors"
-                                  >
-                                    <div className="flex-1">
-                                      <h4 className="font-medium text-foreground">{savedNPC.name}</h4>
-                                      <p className="text-sm text-muted-foreground">
-                                        {savedNPC.profession} • AC {savedNPC.stats.armorClass} • HP{" "}
-                                        {savedNPC.stats.hitPoints}
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="flex items-center space-x-2 button-3d bg-transparent text-primary-foreground"
+                          disabled={loadingNPCs}
+                        >
+                          <Link2 className="w-4 h-4" />
+                          <span>Link Saved NPC</span>
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="card-3d max-w-2xl">
+                        <DialogHeader>
+                          <DialogTitle className="font-fantasy">Link Saved NPC</DialogTitle>
+                          <DialogDescription>
+                            Choose an NPC from your saved collection to link to this encounter.
+                          </DialogDescription>
+                        </DialogHeader>
+                        <div className="max-h-96 overflow-y-auto">
+                          {loadingNPCs ? (
+                            <div className="flex items-center justify-center py-8">
+                              <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                            </div>
+                          ) : !user || !isConfigured ? (
+                            <div className="text-center py-8">
+                              <p className="text-muted-foreground mb-4">Please sign in to access your saved NPCs.</p>
+                            </div>
+                          ) : savedNPCs.length === 0 ? (
+                            <div className="text-center py-8">
+                              <p className="text-muted-foreground mb-4">No saved NPCs found.</p>
+                              <Link href="/npc-cards">
+                                <Button className="button-3d text-primary-foreground">Create NPCs</Button>
+                              </Link>
+                            </div>
+                          ) : (
+                            <div className="space-y-2">
+                              {savedNPCs.map((savedNPC) => (
+                                <div
+                                  key={savedNPC.id}
+                                  className="flex items-center justify-between p-3 border rounded-lg hover:bg-accent/50 transition-colors"
+                                >
+                                  <div className="flex-1">
+                                    <h4 className="font-medium text-foreground">{savedNPC.name}</h4>
+                                    <p className="text-sm text-muted-foreground">
+                                      {savedNPC.profession} • AC {savedNPC.stats.armorClass} • HP{" "}
+                                      {savedNPC.stats.hitPoints}
+                                    </p>
+                                    {savedNPC.description && (
+                                      <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
+                                        {savedNPC.description}
                                       </p>
-                                      {savedNPC.description && (
-                                        <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
-                                          {savedNPC.description}
-                                        </p>
-                                      )}
-                                    </div>
-                                    <Button
-                                      size="sm"
-                                      onClick={() => linkSavedNPC(savedNPC)}
-                                      className="button-3d text-primary-foreground"
-                                    >
-                                      Link
-                                    </Button>
+                                    )}
                                   </div>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                        </DialogContent>
-                      </Dialog>
-                    )}
+                                  <Button
+                                    size="sm"
+                                    onClick={() => linkSavedNPC(savedNPC)}
+                                    className="button-3d text-primary-foreground"
+                                  >
+                                    Link
+                                  </Button>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </DialogContent>
+                    </Dialog>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
