@@ -47,6 +47,8 @@ import {
   type Encounter as FirebaseEncounter,
   type NPC,
 } from "@/lib/firebase"
+import { PrintButton } from "@/components/print-button"
+import { openPrintWindow } from "@/lib/print-utils"
 
 import type React from "react"
 
@@ -374,6 +376,15 @@ export default function EncounterDesigner() {
     } finally {
       setSavingEncounter(false)
     }
+  }
+
+  const handlePrint = () => {
+    const encounterDisplayElement = document.getElementById("encounter-display-print")
+    if (!encounterDisplayElement) {
+      alert("Unable to find encounter display for printing")
+      return
+    }
+    openPrintWindow(`${encounter.title} - Encounter`, encounterDisplayElement)
   }
 
   const handleLoadEncounter = (savedEncounter: FirebaseEncounter) => {
@@ -844,6 +855,8 @@ export default function EncounterDesigner() {
                   <Save className="w-4 h-4" />
                   <span>{savingEncounter ? "Saving..." : currentEncounterId ? "Update" : "Save"}</span>
                 </Button>
+
+                <PrintButton onPrint={handlePrint} disabled={!encounter.title} />
               </>
             )}
           </div>
@@ -1314,7 +1327,7 @@ export default function EncounterDesigner() {
           </div>
 
           <div className="flex-1">
-            <Card className="card-3d paper-texture">
+            <Card className="card-3d paper-texture" id="encounter-display-print">
               <CardHeader>
                 <CardTitle className="text-foreground font-fantasy">Encounter Preview</CardTitle>
                 <CardDescription className="text-muted-foreground">Preview of your encounter design</CardDescription>
