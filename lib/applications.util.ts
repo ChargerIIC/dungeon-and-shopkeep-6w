@@ -50,7 +50,7 @@ export const applications = [
     icon: DoorOpen,
     color: "indigo",
     demoLink: "/encounters",
-    features: ["Encounter Design", "NPC Lists", "PNG Map Attachments"],
+    features: ["Encounter Design", "NPC Lists", "Map Attachments", "Treasure Inventories"],
     status: "beta",
   },
   {
