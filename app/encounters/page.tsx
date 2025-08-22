@@ -1139,17 +1139,19 @@ export default function EncounterDesigner() {
                     <h3 className="font-medium text-foreground font-fantasy">Treasures & Rewards</h3>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-                    <ValidatedInput
-                      placeholder="Treasure name"
-                      value={newTreasure.name}
-                      onChange={(value) => setNewTreasure((prev) => ({ ...prev, name: sanitizeInputString(value) }))}
-                      onBlur={() => newTreasureValidation.markFieldAsTouched("name")}
-                      required
-                      {...newTreasureValidation.getFieldState("name")}
-                      helperText="Enter treasure name"
-                    />
-                    <div>
+                  <div className="flex flex-wrap items-end gap-4 mb-4">
+                    <div className="flex-1 min-w-[200px]">
+                      <ValidatedInput
+                        placeholder="Treasure name"
+                        value={newTreasure.name}
+                        onChange={(value) => setNewTreasure((prev) => ({ ...prev, name: sanitizeInputString(value) }))}
+                        onBlur={() => newTreasureValidation.markFieldAsTouched("name")}
+                        required
+                        {...newTreasureValidation.getFieldState("name")}
+                        helperText="Enter treasure name"
+                      />
+                    </div>
+                    <div className="min-w-[120px]">
                       <Label className="text-foreground font-medium">Type</Label>
                       <Select
                         value={newTreasure.type}
@@ -1167,14 +1169,16 @@ export default function EncounterDesigner() {
                         </SelectContent>
                       </Select>
                     </div>
-                    <ValidatedInput
-                      placeholder="Value (e.g., 100 gp)"
-                      value={newTreasure.value}
-                      onChange={(value) => setNewTreasure((prev) => ({ ...prev, value: sanitizeInputString(value) }))}
-                      onBlur={() => newTreasureValidation.markFieldAsTouched("value")}
-                      {...newTreasureValidation.getFieldState("value")}
-                      helperText="Optional value"
-                    />
+                    <div className="min-w-[140px]">
+                      <ValidatedInput
+                        placeholder="Value (e.g., 100 gp)"
+                        value={newTreasure.value}
+                        onChange={(value) => setNewTreasure((prev) => ({ ...prev, value: sanitizeInputString(value) }))}
+                        onBlur={() => newTreasureValidation.markFieldAsTouched("value")}
+                        {...newTreasureValidation.getFieldState("value")}
+                        helperText="Optional value"
+                      />
+                    </div>
                     <Button onClick={addTreasure} className="button-3d text-primary-foreground">
                       <PlusCircle className="h-4 w-4 mr-2" />
                       Add Treasure
