@@ -430,7 +430,73 @@ export function validateEncounterDescription(description: string): ValidationRes
  * Validates NPC name
  */
 export function validateNPCName(name: string): ValidationResult {
-  return validateStringField(name, "NPC name", ENCOUNTER_VALIDATION_CONSTRAINTS.npcName)
+  return validateStringField(name, "NPC name", NPC_VALIDATION_CONSTRAINTS.npcName)
+}
+
+/**
+ * Validates NPC profession
+ */
+export function validateProfession(profession: string): ValidationResult {
+  return validateStringField(profession, "Profession", NPC_VALIDATION_CONSTRAINTS.profession)
+}
+
+/**
+ * Validates NPC description
+ */
+export function validateDescription(description: string): ValidationResult {
+  if (description.trim() === "") {
+    return { isValid: true, errors: [] } // Description is optional
+  }
+  return validateStringField(description, "Description", NPC_VALIDATION_CONSTRAINTS.description)
+}
+
+/**
+ * Validates a complete NPC object
+ */
+export function validateNPC(npc: {
+  name: string
+  profession: string
+  description: string
+  vocalNotes?: string
+  inventory?: Array<{ name: string; description: string }>
+  stats?: any
+  theme?: string
+}): ValidationResult {
+  const allErrors: string[] = []
+
+  // Validate basic NPC fields
+  const nameResult = validateNPCName(npc.name)
+  const professionResult = validateProfession(npc.profession)
+  const descriptionResult = validateDescription(npc.description)
+
+  allErrors.push(...nameResult.errors)
+  allErrors.push(...professionResult.errors)
+  allErrors.push(...descriptionResult.errors)
+
+  // Validate inventory items if present
+  if (npc.inventory && npc.inventory.length > 50) {
+    allErrors.push("NPC can only have a maximum of 50 inventory items.")
+  }
+
+  if (npc.inventory) {
+    for (let i = 0; i < npc.inventory.length; i++) {
+      const item = npc.inventory[i]
+      const itemNameResult = validateNPCName(item.name)
+      const itemDescResult = validateDescription(item.description)
+
+      if (!itemNameResult.isValid) {
+        allErrors.push(`Inventory item #${i + 1}: ${itemNameResult.errors.join(", ")}`)
+      }
+      if (!itemDescResult.isValid) {
+        allErrors.push(`Inventory item #${i + 1} description: ${itemDescResult.errors.join(", ")}`)
+      }
+    }
+  }
+
+  return {
+    isValid: allErrors.length === 0,
+    errors: allErrors,
+  }
 }
 
 /**

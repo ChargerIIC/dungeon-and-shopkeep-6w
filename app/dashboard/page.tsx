@@ -1,14 +1,13 @@
 "use client"
 
 import { useEffect } from "react"
-import { Package, Shield, BookOpen, MapPin, Scroll, LogOut, User, ArrowRight, Clock, LightbulbIcon, CloudLightningIcon } from "lucide-react"
+import { ArrowRight, Clock } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { ThemeToggle } from "@/components/theme-toggle"
 import { useAuth } from "@/components/auth-provider"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { applications } from "@/lib/applications.util"
+import { applications } from "@/lib/applications"
 import { SharedHeader } from "@/components/shared-header" // <-- Import the shared header
 
 export default function DashboardPage() {
@@ -22,7 +21,6 @@ export default function DashboardPage() {
     }
   }, [user, loading, isConfigured, router])
 
-  
   const getColorClasses = (color: string) => {
     const colorMap = {
       amber: "bg-amber-100 dark:bg-amber-900/50 text-amber-600 dark:text-amber-400",
@@ -179,9 +177,7 @@ export default function DashboardPage() {
                   Connect with other Game Masters and share your creations.
                 </CardDescription>
                 <Button variant="outline" className="mt-4 card-3d bg-transparent">
-                  <Link href="https://discord.com/invite/dnd">
-                    Join Discord
-                  </Link>
+                  <Link href="https://discord.com/invite/dnd">Join Discord</Link>
                 </Button>
               </CardHeader>
             </Card>

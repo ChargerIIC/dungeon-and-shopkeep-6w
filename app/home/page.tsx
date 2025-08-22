@@ -1,11 +1,10 @@
 "use client"
-import { Sparkles, Users, Download, Dice6, Package, BookOpen, MapPin, Scroll } from "lucide-react"
+import { Sparkles, Users, Download, Dice6 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { ThemeToggle } from "@/components/theme-toggle"
 import { useAuth } from "@/components/auth-provider"
 import Link from "next/link"
-import { applications } from "@/lib/applications.util"
+import { applications } from "@/lib/applications"
 import { SharedHeader } from "@/components/shared-header"
 
 export default function HomePage() {
