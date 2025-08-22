@@ -1,4 +1,4 @@
-import { BookOpen, CloudLightningIcon, Dice6, MapPin, Package, Scroll } from "lucide-react"
+import { BookOpen, CloudLightningIcon, Dice6, MapPin, Package, Scroll, DoorOpen } from "lucide-react"
 
 // This file contains the definitions for various applications available in the system.
 /*** Each application shown to users has data here. Each lists a title, description, feature list, and the application's status  ***/
@@ -45,6 +45,16 @@ export const applications = [
     lastUpdated: "08/14/2025",
   },
   {
+    id: "encounter-designer",
+    title: "Encounter Card Designer",
+    description: "Design Dungeon and Dragons encounters with NPC management and map attachments",
+    icon: DoorOpen,
+    color: "red",
+    demoLink: "/encounters",
+    features: ["Encounter Design", "NPC Lists", "PNG Map Attachments"],
+    status: "beta",
+  },
+  {
     id: "map-maker",
     title: "Realm Mapper",
     description: "Design interactive maps for your fantasy worlds and adventures",
@@ -52,16 +62,6 @@ export const applications = [
     color: "blue",
     demoLink: "#",
     features: ["Interactive Maps", "Custom Markers", "Layer System"],
-    status: "coming-soon",
-  },
-  {
-    id: "encounter-designer",
-    title: "Encounter Card Designer",
-    description: "Design Dungeon and Dragons encounters with NPC management and map attachments",
-    icon: Dice6,
-    color: "red",
-    demoLink: "/encounters",
-    features: ["Encounter Design", "NPC Lists", "PNG Map Attachments"],
     status: "coming-soon",
   },
   {
