@@ -1174,6 +1174,7 @@ export default function EncounterDesigner() {
                         </Select>
                       </div>
                       <div>
+                        <Label className="text-foreground font-medium">Value (Optional)</Label>
                         <ValidatedInput
                           placeholder="Value (e.g., 100 gp)"
                           value={newTreasure.value}
@@ -1182,7 +1183,6 @@ export default function EncounterDesigner() {
                           }
                           onBlur={() => newTreasureValidation.markFieldAsTouched("value")}
                           {...newTreasureValidation.getFieldState("value")}
-                          helperText="Optional value"
                         />
                       </div>
                     </div>
