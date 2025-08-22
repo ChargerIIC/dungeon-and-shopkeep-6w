@@ -1153,38 +1153,16 @@ export default function EncounterDesigner() {
                       />
                     </div>
 
-                    {/* Row 2: Type and Value inputs side by side */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <Label className="text-foreground font-medium">Type</Label>
-                        <Select
-                          value={newTreasure.type}
-                          onValueChange={(value) => setNewTreasure((prev) => ({ ...prev, type: value }))}
-                        >
-                          <SelectTrigger className="input-3d mt-2">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent className="card-3d">
-                            {treasureTypes.map((type) => (
-                              <SelectItem key={type} value={type} className="hover:bg-accent/50">
-                                {type}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <Label className="text-foreground font-medium">Value (Optional)</Label>
-                        <ValidatedInput
-                          placeholder="Value (e.g., 100 gp)"
-                          value={newTreasure.value}
-                          onChange={(value) =>
-                            setNewTreasure((prev) => ({ ...prev, value: sanitizeInputString(value) }))
-                          }
-                          onBlur={() => newTreasureValidation.markFieldAsTouched("value")}
-                          {...newTreasureValidation.getFieldState("value")}
-                        />
-                      </div>
+                    {/* Row 2: Value input */}
+                    <div>
+                      <Label className="text-foreground font-medium">Value (Optional)</Label>
+                      <ValidatedInput
+                        placeholder="Value (e.g., 100 gp)"
+                        value={newTreasure.value}
+                        onChange={(value) => setNewTreasure((prev) => ({ ...prev, value: sanitizeInputString(value) }))}
+                        onBlur={() => newTreasureValidation.markFieldAsTouched("value")}
+                        {...newTreasureValidation.getFieldState("value")}
+                      />
                     </div>
 
                     {/* Row 3: Add Treasure button */}
