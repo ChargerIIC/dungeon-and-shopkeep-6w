@@ -55,13 +55,13 @@ export const applications = [
     status: "coming-soon",
   },
   {
-    id: "dice-roller",
-    title: "Dice Sanctum",
-    description: "Advanced dice rolling with custom formulas and probability analysis",
+    id: "encounter-designer",
+    title: "Encounter Card Designer",
+    description: "Design Dungeon and Dragons encounters with NPC management and map attachments",
     icon: Dice6,
     color: "red",
     demoLink: "#",
-    features: ["Custom Formulas", "Roll History", "Probability Stats"],
+    features: ["Encounter Design", "NPC Lists", "PNG Map Attachments"],
     status: "coming-soon",
   },
   {

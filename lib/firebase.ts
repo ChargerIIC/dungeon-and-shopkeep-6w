@@ -20,6 +20,7 @@ import {
   where,
   orderBy,
 } from "firebase/firestore"
+import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage"
 
 // Validate environment variables
 const requiredEnvVars = {
@@ -65,6 +66,7 @@ const firebaseConfig = {
 let app: any = null
 let auth: any = null
 let db: any = null
+let storage: any = null // Added storage initialization
 let googleProvider: GoogleAuthProvider | null = null
 let facebookProvider: FacebookAuthProvider | null = null
 
@@ -73,6 +75,7 @@ try {
     app = initializeApp(firebaseConfig)
     auth = getAuth(app)
     db = getFirestore(app)
+    storage = getStorage(app) // Initialize Firebase Storage
     googleProvider = new GoogleAuthProvider()
     googleProvider.setCustomParameters({
       prompt: "select_account",
@@ -86,8 +89,8 @@ try {
   console.error("Firebase initialization error:", error)
 }
 
-// Export auth and db (they might be null if config is missing)
-export { auth, db }
+// Export auth, db, and storage
+export { auth, db, storage } // Added storage to exports
 
 // Sign in with Google
 export const signInWithGoogle = async () => {
@@ -427,5 +430,260 @@ export const deleteNPC = async (npcId: string) => {
   } catch (error) {
     console.error("Error deleting NPC:", error)
     throw new Error("Failed to delete NPC. Please try again.")
+  }
+}
+
+// Encounter data types
+export interface EncounterNPC {
+  id: string
+  name: string
+  role: string
+  notes: string
+}
+
+export interface TreasureItem {
+  id: string
+  name: string
+  type: string
+  value: string
+  description: string
+}
+
+export interface MapAttachment {
+  id: string
+  name: string
+  url: string // Firebase Storage URL
+}
+
+export interface Encounter {
+  id?: string
+  title: string
+  description: string
+  difficulty: string
+  environment: string
+  partyLevel: number
+  partySize: number
+  npcs: EncounterNPC[]
+  treasures: TreasureItem[]
+  maps: MapAttachment[]
+  notes: string
+  creatorId: string
+  createdAt: Date
+  updatedAt: Date
+}
+
+// Save encounter to Firestore
+export const saveEncounter = async (encounter: Omit<Encounter, "id" | "createdAt" | "updatedAt">) => {
+  if (!db || !auth?.currentUser) {
+    throw new Error("Firebase is not configured or user is not authenticated.")
+  }
+
+  try {
+    const encounterData = {
+      ...encounter,
+      creatorId: auth.currentUser.uid,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }
+
+    const docRef = await addDoc(collection(db, "encounters"), encounterData)
+    return docRef.id
+  } catch (error) {
+    console.error("Error saving encounter:", error)
+    throw new Error("Failed to save encounter. Please try again.")
+  }
+}
+
+// Update existing encounter
+export const updateEncounter = async (
+  encounterId: string,
+  encounter: Omit<Encounter, "id" | "creatorId" | "createdAt" | "updatedAt">,
+) => {
+  if (!db || !auth?.currentUser) {
+    throw new Error("Firebase is not configured or user is not authenticated.")
+  }
+
+  try {
+    const encounterData = {
+      ...encounter,
+      updatedAt: new Date(),
+    }
+
+    const encounterRef = doc(db, "encounters", encounterId)
+    await updateDoc(encounterRef, encounterData)
+  } catch (error) {
+    console.error("Error updating encounter:", error)
+    throw new Error("Failed to update encounter. Please try again.")
+  }
+}
+
+// Get user's encounters
+export const getUserEncounters = async (): Promise<Encounter[]> => {
+  if (!db || !auth?.currentUser) {
+    throw new Error("Firebase is not configured or user is not authenticated.")
+  }
+
+  try {
+    const encountersQuery = query(
+      collection(db, "encounters"),
+      where("creatorId", "==", auth.currentUser.uid),
+      orderBy("updatedAt", "desc"),
+    )
+
+    const querySnapshot = await getDocs(encountersQuery)
+    const encounters: Encounter[] = []
+
+    querySnapshot.forEach((doc) => {
+      const data = doc.data()
+      encounters.push({
+        id: doc.id,
+        title: data.title,
+        description: data.description,
+        difficulty: data.difficulty,
+        environment: data.environment,
+        partyLevel: data.partyLevel,
+        partySize: data.partySize,
+        npcs: data.npcs,
+        treasures: data.treasures,
+        maps: data.maps,
+        notes: data.notes,
+        creatorId: data.creatorId,
+        createdAt: data.createdAt.toDate(),
+        updatedAt: data.updatedAt.toDate(),
+      })
+    })
+
+    return encounters
+  } catch (error) {
+    console.error("Error getting user encounters:", error)
+    throw new Error("Failed to load encounters. Please try again.")
+  }
+}
+
+// Delete encounter
+export const deleteEncounter = async (encounterId: string) => {
+  if (!db || !auth?.currentUser) {
+    throw new Error("Firebase is not configured or user is not authenticated.")
+  }
+
+  try {
+    const encounterRef = doc(db, "encounters", encounterId)
+    const encounterDoc = await getDocs(query(collection(db, "encounters"), where("__name__", "==", encounterId)))
+
+    // Delete associated map files from storage
+    if (!encounterDoc.empty) {
+      const encounterData = encounterDoc.docs[0].data()
+      if (encounterData.maps && encounterData.maps.length > 0) {
+        const deletePromises = encounterData.maps.map((map: MapAttachment) =>
+          deleteMapFile(map.url).catch((error) => console.warn("Failed to delete map file:", error)),
+        )
+        await Promise.all(deletePromises)
+      }
+    }
+
+    await deleteDoc(encounterRef)
+  } catch (error) {
+    console.error("Error deleting encounter:", error)
+    throw new Error("Failed to delete encounter. Please try again.")
+  }
+}
+
+/**
+ * Upload a map file to Firebase Storage
+ */
+export const uploadMapFile = async (file: File, encounterId: string): Promise<string> => {
+  if (!storage || !auth?.currentUser) {
+    throw new Error("Firebase Storage is not configured or user is not authenticated.")
+  }
+
+  try {
+    // Create a unique filename with timestamp
+    const timestamp = Date.now()
+    const fileExtension = file.name.split(".").pop()
+    const fileName = `${timestamp}_${file.name.replace(/[^a-zA-Z0-9.-]/g, "_")}`
+
+    // Create storage reference
+    const storageRef = ref(storage, `encounters/${auth.currentUser.uid}/${encounterId}/maps/${fileName}`)
+
+    // Upload file
+    const snapshot = await uploadBytes(storageRef, file)
+
+    // Get download URL
+    const downloadURL = await getDownloadURL(snapshot.ref)
+
+    return downloadURL
+  } catch (error) {
+    console.error("Error uploading map file:", error)
+    throw new Error("Failed to upload map file. Please try again.")
+  }
+}
+
+/**
+ * Delete a map file from Firebase Storage
+ */
+export const deleteMapFile = async (fileUrl: string): Promise<void> => {
+  if (!storage || !auth?.currentUser) {
+    throw new Error("Firebase Storage is not configured or user is not authenticated.")
+  }
+
+  try {
+    // Extract the file path from the URL
+    const url = new URL(fileUrl)
+    const pathMatch = url.pathname.match(/\/o\/(.+)\?/)
+    if (!pathMatch) {
+      throw new Error("Invalid file URL")
+    }
+
+    const filePath = decodeURIComponent(pathMatch[1])
+    const storageRef = ref(storage, filePath)
+
+    await deleteObject(storageRef)
+  } catch (error) {
+    console.error("Error deleting map file:", error)
+    // Don't throw error for file deletion failures to avoid blocking other operations
+  }
+}
+
+/**
+ * Upload multiple map files
+ */
+export const uploadMultipleMapFiles = async (
+  files: File[],
+  encounterId: string,
+  onProgress?: (progress: number, fileName: string) => void,
+): Promise<Array<{ name: string; url: string; id: string }>> => {
+  if (!storage || !auth?.currentUser) {
+    throw new Error("Firebase Storage is not configured or user is not authenticated.")
+  }
+
+  const uploadPromises = files.map(async (file, index) => {
+    try {
+      if (onProgress) {
+        onProgress(0, file.name)
+      }
+
+      const url = await uploadMapFile(file, encounterId)
+
+      if (onProgress) {
+        onProgress(100, file.name)
+      }
+
+      return {
+        id: `${Date.now()}_${index}`,
+        name: file.name,
+        url: url,
+      }
+    } catch (error) {
+      console.error(`Failed to upload ${file.name}:`, error)
+      throw new Error(`Failed to upload ${file.name}`)
+    }
+  })
+
+  try {
+    const results = await Promise.all(uploadPromises)
+    return results
+  } catch (error) {
+    console.error("Error uploading multiple files:", error)
+    throw new Error("Some files failed to upload. Please try again.")
   }
 }
