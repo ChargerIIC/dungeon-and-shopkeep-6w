@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { useAuth } from "@/components/auth-provider"
 import Link from "next/link"
-import { applications } from "@/lib/applications"
+import { applications } from "@/lib/applications.util"
 import { SharedHeader } from "@/components/shared-header"
 
 export default function HomePage() {
