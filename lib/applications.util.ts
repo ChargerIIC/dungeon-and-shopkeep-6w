@@ -49,7 +49,7 @@ export const applications = [
     title: "Encounter Card Designer",
     description: "Design Dungeon and Dragons encounters with NPC management and map attachments",
     icon: DoorOpen,
-    color: "red",
+    color: "indigo",
     demoLink: "/encounters",
     features: ["Encounter Design", "NPC Lists", "PNG Map Attachments"],
     status: "beta",
