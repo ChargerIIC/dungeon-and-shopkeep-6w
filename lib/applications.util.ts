@@ -60,7 +60,7 @@ export const applications = [
     description: "Design Dungeon and Dragons encounters with NPC management and map attachments",
     icon: Dice6,
     color: "red",
-    demoLink: "#",
+    demoLink: "/encounters",
     features: ["Encounter Design", "NPC Lists", "PNG Map Attachments"],
     status: "coming-soon",
   },
