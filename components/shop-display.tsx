@@ -141,7 +141,7 @@ export function ShopDisplay({ shopTitle, ownerName, items, theme, isPrintMode = 
       <Card
         className={`${styles.cardBg} ${styles.border} shadow-2xl overflow-hidden print:shadow-none print:max-w-none print:w-full card-3d paper-texture`}
       >
-        <CardHeader className={`${styles.headerBg} border-b ${styles.border} print:pb-4 wood-grain`}>
+        <CardHeader className={`${styles.headerBg} border-b ${styles.border} print:pb-4`}>
           <CardTitle
             className={`text-center ${styles.title} text-2xl md:text-3xl font-fantasy print:text-3xl print:mb-2`}
             style={{ textShadow: "0 2px 4px rgba(0,0,0,0.3)" }}
