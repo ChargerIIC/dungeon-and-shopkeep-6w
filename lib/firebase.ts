@@ -21,6 +21,7 @@ import {
   orderBy,
 } from "firebase/firestore"
 import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage"
+import { Encounter, MapAttachment } from './encounters.model'
 
 // Validate environment variables
 const requiredEnvVars = {
@@ -431,45 +432,6 @@ export const deleteNPC = async (npcId: string) => {
     console.error("Error deleting NPC:", error)
     throw new Error("Failed to delete NPC. Please try again.")
   }
-}
-
-// Encounter data types
-export interface EncounterNPC {
-  id: string
-  name: string
-  role: string
-  notes: string
-}
-
-export interface TreasureItem {
-  id: string
-  name: string
-  type: string
-  value: string
-  description: string
-}
-
-export interface MapAttachment {
-  id: string
-  name: string
-  url: string // Firebase Storage URL
-}
-
-export interface Encounter {
-  id?: string
-  title: string
-  description: string
-  difficulty: string
-  environment: string
-  partyLevel: number
-  partySize: number
-  npcs: EncounterNPC[]
-  treasures: TreasureItem[]
-  maps: MapAttachment[]
-  notes: string
-  creatorId: string
-  createdAt: Date
-  updatedAt: Date
 }
 
 // Save encounter to Firestore
