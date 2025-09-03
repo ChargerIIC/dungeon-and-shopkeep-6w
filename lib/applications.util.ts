@@ -1,4 +1,4 @@
-import { BookOpen, CloudLightningIcon, Dice6, MapPin, Package, Scroll, DoorOpen } from "lucide-react"
+import { BookOpen, CloudLightningIcon, Dice6, Package, Scroll, DoorOpen } from "lucide-react"
 
 // Application definitions for the tabletop gaming toolkit
 export const applications = [
@@ -54,14 +54,19 @@ export const applications = [
     status: "beta",
   },
   {
-    id: "map-maker",
-    title: "Realm Mapper",
-    description: "Design interactive maps for your fantasy worlds and adventures",
-    icon: MapPin,
+    id: "spell-cards",
+    title: "Spell Card Creator",
+    description: "Create and style cards for Dungeons and Dragons Fifth Edition spells with custom themes",
+    icon: Scroll,
     color: "blue",
-    demoLink: "#",
-    features: ["Interactive Maps", "Custom Markers", "Layer System"],
-    status: "coming-soon",
+    demoLink: "/spellcards",
+    features: [
+      "Spell Design",
+      "Theme Selection",
+      "Print Results as 3x5 inch cards",
+      "Track Ritual and Concentration requirements",
+    ],
+    status: "available",
   },
   {
     id: "lore-keeper",

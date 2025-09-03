@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useAuth } from "@/components/auth-provider"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { applications } from "@/lib/applications.util"
+import { applications } from "@/lib/applications.util.ts" // <-- Updated import path to include .ts extension
 import { SharedHeader } from "@/components/shared-header" // <-- Import the shared header
 
 export default function DashboardPage() {

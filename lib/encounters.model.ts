@@ -27,7 +27,7 @@ export interface Encounter {
   id?: string
   title: string
   description: string
-  difficulty: 'easy' | 'medium' | 'hard' | 'deadly'
+  difficulty: "easy" | "medium" | "hard" | "deadly"
   environment: string
   partyLevel: number
   partySize: number

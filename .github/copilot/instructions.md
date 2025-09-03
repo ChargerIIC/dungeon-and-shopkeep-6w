@@ -37,7 +37,7 @@ The application uses a consistent theme system across preview components:
 It also supports a Light, Dark, and System theme for the overall UI
 
 ## Type Patterns
-```typescript
+\`\`\`typescript
 interface BaseItem {
   id: string
   name: string
@@ -59,7 +59,7 @@ interface BaseCombatStats {
   speed: number
   proficiencyBonus: number
 }
-```
+\`\`\`
 
 ## Firebase Pattern
 - All Firebase operations should be wrapped in try/catch blocks
@@ -75,21 +75,21 @@ interface BaseCombatStats {
 - Use responsive design patterns
 
 ## Error Handling
-```typescript
+\`\`\`typescript
 try {
   // Firebase operations
 } catch (error) {
   console.error("Operation failed:", error)
   throw new Error("Friendly error message")
 }
-```
+\`\`\`
 
 ## Authentication Pattern
-```typescript
+\`\`\`typescript
 if (!auth.currentUser) {
   throw new Error("No authenticated user")
 }
-```
+\`\`\`
 
 ## State Management
 - Use React hooks for local state

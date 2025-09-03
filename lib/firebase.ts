@@ -21,7 +21,10 @@ import {
   orderBy,
 } from "firebase/firestore"
 import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage"
-import { Encounter, MapAttachment } from './encounters.model'
+import type { Encounter, MapAttachment } from "./encounters.model"
+import type { Shop } from "./shops.model"
+import type { NPC } from "./npcs.model"
+import type { SpellCard } from "./spellCards.model"
 
 // Validate environment variables
 const requiredEnvVars = {
@@ -189,26 +192,6 @@ export const onAuthStateChange = (callback: (user: User | null) => void) => {
 // Helper function to check if Firebase is configured
 export { isFirebaseConfigured }
 
-// Shop data types
-export interface ShopItem {
-  id: string
-  name: string
-  category: string
-  price: number
-  currency: string
-}
-
-export interface Shop {
-  id?: string
-  title: string
-  owner: string
-  items: ShopItem[]
-  theme: string
-  creatorId: string
-  createdAt: Date
-  updatedAt: Date
-}
-
 // Save shop to Firestore
 export const saveShop = async (shop: Omit<Shop, "id" | "createdAt" | "updatedAt">) => {
   if (!db || !auth?.currentUser) {
@@ -301,40 +284,6 @@ export const deleteShop = async (shopId: string) => {
     console.error("Error deleting shop:", error)
     throw new Error("Failed to delete shop. Please try again.")
   }
-}
-
-// NPC data types
-export interface NPCInventoryItem {
-  id: string
-  name: string
-  description: string
-}
-
-export interface NPCStats {
-  STR: number
-  DEX: number
-  CON: number
-  INT: number
-  WIS: number
-  CHA: number
-  armorClass: number
-  hitPoints: number
-  speed: number
-  proficiencyBonus: number
-}
-
-export interface NPC {
-  id?: string
-  name: string
-  profession: string
-  description: string
-  vocalNotes: string
-  inventory: NPCInventoryItem[]
-  stats: NPCStats
-  theme: string
-  creatorId: string
-  createdAt: Date
-  updatedAt: Date
 }
 
 // Save NPC to Firestore
@@ -547,6 +496,111 @@ export const deleteEncounter = async (encounterId: string) => {
   } catch (error) {
     console.error("Error deleting encounter:", error)
     throw new Error("Failed to delete encounter. Please try again.")
+  }
+}
+
+// Save spell card to Firestore
+export const saveSpellCard = async (spellCard: Omit<SpellCard, "id" | "createdAt" | "updatedAt">) => {
+  if (!db || !auth?.currentUser) {
+    throw new Error("Firebase is not configured or user is not authenticated.")
+  }
+
+  try {
+    const spellCardData = {
+      ...spellCard,
+      creatorId: auth.currentUser.uid,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }
+
+    const docRef = await addDoc(collection(db, "spellCards"), spellCardData)
+    return docRef.id
+  } catch (error) {
+    console.error("Error saving spell card:", error)
+    throw new Error("Failed to save spell card. Please try again.")
+  }
+}
+
+// Update existing spell card
+export const updateSpellCard = async (
+  spellCardId: string,
+  spellCard: Omit<SpellCard, "id" | "creatorId" | "createdAt" | "updatedAt">,
+) => {
+  if (!db || !auth?.currentUser) {
+    throw new Error("Firebase is not configured or user is not authenticated.")
+  }
+
+  try {
+    const spellCardData = {
+      ...spellCard,
+      updatedAt: new Date(),
+    }
+
+    const spellCardRef = doc(db, "spellCards", spellCardId)
+    await updateDoc(spellCardRef, spellCardData)
+  } catch (error) {
+    console.error("Error updating spell card:", error)
+    throw new Error("Failed to update spell card. Please try again.")
+  }
+}
+
+// Get user's spell cards
+export const getUserSpellCards = async (): Promise<SpellCard[]> => {
+  if (!db || !auth?.currentUser) {
+    throw new Error("Firebase is not configured or user is not authenticated.")
+  }
+
+  try {
+    const spellCardsQuery = query(
+      collection(db, "spellCards"),
+      where("creatorId", "==", auth.currentUser.uid),
+      orderBy("updatedAt", "desc"),
+    )
+
+    const querySnapshot = await getDocs(spellCardsQuery)
+    const spellCards: SpellCard[] = []
+
+    querySnapshot.forEach((doc) => {
+      const data = doc.data()
+      spellCards.push({
+        id: doc.id,
+        title: data.title,
+        level: data.level,
+        school: data.school,
+        castingTime: data.castingTime,
+        range: data.range,
+        duration: data.duration,
+        description: data.description,
+        classes: data.classes,
+        isRitual: data.isRitual,
+        requiresConcentration: data.requiresConcentration,
+        theme: data.theme,
+        borderStyle: data.borderStyle,
+        creatorId: data.creatorId,
+        createdAt: data.createdAt.toDate(),
+        updatedAt: data.updatedAt.toDate(),
+      })
+    })
+
+    return spellCards
+  } catch (error) {
+    console.error("Error getting user spell cards:", error)
+    throw new Error("Failed to load spell cards. Please try again.")
+  }
+}
+
+// Delete spell card
+export const deleteSpellCard = async (spellCardId: string) => {
+  if (!db || !auth?.currentUser) {
+    throw new Error("Firebase is not configured or user is not authenticated.")
+  }
+
+  try {
+    const spellCardRef = doc(db, "spellCards", spellCardId)
+    await deleteDoc(spellCardRef)
+  } catch (error) {
+    console.error("Error deleting spell card:", error)
+    throw new Error("Failed to delete spell card. Please try again.")
   }
 }
 
