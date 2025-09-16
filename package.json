@@ -54,7 +54,7 @@
     "input-otp": "latest",
     "lightningcss": "^1.30.1",
     "lucide-react": "^0.454.0",
-    "next": "15.2.4",
+    "next": "^15.5.3",
     "next-themes": "latest",
     "path": "latest",
     "react": "^19",
