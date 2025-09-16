@@ -115,3 +115,87 @@ if (!auth.currentUser) {
 - Use proper image optimization
 - Implement proper caching strategies
 - Use proper bundling optimization
+
+## Change Request Guidelines
+
+### When Adding New Features
+1. **Always search the codebase first** to understand existing patterns and components
+2. **Follow the established theme system** - ensure new features support all 5 themes (Parchment, Tavern, Arcane, Forest, Dungeon)
+3. **Implement Firebase integration** for save/load functionality following the existing patterns
+4. **Add print optimization** - include print-specific styles and layouts
+5. **Use existing UI components** from `/components/ui/` when possible
+6. **Follow the established data models** in `/lib/models/` or extend them appropriately
+7. **Add supporting unit tests where possible** - create test files in `__tests__/` directory following existing patterns
+8. **Never delete package-lock.json** - preserve the npm lock file in all code changes
+
+### For Form-Based Features
+- Use controlled components with proper state management
+- Implement real-time preview functionality where applicable
+- Include form validation and error handling
+- Follow the established input styling patterns
+- Add loading states for async operations
+
+### For Display Components
+- Support all theme variations with proper color schemes
+- Include responsive design for mobile and desktop
+- Implement proper typography hierarchy
+- Add print-specific styling with `@media print`
+- Use the card-3d class for depth effects
+
+### For Database Operations
+- Always check authentication before operations
+- Use proper TypeScript interfaces for data structures
+- Implement proper error handling with user-friendly messages
+- Include loading states and success feedback
+- Follow the established Firebase patterns in `/lib/firebase.ts`
+
+### Code Organization Rules
+- New pages go in `/app/[feature-name]/page.tsx`
+- Shared components go in `/components/`
+- Feature-specific components can be co-located with pages
+- Data models and types go in `/lib/models/`
+- Utility functions go in `/lib/utils/`
+
+### Testing Considerations
+- Ensure all new features work in both authenticated and guest modes
+- Test print functionality across different browsers
+- Verify theme switching works correctly
+- Test responsive design on mobile devices
+- Validate Firebase operations with proper error scenarios
+- **Write unit tests for new components and utilities** using Jest and React Testing Library
+- **Follow existing test patterns** found in `__tests__/` directory
+- **Test critical user flows** and edge cases
+
+### Performance Guidelines
+- Use React.memo for expensive components
+- Implement proper loading states
+- Optimize images and assets
+- Use proper bundling for large features
+- Consider lazy loading for non-critical components
+
+### Security Requirements
+- Validate all user input on both client and server
+- Implement proper Firebase security rules
+- Never expose sensitive data in client-side code
+- Use proper authentication checks for protected operations
+- Sanitize user-generated content before display
+
+### Accessibility Standards
+- Include proper ARIA labels and roles
+- Ensure keyboard navigation works correctly
+- Maintain proper color contrast ratios
+- Add alt text for all images
+- Use semantic HTML elements
+
+### Documentation Requirements
+- Update README.md for major new features
+- Add inline comments for complex logic
+- Document new data models and interfaces
+- Include usage examples for new components
+- Update this instruction file for new patterns
+
+### Package Management Rules
+- **NEVER delete or modify package-lock.json** - this file ensures consistent dependency versions
+- Use `npm install` for adding new dependencies
+- Preserve existing dependency versions unless explicitly updating
+- Document any new dependencies in pull requests

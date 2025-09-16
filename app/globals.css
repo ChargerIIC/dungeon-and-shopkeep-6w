@@ -67,7 +67,7 @@
   --popover-foreground: oklch(0.9 0.02 80);
 
   --primary: oklch(0.75 0.08 75); /* Warm gold */
-  --primary-foreground: oklch(0.2 0.02 45);
+  --primary-foreground: oklch(0.95 0.02 80); /* Light cream for proper contrast */
 
   --secondary: oklch(0.25 0.03 50); /* Dark oak */
   --secondary-foreground: oklch(0.85 0.02 75);
@@ -357,7 +357,7 @@
 /* Print-specific styles */
 @media print {
   @page {
-    margin: 0.75in;
+    margin: 0.5in; /* Reduced margins for more content space */
     size: letter;
   }
 
@@ -603,5 +603,67 @@
   }
   .print\:border-red-900\/50 {
     border-color: rgba(127, 29, 29, 0.5) !important;
+  }
+
+  /* NPC-specific print optimizations for single page layout */
+  .print\:grid-cols-6 {
+    grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+  }
+
+  .print\:grid-cols-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+
+  .print\:gap-2 {
+    gap: 0.5rem !important;
+  }
+
+  .print\:gap-3 {
+    gap: 0.75rem !important;
+  }
+
+  .print\:text-sm {
+    font-size: 0.875rem !important;
+    line-height: 1.25rem !important;
+  }
+
+  .print\:py-3 {
+    padding-top: 0.75rem !important;
+    padding-bottom: 0.75rem !important;
+  }
+
+  .print\:px-4 {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  .print\:space-y-4 > * + * {
+    margin-top: 1rem !important;
+  }
+
+  .print\:leading-relaxed {
+    line-height: 1.625 !important;
+  }
+
+  /* Compact spacing for single page layout */
+  .print\:compact-spacing {
+    margin-bottom: 1rem !important;
+  }
+
+  .print\:compact-spacing:last-child {
+    margin-bottom: 0 !important;
+  }
+
+  /* Ensure ability scores and combat stats display in proper columns */
+  .print\:ability-grid {
+    display: grid !important;
+    grid-template-columns: repeat(6, 1fr) !important;
+    gap: 0.5rem !important;
+  }
+
+  .print\:combat-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 0.5rem !important;
   }
 }

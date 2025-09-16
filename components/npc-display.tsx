@@ -1,9 +1,17 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Users, Sword, Shield, Eye, Brain } from "lucide-react"
+import { Users, Sword, Shield, Eye, Brain, Zap } from "lucide-react"
 
 type InventoryItem = {
   id: string
   name: string
+  description: string
+}
+
+type NPCAction = {
+  id: string
+  name: string
+  attackBonus?: number
+  damage?: string
   description: string
 }
 
@@ -29,6 +37,7 @@ type NPCDisplayProps = {
   stats: NPCStats
   theme: string
   isPrintMode?: boolean
+  actions?: NPCAction[]
 }
 
 // Theme configurations (same as shop display for consistency)
@@ -131,6 +140,7 @@ export function NPCDisplay({
   stats,
   theme,
   isPrintMode = false,
+  actions = [],
 }: NPCDisplayProps) {
   // Get theme styles with fallback to parchment theme
   const styles = themeConfig[theme as keyof typeof themeConfig] || themeConfig.parchment
@@ -181,7 +191,7 @@ export function NPCDisplay({
           )}
 
           {/* Ability Scores */}
-          <div className="print:break-inside-avoid">
+          <div className="print:break-inside-avoid print:compact-spacing">
             <div className={`flex items-center gap-2 mb-2 ${styles.title} print:mb-4`}>
               <div className="p-1 rounded card-3d bg-gradient-to-br from-white/20 to-white/10">
                 <Brain className="h-4 w-4" />
@@ -189,24 +199,24 @@ export function NPCDisplay({
               <h3 className="font-semibold text-lg print:text-xl font-fantasy">Ability Scores</h3>
             </div>
             <div className={`h-1 ${styles.divider} mb-3 print:mb-4 print:h-px rounded-full`}></div>
-            <div className="grid grid-cols-3 gap-3 print:grid-cols-6">
+            <div className="grid grid-cols-3 gap-3 print:ability-grid">
               {Object.entries(stats)
                 .slice(0, 6)
                 .map(([ability, score]) => (
                   <div
                     key={ability}
-                    className={`text-center p-3 rounded-lg ${styles.itemBg} ${styles.border} border-opacity-30 card-3d`}
+                    className={`text-center p-3 rounded-lg ${styles.itemBg} ${styles.border} border-opacity-30 card-3d print:p-2`}
                   >
                     <div className={`font-bold text-sm ${styles.itemText}`}>{ability}</div>
-                    <div className={`text-xl font-bold ${styles.title}`}>{score}</div>
-                    <div className={`text-sm ${styles.subtitle}`}>{getModifier(score)}</div>
+                    <div className={`text-xl font-bold ${styles.title} print:text-lg`}>{score}</div>
+                    <div className={`text-sm ${styles.subtitle} print:text-xs`}>{getModifier(score)}</div>
                   </div>
                 ))}
             </div>
           </div>
 
           {/* Combat Stats */}
-          <div className="print:break-inside-avoid">
+          <div className="print:break-inside-avoid print:compact-spacing">
             <div className={`flex items-center gap-2 mb-2 ${styles.title} print:mb-4`}>
               <div className="p-1 rounded card-3d bg-gradient-to-br from-white/20 to-white/10">
                 <Sword className="h-4 w-4" />
@@ -214,25 +224,69 @@ export function NPCDisplay({
               <h3 className="font-semibold text-lg print:text-xl font-fantasy">Combat Stats</h3>
             </div>
             <div className={`h-1 ${styles.divider} mb-3 print:mb-4 print:h-px rounded-full`}></div>
-            <div className="grid grid-cols-2 gap-3 print:grid-cols-4">
-              <div className={`text-center p-3 rounded-lg ${styles.itemBg} ${styles.border} border-opacity-30 card-3d`}>
+            <div className="grid grid-cols-2 gap-3 print:combat-grid">
+              <div
+                className={`text-center p-3 rounded-lg ${styles.itemBg} ${styles.border} border-opacity-30 card-3d print:p-2`}
+              >
                 <div className={`font-bold text-sm ${styles.itemText}`}>AC</div>
-                <div className={`text-xl font-bold ${styles.title}`}>{stats.armorClass}</div>
+                <div className={`text-xl font-bold ${styles.title} print:text-lg`}>{stats.armorClass}</div>
               </div>
-              <div className={`text-center p-3 rounded-lg ${styles.itemBg} ${styles.border} border-opacity-30 card-3d`}>
+              <div
+                className={`text-center p-3 rounded-lg ${styles.itemBg} ${styles.border} border-opacity-30 card-3d print:p-2`}
+              >
                 <div className={`font-bold text-sm ${styles.itemText}`}>HP</div>
-                <div className={`text-xl font-bold ${styles.title}`}>{stats.hitPoints}</div>
+                <div className={`text-xl font-bold ${styles.title} print:text-lg`}>{stats.hitPoints}</div>
               </div>
-              <div className={`text-center p-3 rounded-lg ${styles.itemBg} ${styles.border} border-opacity-30 card-3d`}>
+              <div
+                className={`text-center p-3 rounded-lg ${styles.itemBg} ${styles.border} border-opacity-30 card-3d print:p-2`}
+              >
                 <div className={`font-bold text-sm ${styles.itemText}`}>Speed</div>
-                <div className={`text-xl font-bold ${styles.title}`}>{stats.speed} ft</div>
+                <div className={`text-xl font-bold ${styles.title} print:text-lg`}>{stats.speed} ft</div>
               </div>
-              <div className={`text-center p-3 rounded-lg ${styles.itemBg} ${styles.border} border-opacity-30 card-3d`}>
+              <div
+                className={`text-center p-3 rounded-lg ${styles.itemBg} ${styles.border} border-opacity-30 card-3d print:p-2`}
+              >
                 <div className={`font-bold text-sm ${styles.itemText}`}>Prof</div>
-                <div className={`text-xl font-bold ${styles.title}`}>+{stats.proficiencyBonus}</div>
+                <div className={`text-xl font-bold ${styles.title} print:text-lg`}>+{stats.proficiencyBonus}</div>
               </div>
             </div>
           </div>
+
+          {/* Actions */}
+          {actions.length > 0 && (
+            <div className="print:break-inside-avoid">
+              <div className={`flex items-center gap-2 mb-2 ${styles.title} print:mb-4`}>
+                <div className="p-1 rounded card-3d bg-gradient-to-br from-white/20 to-white/10">
+                  <Zap className="h-4 w-4" />
+                </div>
+                <h3 className="font-semibold text-lg print:text-xl font-fantasy">Actions</h3>
+              </div>
+              <div className={`h-1 ${styles.divider} mb-3 print:mb-4 print:h-px rounded-full`}></div>
+              <div className="space-y-3 print:space-y-4">
+                {actions.map((action) => (
+                  <div
+                    key={action.id}
+                    className={`p-3 rounded-lg ${styles.itemBg} ${styles.border} border-opacity-30 card-3d print:py-3 print:px-4`}
+                  >
+                    <div className="flex items-start justify-between mb-2">
+                      <h4 className={`font-bold ${styles.title} print:font-bold`}>{action.name}</h4>
+                      <div className="flex gap-3 text-sm">
+                        {action.attackBonus !== undefined && (
+                          <span className={`${styles.subtitle} font-medium`}>Attack: +{action.attackBonus}</span>
+                        )}
+                        {action.damage && (
+                          <span className={`${styles.subtitle} font-medium`}>Damage: {action.damage}</span>
+                        )}
+                      </div>
+                    </div>
+                    <p className={`${styles.text} text-sm leading-relaxed print:text-sm print:leading-relaxed`}>
+                      {action.description}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Inventory */}
           {inventory.length > 0 && (
@@ -261,7 +315,7 @@ export function NPCDisplay({
           )}
 
           {/* Empty State */}
-          {!description && !vocalNotes && inventory.length === 0 && (
+          {!description && !vocalNotes && inventory.length === 0 && actions.length === 0 && (
             <div className={`text-center py-8 ${styles.text} italic print:py-12 print:text-lg`}>
               Start creating your NPC by filling in the details on the left.
             </div>

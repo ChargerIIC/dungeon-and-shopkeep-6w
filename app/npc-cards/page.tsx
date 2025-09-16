@@ -19,7 +19,6 @@ import {
 } from "@/components/ui/dialog"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { PrintButton } from "@/components/print-button"
-import { NPCDisplay } from "@/components/npc-display"
 import { useAuth } from "@/components/auth-provider"
 import { signOutUser, saveNPC, updateNPC, getUserNPCs, deleteNPC, type NPC } from "@/lib/firebase"
 import { openPrintWindow } from "@/lib/print-utils"
@@ -81,11 +80,20 @@ type NPCCharacter = {
   vocalNotes: string
   inventory: InventoryItem[]
   stats: NPCStats
+  actions: NPCAction[]
 }
 
 type InventoryItem = {
   id: string
   name: string
+  description: string
+}
+
+type NPCAction = {
+  id: string
+  name: string
+  attackBonus?: number
+  damage?: string
   description: string
 }
 
@@ -134,10 +142,35 @@ export default function NPCCreator() {
     { id: "3", name: "Merchant's Ledger", description: "Records of recent transactions" },
   ])
 
+  // Actions state
+  const [actions, setActions] = useState<NPCAction[]>([
+    {
+      id: "1",
+      name: "Persuasion",
+      description: "Attempts to convince others through charm and reasoning. Uses Charisma (Persuasion).",
+    },
+    {
+      id: "2",
+      name: "Dagger",
+      attackBonus: 4,
+      damage: "1d4 + 2 piercing",
+      description: "Melee or Ranged Weapon Attack: +4 to hit, reach 5 ft. or range 20/60 ft., one target.",
+    },
+  ])
+
   // New inventory item state
   const [newInventoryItem, setNewInventoryItem] = useState<InventoryItem>({
     id: "",
     name: "",
+    description: "",
+  })
+
+  // New action item state
+  const [newAction, setNewAction] = useState<NPCAction>({
+    id: "",
+    name: "",
+    attackBonus: undefined,
+    damage: "",
     description: "",
   })
 
@@ -269,6 +302,12 @@ export default function NPCCreator() {
       })),
       stats,
       theme,
+      actions: actions.map((action) => ({
+        ...action,
+        name: sanitizeString(action.name),
+        description: sanitizeString(action.description),
+        damage: action.damage ? sanitizeString(action.damage) : undefined,
+      })),
       creatorId: user?.uid || "",
     }
 
@@ -327,6 +366,7 @@ export default function NPCCreator() {
     setStats(npc.stats)
     setTheme(npc.theme || "parchment")
     setCurrentNPCId(npc.id || null)
+    setActions(npc.actions || [])
 
     toast({
       title: "NPC Loaded",
@@ -370,6 +410,7 @@ export default function NPCCreator() {
     setDescription("A mysterious character with an unknown past.")
     setVocalNotes("Speaks with a neutral tone.")
     setInventory([])
+    setActions([])
     setStats({
       STR: 10,
       DEX: 10,
@@ -468,6 +509,73 @@ export default function NPCCreator() {
   // Update stat
   const updateStat = (statName: keyof NPCStats, value: number) => {
     setStats((prev) => ({ ...prev, [statName]: value }))
+  }
+
+  // Add new action
+  const addAction = () => {
+    if (newAction.name.trim() === "") {
+      toast({
+        title: "Invalid Action",
+        description: "Action name is required.",
+        variant: "destructive",
+      })
+      return
+    }
+
+    if (newAction.description.trim() === "") {
+      toast({
+        title: "Invalid Action",
+        description: "Action description is required.",
+        variant: "destructive",
+      })
+      return
+    }
+
+    // Check for duplicate action names
+    const isDuplicate = actions.some(
+      (action) => action.name.toLowerCase().trim() === newAction.name.toLowerCase().trim(),
+    )
+
+    if (isDuplicate) {
+      toast({
+        title: "Duplicate Action",
+        description: "An action with this name already exists.",
+        variant: "destructive",
+      })
+      return
+    }
+
+    const action = {
+      ...newAction,
+      id: Date.now().toString(),
+      name: sanitizeString(newAction.name),
+      description: sanitizeString(newAction.description),
+      damage: newAction.damage ? sanitizeString(newAction.damage) : undefined,
+    }
+
+    setActions([...actions, action])
+    setNewAction({
+      id: "",
+      name: "",
+      attackBonus: undefined,
+      damage: "",
+      description: "",
+    })
+
+    toast({
+      title: "Action Added",
+      description: `${action.name} has been added to the actions.`,
+    })
+  }
+
+  // Remove action
+  const removeAction = (id: string) => {
+    setActions(actions.filter((action) => action.id !== id))
+  }
+
+  // Update action
+  const updateAction = (id: string, field: keyof NPCAction, value: string | number | undefined) => {
+    setActions(actions.map((action) => (action.id === id ? { ...action, [field]: value } : action)))
   }
 
   if (loading) {
@@ -855,6 +963,144 @@ export default function NPCCreator() {
                 )}
               </CardContent>
             </Card>
+
+            {/* Actions */}
+            <Card className="card-3d">
+              <CardHeader>
+                <CardTitle>Actions</CardTitle>
+                <CardDescription>Combat actions, spells, and special abilities this NPC can perform.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {/* Add New Action */}
+                <div className="space-y-3 p-4 border rounded-lg bg-muted/30">
+                  <h4 className="font-medium">Add New Action</h4>
+                  <div className="grid grid-cols-1 gap-3">
+                    <div className="space-y-2">
+                      <Label htmlFor="actionName">Action Name *</Label>
+                      <Input
+                        id="actionName"
+                        value={newAction.name}
+                        onChange={(e) => setNewAction((prev) => ({ ...prev, name: e.target.value }))}
+                        placeholder="Enter action name (e.g., Longsword, Fireball, Intimidate)"
+                        className="input-3d"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="space-y-2">
+                        <Label htmlFor="attackBonus">Attack Bonus (optional)</Label>
+                        <Input
+                          id="attackBonus"
+                          type="number"
+                          value={newAction.attackBonus || ""}
+                          onChange={(e) =>
+                            setNewAction((prev) => ({
+                              ...prev,
+                              attackBonus: e.target.value ? Number.parseInt(e.target.value) : undefined,
+                            }))
+                          }
+                          placeholder="e.g., +5"
+                          className="input-3d"
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="damage">Damage (optional)</Label>
+                        <Input
+                          id="damage"
+                          value={newAction.damage || ""}
+                          onChange={(e) => setNewAction((prev) => ({ ...prev, damage: e.target.value }))}
+                          placeholder="e.g., 1d8 + 3 slashing"
+                          className="input-3d"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="actionDescription">Description *</Label>
+                      <Textarea
+                        id="actionDescription"
+                        value={newAction.description}
+                        onChange={(e) => setNewAction((prev) => ({ ...prev, description: e.target.value }))}
+                        placeholder="Describe the action, its effects, and any special rules"
+                        className="input-3d min-h-[80px]"
+                      />
+                    </div>
+
+                    <Button onClick={addAction} className="button-3d">
+                      <PlusCircle className="h-4 w-4 mr-2" />
+                      Add Action
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Current Actions */}
+                {actions.length > 0 && (
+                  <div className="space-y-2">
+                    <h4 className="font-medium">Current Actions</h4>
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Name</TableHead>
+                          <TableHead>Attack Bonus</TableHead>
+                          <TableHead>Damage</TableHead>
+                          <TableHead>Description</TableHead>
+                          <TableHead className="w-[100px]">Actions</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {actions.map((action) => (
+                          <TableRow key={action.id}>
+                            <TableCell>
+                              <Input
+                                value={action.name}
+                                onChange={(e) => updateAction(action.id, "name", e.target.value)}
+                                className="input-3d"
+                              />
+                            </TableCell>
+                            <TableCell>
+                              <Input
+                                type="number"
+                                value={action.attackBonus || ""}
+                                onChange={(e) =>
+                                  updateAction(
+                                    action.id,
+                                    "attackBonus",
+                                    e.target.value ? Number.parseInt(e.target.value) : undefined,
+                                  )
+                                }
+                                placeholder="Optional"
+                                className="input-3d"
+                              />
+                            </TableCell>
+                            <TableCell>
+                              <Input
+                                value={action.damage || ""}
+                                onChange={(e) => updateAction(action.id, "damage", e.target.value)}
+                                placeholder="Optional"
+                                className="input-3d"
+                              />
+                            </TableCell>
+                            <TableCell>
+                              <Textarea
+                                value={action.description}
+                                onChange={(e) => updateAction(action.id, "description", e.target.value)}
+                                className="input-3d min-h-[60px]"
+                              />
+                            </TableCell>
+                            <TableCell>
+                              <Button onClick={() => removeAction(action.id)} variant="destructive" size="sm">
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
           </div>
 
           {/* NPC Display Preview */}
@@ -867,6 +1113,7 @@ export default function NPCCreator() {
               inventory={inventory}
               stats={stats}
               theme={theme}
+              actions={actions}
             />
           </div>
         </div>

@@ -43,13 +43,13 @@ export default function HomePage() {
                 Start Your Journey
               </Button>
             </Link>
-            <Link href="/shopkeeper">
+            <Link href="/about">
               <Button
                 size="lg"
                 variant="outline"
                 className="text-lg px-8 py-3 card-3d text-foreground border-border/50 bg-transparent"
               >
-                {user ? "Use Shop Creator" : "Try Shop Creator Free"}
+                About This Site
               </Button>
             </Link>
           </div>

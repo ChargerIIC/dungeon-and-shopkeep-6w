@@ -29,8 +29,8 @@ export const applications = [
     icon: BookOpen,
     color: "purple",
     demoLink: "/npc-cards",
-    status: "beta",
-    features: ["D&D 5e Stats", "Inventory Management", "Vocal Notes", "Print Ready"],
+    status: "available",
+    features: ["D&D 5e Stats", "Inventory Management", "Vocal Notes", "Actions System", "Print Ready"],
   },
   {
     id: "mockery",
@@ -79,3 +79,5 @@ export const applications = [
     status: "coming-soon",
   },
 ]
+
+export default applications
