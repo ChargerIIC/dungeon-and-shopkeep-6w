@@ -451,9 +451,9 @@ export default function StatGenerator() {
                           )}
                         />
                         {die.ignored && (
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <div className="w-full h-0.5 bg-red-500 dark:bg-red-400 rotate-45"></div>
-                            <div className="w-full h-0.5 bg-red-500 dark:bg-red-400 -rotate-45"></div>
+                          <div className="absolute inset-0">
+                            <div className="absolute top-0 left-0 w-full h-full border-l-2 border-red-500 dark:border-red-400 transform rotate-45 origin-center"></div>
+                            <div className="absolute top-0 left-0 w-full h-full border-l-2 border-red-500 dark:border-red-400 transform -rotate-45 origin-center"></div>
                           </div>
                         )}
                       </button>
