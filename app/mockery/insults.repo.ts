@@ -140,7 +140,7 @@ export const InsultsRepo: Array<Insult> = [
     { text: "I've seen more muscles on a skeleton", tag: [InsultCategory.MONSTER]},
     { text: "A body like that could have only been made with the aid of the Darkness spell", tag: [InsultCategory.MONSTER]},
     { text: "You are uglier than a troll's backside!", tag: [InsultCategory.MONSTER]},
-    { text: "You look like a bird that swalled a buckler whole", tag: [InsultCategory.MONSTER]},
+    { text: "You look like a bird that swallowed a buckler whole", tag: [InsultCategory.MONSTER]},
     { text: "Bless your heart, you think you are a threat.", tag: [InsultCategory.MONSTER]},
     { text: "You couldn't get the ground if you jumped", tag: [InsultCategory.MONSTER, InsultCategory.VILLAIN] },
     { text: "Your face is so ugly, your portraits hang themselves.", tag: [InsultCategory.MONSTER, InsultCategory.VILLAIN] },
